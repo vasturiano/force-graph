@@ -83,7 +83,14 @@ export default Kapsule({
         const getColor = accessorFn(state.nodeColor);
         const ctx = state.ctx;
 
+        ctx.save();
         state.graphData.nodes.forEach(node => {
+          if (state.nodeCanvasObject) {
+            // Custom node paint
+            state.nodeCanvasObject(node, state.ctx, state.globalScale);
+            return;
+          }
+
           const r = Math.sqrt(Math.max(0, getVal(node) || 1)) * state.nodeRelSize;
 
           ctx.beginPath();
@@ -91,6 +98,7 @@ export default Kapsule({
           ctx.fillStyle = getColor(node) || '#ffffaa';
           ctx.fill();
         });
+        ctx.restore();
       }
 
       function paintLinks() {
@@ -98,6 +106,7 @@ export default Kapsule({
         const getWidth = accessorFn(state.linkWidth);
         const ctx = state.ctx;
 
+        ctx.save();
         state.graphData.links.forEach(link => {
           const start = link.source;
           const end = link.target;
@@ -109,6 +118,7 @@ export default Kapsule({
           ctx.strokeStyle = getColor(link) || '#f0f0f0';
           ctx.stroke();
         });
+        ctx.restore();
       }
 
       function paintPhotons() {
@@ -117,13 +127,14 @@ export default Kapsule({
         const getColor = accessorFn(state.linkDirectionalParticleColor || state.linkColor);
         const ctx = state.ctx;
 
+        ctx.save();
         state.graphData.links.forEach(link => {
           const start = link.source;
           const end = link.target;
 
           const particleSpeed = getSpeed(link);
           const photons = link.__photons || [];
-          const photonR = Math.max(0, getDiameter(link) / 2) / Math.cbrt(state.globalScale);
+          const photonR = Math.max(0, getDiameter(link) / 2) / Math.sqrt(state.globalScale);
           const photonColor =getColor(link) || '#f0f0f0';
 
           photons.forEach((photon, idx) => {
@@ -140,6 +151,7 @@ export default Kapsule({
             ctx.fill();
           });
         });
+        ctx.restore();
       }
     }
   },

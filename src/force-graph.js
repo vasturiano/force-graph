@@ -37,7 +37,6 @@ const linkedFGMethods = Object.assign(...[
 
 function adjustCanvasSize(state) {
   if (state.canvas) {
-    console.log('adjust canvas');
     state.canvas.width = state.width;
     state.canvas.height = state.height;
 
