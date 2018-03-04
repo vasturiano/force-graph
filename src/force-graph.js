@@ -85,7 +85,7 @@ export default Kapsule({
     backgroundColor: { onChange(color, state) { state.canvas && color && (state.canvas.style.background = color) }, triggerUpdate: false },
     nodeLabel: { default: 'name', triggerUpdate: false },
     linkLabel: { default: 'name', triggerUpdate: false },
-    linkHoverPrecision: { default: 1, triggerUpdate: false },
+    linkHoverPrecision: { default: 4, triggerUpdate: false },
     enablePointerInteraction: { default: true, onChange(_, state) { state.onHover = null; }, triggerUpdate: false },
     onNodeClick: { default: () => {}, triggerUpdate: false },
     onNodeHover: { default: () => {}, triggerUpdate: false },
@@ -202,7 +202,6 @@ export default Kapsule({
         const objIndex = (r << 16) + (g << 8) + b; // Convert from rgb to int (obj list index)
 
         const hoverObj = objIndex ? state.objs[objIndex] : null;
-        //console.log(hoverObject);
 
         if (hoverObj !== state.hoverObj) {
           const prevObj = state.hoverObj;
@@ -236,6 +235,9 @@ export default Kapsule({
         graph.globalScale(t.k)
           .tickFrame();
       });
+      const getLinkWidth = accessorFn(state.linkWidth);
+      state.shadowGraph.linkWidth(l => getLinkWidth(l) + state.linkHoverPrecision);
+
       requestAnimationFrame(animate);
     })();
 
@@ -244,7 +246,5 @@ export default Kapsule({
     }
   },
 
-  update: function updateFn(state) {
-
-  }
+  update: function updateFn(state) {}
 });
