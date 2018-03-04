@@ -95,17 +95,11 @@ export default Kapsule({
   },
 
   methods: {
-    _adjustCanvasSize(state) {
-      state.canvas.width = state.width;
-      state.canvas.height = state.height;
-
-      const ctx = state.canvas.getContext('2d');
-      const t = state.curTransform;
-      t.x = state.width/2 / t.k;
-      t.y = state.height/2 / t.k;
-      ctx.resetTransform();
-      ctx.translate(t.x, t.y);
-      ctx.scale(t.k, t.k);
+    stopAnimation: function(state) {
+      if (state.animationFrameRequestId) {
+        cancelAnimationFrame(state.animationFrameRequestId);
+      }
+      return this;
     },
     ...linkedMethods
   },
@@ -231,15 +225,16 @@ export default Kapsule({
         c.clearRect(-t.x / t.k, -t.y / t.k, state.width / t.k, state.height / t.k)
       );
 
+      // Adjust link hover area
+      state.shadowGraph.linkWidth(l => accessorFn(state.linkWidth)(l) + state.linkHoverPrecision);
+
       // Frame cycle
       [state.forceGraph, state.shadowGraph].forEach(graph => {
         graph.globalScale(t.k)
           .tickFrame();
       });
-      const getLinkWidth = accessorFn(state.linkWidth);
-      state.shadowGraph.linkWidth(l => getLinkWidth(l) + state.linkHoverPrecision);
 
-      requestAnimationFrame(animate);
+      state.animationFrameRequestId = requestAnimationFrame(animate);
     })();
 
     function getObjType(obj) {
