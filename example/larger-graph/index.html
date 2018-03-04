@@ -1,0 +1,25 @@
+<head>
+  <style> body { margin: 0; } </style>
+
+  <script src="//unpkg.com/force-graph"></script>
+  <!--<script src="../../dist/force-graph.js"></script>-->
+</head>
+
+<body>
+  <div id="graph"></div>
+
+  <script>
+    fetch('blocks.json').then(res => res.json()).then(data => {
+        const Graph = ForceGraph()
+        (document.getElementById('graph'))
+          .backgroundColor('#101020')
+          .nodeRelSize(6)
+          .nodeAutoColorBy('user')
+          .nodeLabel(node => `${node.user}: ${node.description}`)
+          .linkColor(() => 'rgba(255,255,255,0.2)')
+          .linkDirectionalParticles(1)
+          .onNodeClick(node => window.open(`https://bl.ocks.org/${node.user}/${node.id}`, '_blank'))
+          .graphData(data);
+      });
+  </script>
+</body>
