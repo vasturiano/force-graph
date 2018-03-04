@@ -16,7 +16,6 @@ import { autoColorObjects, colorStr2Hex } from './color-utils';
 export default Kapsule({
 
   props: {
-    jsonUrl: {},
     graphData: {
       default: {
         nodes: [],
@@ -179,16 +178,6 @@ export default Kapsule({
 
     if (state.graphData.nodes.length || state.graphData.links.length) {
       console.info('force-graph loading', state.graphData.nodes.length + ' nodes', state.graphData.links.length + ' links');
-    }
-
-    if (!state.fetchingJson && state.jsonUrl && !state.graphData.nodes.length && !state.graphData.links.length) {
-      // (Re-)load data
-      state.fetchingJson = true;
-      qwest.get(state.jsonUrl).then((_, json) => {
-        state.fetchingJson = false;
-        state.graphData = json;
-        state._rerender();  // Force re-update
-      });
     }
 
     if (state.nodeAutoColorBy !== null) {

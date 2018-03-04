@@ -11,7 +11,6 @@ const bindFG = linkKapsule('forceGraph', CanvasForceGraph);
 const bindBoth = linkKapsule(['forceGraph', 'shadowGraph'], CanvasForceGraph);
 const linkedProps = Object.assign(
   ...[
-    'jsonUrl',
     'nodeColor',
     'nodeAutoColorBy',
     'nodeCanvasObject',
