@@ -7,46 +7,54 @@ import linkKapsule from './kapsule-link.js';
 
 // Expose config from forceGraph
 const bindFG = linkKapsule('forceGraph', CanvasForceGraph);
-const linkedFGProps = Object.assign(...[
-  'jsonUrl',
-  'graphData',
-  'nodeRelSize',
-  'nodeId',
-  'nodeVal',
-  'nodeColor',
-  'nodeAutoColorBy',
-  'nodeCanvasObject',
-  'linkSource',
-  'linkTarget',
-  'linkColor',
-  'linkAutoColorBy',
-  'linkWidth',
-  'linkDirectionalParticles',
-  'linkDirectionalParticleSpeed',
-  'linkDirectionalParticleWidth',
-  'linkDirectionalParticleColor',
-  'd3AlphaDecay',
-  'd3VelocityDecay',
-  'warmupTicks',
-  'cooldownTicks',
-  'cooldownTime'
-].map(p => ({ [p]: bindFG.linkProp(p)})));
-const linkedFGMethods = Object.assign(...[
+const bindBoth = linkKapsule(['forceGraph', 'shadowGraph'], CanvasForceGraph);
+const linkedProps = Object.assign(
+  ...[
+    'jsonUrl',
+    'nodeColor',
+    'nodeAutoColorBy',
+    'nodeCanvasObject',
+    'linkColor',
+    'linkAutoColorBy',
+    'linkWidth',
+    'linkDirectionalParticles',
+    'linkDirectionalParticleSpeed',
+    'linkDirectionalParticleWidth',
+    'linkDirectionalParticleColor',
+    'd3AlphaDecay',
+    'd3VelocityDecay',
+    'warmupTicks',
+    'cooldownTicks',
+    'cooldownTime'
+  ].map(p => ({ [p]: bindFG.linkProp(p)})),
+  ...[
+    'graphData',
+    'nodeRelSize',
+    'nodeId',
+    'nodeVal',
+    'linkSource',
+    'linkTarget'
+  ].map(p => ({ [p]: bindBoth.linkProp(p)}))
+);
+const linkedMethods = Object.assign(...[
   'd3Force'
 ].map(p => ({ [p]: bindFG.linkMethod(p)})));
 
 function adjustCanvasSize(state) {
   if (state.canvas) {
-    state.canvas.width = state.width;
-    state.canvas.height = state.height;
-
-    const ctx = state.canvas.getContext('2d');
     const t = state.curTransform;
     t.x = state.width / 2 / t.k;
     t.y = state.height / 2 / t.k;
-    ctx.resetTransform();
-    ctx.translate(t.x, t.y);
-    ctx.scale(t.k, t.k);
+
+    [state.canvas, state.shadowCanvas].forEach(canvas => {
+      canvas.width = state.width;
+      canvas.height = state.height;
+
+      const ctx = canvas.getContext('2d');
+      ctx.resetTransform();
+      ctx.translate(t.x, t.y);
+      ctx.scale(t.k, t.k);
+    });
   }
 }
 
@@ -65,7 +73,7 @@ export default Kapsule({
     onNodeHover: { default: () => {}, triggerUpdate: false },
     onLinkClick: { default: () => {}, triggerUpdate: false },
     onLinkHover: { default: () => {}, triggerUpdate: false },
-    ...linkedFGProps
+    ...linkedProps
   },
 
   methods: {
@@ -81,11 +89,12 @@ export default Kapsule({
       ctx.translate(t.x, t.y);
       ctx.scale(t.k, t.k);
     },
-    ...linkedFGMethods
+    ...linkedMethods
   },
 
   stateInit: () => ({
     forceGraph: new CanvasForceGraph(),
+    shadowGraph: new CanvasForceGraph().cooldownTicks(0),
     curTransform: { k: 1, x: 0, y: 0 }
   }),
 
@@ -94,10 +103,14 @@ export default Kapsule({
     domNode.innerHTML = '';
 
     state.canvas = document.createElement('canvas');
-    domNode.appendChild(state.canvas);
-    const ctx = state.canvas.getContext('2d');
     if (state.backgroundColor) state.canvas.style.background = state.backgroundColor;
+    domNode.appendChild(state.canvas);
+
+    state.shadowCanvas = document.createElement('canvas');
+
     adjustCanvasSize(state);
+    const ctx = state.canvas.getContext('2d');
+    const shadowCtx = state.shadowCanvas.getContext('2d');
 
     // Setup zoom / pan interaction
     d3Select(state.canvas).call(d3Zoom().scaleExtent([0.01, 1000]).on('zoom', () => {
@@ -108,9 +121,11 @@ export default Kapsule({
       t.x += state.width / 2 * t.k;
       t.y += state.height / 2 * t.k;
 
-      ctx.resetTransform();
-      ctx.translate(t.x, t.y);
-      ctx.scale(t.k, t.k);
+      [ctx, shadowCtx].forEach(c => {
+        c.resetTransform();
+        c.translate(t.x, t.y);
+        c.scale(t.k, t.k);
+      });
     }));
 
     // Setup tooltip
@@ -155,6 +170,7 @@ export default Kapsule({
     */
 
     state.forceGraph(ctx);
+    state.shadowGraph(shadowCtx);
 
     //
 
@@ -198,15 +214,20 @@ export default Kapsule({
 
       // Wipe canvas
       const t = state.curTransform;
-      ctx.clearRect(-t.x / t.k, -t.y / t.k, state.width / t.k, state.height / t.k);
+      [ctx, shadowCtx].forEach(c =>
+        c.clearRect(-t.x / t.k, -t.y / t.k, state.width / t.k, state.height / t.k)
+      );
 
       // Frame cycle
-      state.forceGraph
-        .globalScale(t.k)
-        .tickFrame();
+      [state.forceGraph, state.shadowGraph].forEach(graph => {
+        graph.globalScale(t.k)
+          .tickFrame();
+      });
       requestAnimationFrame(animate);
     })();
   },
 
-  update: function updateFn(state) {}
+  update: function updateFn(state) {
+
+  }
 });

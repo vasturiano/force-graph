@@ -122,6 +122,7 @@ export default Kapsule({
       }
 
       function paintPhotons() {
+        const getNumPhotons = accessorFn(state.linkDirectionalParticles);
         const getSpeed = accessorFn(state.linkDirectionalParticleSpeed);
         const getDiameter = accessorFn(state.linkDirectionalParticleWidth);
         const getColor = accessorFn(state.linkDirectionalParticleColor || state.linkColor);
@@ -129,6 +130,8 @@ export default Kapsule({
 
         ctx.save();
         state.graphData.links.forEach(link => {
+          if (!getNumPhotons(link)) return;
+
           const start = link.source;
           const end = link.target;
 
@@ -207,7 +210,9 @@ export default Kapsule({
     const linkParticlesAccessor = accessorFn(state.linkDirectionalParticles);
     state.graphData.links.forEach(link => {
       const numPhotons = Math.round(Math.abs(linkParticlesAccessor(link)));
-      link.__photons = [...Array(numPhotons)].map(() => ({}));
+      if (numPhotons) {
+        link.__photons = [...Array(numPhotons)].map(() => ({}));
+      }
     });
 
     // Feed data to force-directed layout

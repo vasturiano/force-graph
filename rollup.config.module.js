@@ -1,3 +1,6 @@
+import postCss from 'rollup-plugin-postcss';
+import postCssSimpleVars from 'postcss-simple-vars';
+import postCssNested from 'postcss-nested';
 import babel from 'rollup-plugin-babel';
 import { name, dependencies, peerDependencies } from './package.json';
 
@@ -15,6 +18,12 @@ export default {
   ],
   external: [...Object.keys(dependencies), ...Object.keys(peerDependencies)],
   plugins: [
+    postCss({
+      plugins: [
+        postCssSimpleVars(),
+        postCssNested()
+      ]
+    }),
     babel()
   ]
 };
