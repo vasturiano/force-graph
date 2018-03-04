@@ -6,7 +6,6 @@ import {
 } from 'd3-force';
 
 import Kapsule from 'kapsule';
-import qwest from 'qwest';
 import accessorFn from 'accessor-fn';
 
 import { autoColorObjects, colorStr2Hex } from './color-utils';
@@ -137,7 +136,7 @@ export default Kapsule({
           const particleSpeed = getSpeed(link);
           const photons = link.__photons || [];
           const photonR = Math.max(0, getDiameter(link) / 2) / Math.sqrt(state.globalScale);
-          const photonColor =getColor(link) || '#f0f0f0';
+          const photonColor = getColor(link) || '#f0f0f0';
 
           photons.forEach((photon, idx) => {
             const photonPosRatio = photon.__progressRatio =

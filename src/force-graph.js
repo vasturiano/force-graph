@@ -217,8 +217,9 @@ export default Kapsule({
             state[`on${objType}Hover`](obj, prevObjType === objType ? prevObj : null);
           }
 
-          toolTipElem.style.visibility = hoverObj ? 'visible' : 'hidden';
-          toolTipElem.innerHTML = hoverObj ? accessorFn(state[`${objType.toLowerCase()}Label`])(obj) || '' : '';
+          const tooltipContent = hoverObj ? accessorFn(state[`${objType.toLowerCase()}Label`])(obj) || '' : '';
+          toolTipElem.style.visibility = tooltipContent.length ? 'visible' : 'hidden';
+          toolTipElem.innerHTML = tooltipContent;
 
           state.hoverObj = hoverObj;
         }
