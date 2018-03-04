@@ -56,6 +56,7 @@ export default Kapsule({
   props:{
     width: { default: window.innerWidth, onChange: (_, state) => adjustCanvasSize(state), triggerUpdate: false } ,
     height: { default: window.innerHeight, onChange: (_, state) => adjustCanvasSize(state), triggerUpdate: false },
+    backgroundColor: { onChange(color, state) { state.canvas && color && (state.canvas.style.background = color) }, triggerUpdate: false },
     nodeLabel: { default: 'name', triggerUpdate: false },
     linkLabel: { default: 'name', triggerUpdate: false },
     linkHoverPrecision: { default: 1, triggerUpdate: false },
@@ -95,6 +96,7 @@ export default Kapsule({
     state.canvas = document.createElement('canvas');
     domNode.appendChild(state.canvas);
     const ctx = state.canvas.getContext('2d');
+    if (state.backgroundColor) state.canvas.style.background = state.backgroundColor;
     adjustCanvasSize(state);
 
     // Setup zoom / pan interaction
