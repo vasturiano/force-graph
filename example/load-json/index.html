@@ -13,8 +13,12 @@
       const Graph = ForceGraph()
       (document.getElementById('graph'))
         .graphData(data)
+        .nodeId('id')
+        .nodeVal('val')
         .nodeLabel('id')
-        .nodeAutoColorBy('group');
+        .nodeAutoColorBy('group')
+        .linkSource('source')
+        .linkTarget('target')
     });
   </script>
 </body>
