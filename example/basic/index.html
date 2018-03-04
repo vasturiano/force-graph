@@ -23,6 +23,8 @@
 
     const Graph = ForceGraph()
       (document.getElementById('graph'))
+        .nodeLabel(n =>n.__indexColor)
+        .linkLabel(n =>n.__indexColor)
         .linkDirectionalParticles(2)
         .graphData(gData);
   </script>

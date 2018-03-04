@@ -1,6 +1,7 @@
 import { select as d3Select, event as d3Event } from 'd3-selection';
 import { zoom as d3Zoom } from 'd3-zoom';
 import Kapsule from 'kapsule';
+import accessorFn from 'accessor-fn';
 
 import CanvasForceGraph from './canvas-force-graph';
 import linkKapsule from './kapsule-link.js';
@@ -28,7 +29,6 @@ const linkedProps = Object.assign(
     'cooldownTime'
   ].map(p => ({ [p]: bindFG.linkProp(p)})),
   ...[
-    'graphData',
     'nodeRelSize',
     'nodeId',
     'nodeVal',
@@ -64,6 +64,25 @@ export default Kapsule({
   props:{
     width: { default: window.innerWidth, onChange: (_, state) => adjustCanvasSize(state), triggerUpdate: false } ,
     height: { default: window.innerHeight, onChange: (_, state) => adjustCanvasSize(state), triggerUpdate: false },
+    graphData: {
+      default: { nodes: [], links: [] },
+      onChange: ((d, state) => {
+        hexIndex([...d.nodes, ...d.links]);
+        state.forceGraph.graphData(d);
+        state.shadowGraph.graphData(d);
+
+        function hexIndex(objs) {
+          objs
+            .filter(obj => !obj.hasOwnProperty('__indexColor'))
+            .forEach(obj => {
+              // index per color hex key
+              obj.__indexColor = `#${state.objs.length.toString(16).padStart(6, '0')}`;
+              state.objs.push(obj);
+            });
+        }
+      }),
+      triggerUpdate: false
+    },
     backgroundColor: { onChange(color, state) { state.canvas && color && (state.canvas.style.background = color) }, triggerUpdate: false },
     nodeLabel: { default: 'name', triggerUpdate: false },
     linkLabel: { default: 'name', triggerUpdate: false },
@@ -93,9 +112,13 @@ export default Kapsule({
   },
 
   stateInit: () => ({
+    curTransform: { k: 1, x: 0, y: 0 },
     forceGraph: new CanvasForceGraph(),
-    shadowGraph: new CanvasForceGraph().cooldownTicks(0),
-    curTransform: { k: 1, x: 0, y: 0 }
+    shadowGraph: new CanvasForceGraph()
+      .cooldownTicks(0)
+      .nodeColor('__indexColor')
+      .linkColor('__indexColor'),
+    objs: ['__reserved for background__'] // indexed objects for rgb lookup
   }),
 
   init: function(domNode, state) {
@@ -107,6 +130,12 @@ export default Kapsule({
     domNode.appendChild(state.canvas);
 
     state.shadowCanvas = document.createElement('canvas');
+
+    // Show shadow canvas
+    //state.shadowCanvas.style.position = 'absolute';
+    //state.shadowCanvas.style.top = '0';
+    //state.shadowCanvas.style.left = '0';
+    //domNode.appendChild(state.shadowCanvas);
 
     adjustCanvasSize(state);
     const ctx = state.canvas.getContext('2d');
@@ -133,25 +162,17 @@ export default Kapsule({
     toolTipElem.classList.add('graph-tooltip');
     domNode.appendChild(toolTipElem);
 
-    /*
     // Capture mouse coords on move
-    const raycaster = new three.Raycaster();
-    const mousePos = new three.Vector2();
-    mousePos.x = -2; // Initialize off canvas
-    mousePos.y = -2;
+    const mousePos = { x: -Infinity, y: -Infinity };
     state.canvas.addEventListener("mousemove", ev => {
       // update the mouse pos
-      const offset = getOffset(domNode),
-        relPos = {
-          x: ev.pageX - offset.left,
-          y: ev.pageY - offset.top
-        };
-      mousePos.x = (relPos.x / state.width) * 2 - 1;
-      mousePos.y = -(relPos.y / state.height) * 2 + 1;
+      const offset = getOffset(domNode);
+      mousePos.x = ev.pageX - offset.left;
+      mousePos.y = ev.pageY - offset.top;
 
       // Move tooltip
-      toolTipElem.style.top = (relPos.y - 40) + 'px';
-      toolTipElem.style.left = (relPos.x - 20) + 'px';
+      toolTipElem.style.top = (mousePos.y - 40) + 'px';
+      toolTipElem.style.left = (mousePos.x - 20) + 'px';
 
       function getOffset(el) {
         const rect = el.getBoundingClientRect(),
@@ -164,10 +185,9 @@ export default Kapsule({
     // Handle click events on nodes
     domNode.addEventListener("click", ev => {
       if (state.hoverObj) {
-        state[`on${state.hoverObj.__graphObjType === 'node' ? 'Node' : 'Link'}Click`](state.hoverObj.__data);
+        state[`on${getObjType(state.hoverObj)}Click`](state.hoverObj);
       }
     }, false);
-    */
 
     state.forceGraph(ctx);
     state.shadowGraph(shadowCtx);
@@ -177,39 +197,33 @@ export default Kapsule({
     // Kick-off renderer
     (function animate() { // IIFE
       if (state.enablePointerInteraction) {
-        /*
+
         // Update tooltip and trigger onHover events
-        raycaster.linePrecision = state.linkHoverPrecision;
+        const [r, g, b] = shadowCtx.getImageData(mousePos.x, mousePos.y, 1, 1).data;
+        const objIndex = (r << 16) + (g << 8) + b; // Convert from rgb to int (obj list index)
 
-        raycaster.setFromCamera(mousePos, state.camera);
-        const intersects = raycaster.intersectObjects(state.forceGraph.children)
-          .filter(o => ['node', 'link'].indexOf(o.object.__graphObjType) !== -1) // Check only node/link objects
-          .sort((a, b) => { // Prioritize nodes over links
-            const isNode = o => o.object.__graphObjType === 'node';
-            return isNode(b) - isNode(a);
-          });
+        const hoverObj = objIndex ? state.objs[objIndex] : null;
+        //console.log(hoverObject);
 
-        const topObject = intersects.length ? intersects[0].object : null;
-
-        if (topObject !== state.hoverObj) {
-          const prevObjType = state.hoverObj ? state.hoverObj.__graphObjType : null;
-          const prevObjData = state.hoverObj ? state.hoverObj.__data : null;
-          const objType = topObject ? topObject.__graphObjType : null;
-          const objData = topObject ? topObject.__data : null;
+        if (hoverObj !== state.hoverObj) {
+          const prevObj = state.hoverObj;
+          const prevObjType = prevObj ? getObjType(prevObj) : null;
+          const obj = hoverObj;
+          const objType = obj ? getObjType(obj) : null;
           if (prevObjType && prevObjType !== objType) {
             // Hover out
-            state[`on${prevObjType === 'node' ? 'Node' : 'Link'}Hover`](null, prevObjData);
+            state[`on${prevObjType}Hover`](null, prevObj);
           }
           if (objType) {
             // Hover in
-            state[`on${objType === 'node' ? 'Node' : 'Link'}Hover`](objData, prevObjType === objType ? prevObjData : null);
+            state[`on${objType}Hover`](obj, prevObjType === objType ? prevObj : null);
           }
 
-          toolTipElem.innerHTML = topObject ? accessorFn(state[`${objType}Label`])(objData) || '' : '';
+          toolTipElem.style.visibility = hoverObj ? 'visible' : 'hidden';
+          toolTipElem.innerHTML = hoverObj ? accessorFn(state[`${objType.toLowerCase()}Label`])(obj) || '' : '';
 
-          state.hoverObj = topObject;
+          state.hoverObj = hoverObj;
         }
-        */
       }
 
       // Wipe canvas
@@ -225,6 +239,10 @@ export default Kapsule({
       });
       requestAnimationFrame(animate);
     })();
+
+    function getObjType(obj) {
+      return obj.hasOwnProperty('source') && obj.hasOwnProperty('target') ? 'Link' : 'Node';
+    }
   },
 
   update: function updateFn(state) {
