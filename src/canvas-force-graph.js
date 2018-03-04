@@ -93,7 +93,7 @@ export default Kapsule({
 
           ctx.beginPath();
           ctx.arc(node.x, node.y, r, 0, 2 * Math.PI, false);
-          ctx.fillStyle = getColor(node) || '#ffffaa';
+          ctx.fillStyle = getColor(node) || 'rgb(31, 120, 180, 0.92)';
           ctx.fill();
         });
         ctx.restore();
@@ -113,7 +113,7 @@ export default Kapsule({
           ctx.moveTo(start.x, start.y);
           ctx.lineWidth = (getWidth(link) || 1) / state.globalScale;
           ctx.lineTo(end.x, end.y);
-          ctx.strokeStyle = getColor(link) || '#f0f0f0';
+          ctx.strokeStyle = getColor(link) || 'rgba(0,0,0,0.15)';
           ctx.stroke();
         });
         ctx.restore();
@@ -136,7 +136,7 @@ export default Kapsule({
           const particleSpeed = getSpeed(link);
           const photons = link.__photons || [];
           const photonR = Math.max(0, getDiameter(link) / 2) / Math.sqrt(state.globalScale);
-          const photonColor = getColor(link) || '#f0f0f0';
+          const photonColor = getColor(link) || 'rgba(0,0,0,0.28)';
 
           photons.forEach((photon, idx) => {
             const photonPosRatio = photon.__progressRatio =
