@@ -2,9 +2,9 @@
   position: absolute;
   transform: translate(-50%, 25px);
   font-family: Sans-serif;
-  font-size: 18px;
-  padding: 5px;
-  border-radius: 4px;
+  font-size: 16px;
+  padding: 4px;
+  border-radius: 3px;
   color: lavender;
   background: midnightblue;
   opacity: 0.7;
