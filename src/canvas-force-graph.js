@@ -8,7 +8,7 @@ import {
 import Kapsule from 'kapsule';
 import accessorFn from 'accessor-fn';
 
-import { autoColorObjects, colorStr2Hex } from './color-utils';
+import { autoColorObjects } from './color-utils';
 
 //
 

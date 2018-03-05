@@ -1,8 +1,9 @@
-import { select as d3Select, event as d3Event } from 'd3-selection';
+import { select as d3Select } from 'd3-selection';
 import { zoom as d3Zoom, zoomTransform as d3ZoomTransform } from 'd3-zoom';
 import Kapsule from 'kapsule';
 import accessorFn from 'accessor-fn';
 
+import { int2HexColor, rgb2Int } from './color-utils.js';
 import CanvasForceGraph from './canvas-force-graph';
 import linkKapsule from './kapsule-link.js';
 
@@ -86,7 +87,7 @@ export default Kapsule({
             .filter(obj => !obj.hasOwnProperty('__indexColor'))
             .forEach(obj => {
               // index per color hex key
-              obj.__indexColor = `#${state.objs.length.toString(16).padStart(6, '0')}`;
+              obj.__indexColor = int2HexColor(state.objs.length);
               state.objs.push(obj);
             });
         }
@@ -213,7 +214,7 @@ export default Kapsule({
 
         // Update tooltip and trigger onHover events
         const [r, g, b] = shadowCtx.getImageData(mousePos.x, mousePos.y, 1, 1).data;
-        const objIndex = (r << 16) + (g << 8) + b; // Convert from rgb to int (obj list index)
+        const objIndex = rgb2Int(r, g, b); // Convert from rgb to int (obj list index)
 
         const hoverObj = objIndex ? state.objs[objIndex] : null;
 

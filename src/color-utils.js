@@ -1,7 +1,8 @@
 import { schemePaired } from 'd3-scale-chromatic';
-import tinyColor from 'tinycolor2';
 
-const colorStr2Hex = str => isNaN(str) ? parseInt(tinyColor(str).toHex(), 16) : str;
+const int2HexColor = num => `#${num.toString(16).padStart(6, '0')}`;
+
+const rgb2Int = (r, g, b) => (r << 16) + (g << 8) + b;
 
 // Autoset attribute colorField by colorByAccessor property
 // If an object has already a color, don't set it
@@ -22,4 +23,4 @@ function autoColorObjects(objects, colorByAccessor, colorField) {
   });
 }
 
-export { autoColorObjects, colorStr2Hex };
+export { autoColorObjects, int2HexColor, rgb2Int };
