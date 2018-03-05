@@ -1,10 +1,11 @@
 .graph-tooltip {
   position: absolute;
+  transform: translate(-50%, 25px);
   font-family: Sans-serif;
-  color: lavender;
   font-size: 18px;
-  background: midnightblue;
-  opacity: 0.6;
   padding: 5px;
   border-radius: 4px;
+  color: lavender;
+  background: midnightblue;
+  opacity: 0.7;
 }

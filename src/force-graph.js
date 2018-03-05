@@ -164,8 +164,8 @@ export default Kapsule({
       mousePos.y = ev.pageY - offset.top;
 
       // Move tooltip
-      toolTipElem.style.top = (mousePos.y - 40) + 'px';
-      toolTipElem.style.left = (mousePos.x - 20) + 'px';
+      toolTipElem.style.top = `${mousePos.y}px`;
+      toolTipElem.style.left = `${mousePos.x}px`;
 
       function getOffset(el) {
         const rect = el.getBoundingClientRect(),
