@@ -175,10 +175,6 @@ export default Kapsule({
     state.engineRunning = false; // Pause simulation
     state.onLoading();
 
-    if (state.graphData.nodes.length || state.graphData.links.length) {
-      console.info('force-graph loading', state.graphData.nodes.length + ' nodes', state.graphData.links.length + ' links');
-    }
-
     if (state.nodeAutoColorBy !== null) {
       // Auto add color to uncolored nodes
       autoColorObjects(state.graphData.nodes, accessorFn(state.nodeAutoColorBy), state.nodeColor);

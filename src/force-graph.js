@@ -66,6 +66,10 @@ export default Kapsule({
     graphData: {
       default: { nodes: [], links: [] },
       onChange: ((d, state) => {
+        if (d.nodes.length || d.links.length) {
+          console.info('force-graph loading', d.nodes.length + ' nodes', d.links.length + ' links');
+        }
+
         hexIndex([...d.nodes, ...d.links]);
         state.forceGraph.graphData(d);
         state.shadowGraph.graphData(d);
