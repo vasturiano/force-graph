@@ -25,8 +25,8 @@ export default function(kapsulePropNames, kapsuleType) {
         });
 
         return returnVals.length
-          ? this // chain based on the parent object, not the inner kapsule
-          : returnVals[0];
+          ? returnVals[0]
+          : this; // chain based on the parent object, not the inner kapsule
       }
     }
   }
