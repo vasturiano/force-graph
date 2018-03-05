@@ -7,7 +7,7 @@ import { int2HexColor, rgb2Int } from './color-utils.js';
 import CanvasForceGraph from './canvas-force-graph';
 import linkKapsule from './kapsule-link.js';
 
-const ZOOM2NODES_FACTOR = 3;
+const ZOOM2NODES_FACTOR = 4;
 
 // Expose config from forceGraph
 const bindFG = linkKapsule('forceGraph', CanvasForceGraph);
