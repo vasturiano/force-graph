@@ -1,5 +1,5 @@
 import { select as d3Select, event as d3Event } from 'd3-selection';
-import { zoom as d3Zoom } from 'd3-zoom';
+import { zoom as d3Zoom, zoomTransform as d3ZoomTransform } from 'd3-zoom';
 import Kapsule from 'kapsule';
 import accessorFn from 'accessor-fn';
 
@@ -41,19 +41,24 @@ const linkedMethods = Object.assign(...[
 
 function adjustCanvasSize(state) {
   if (state.canvas) {
-    const t = state.curTransform;
-    t.x = state.width / 2 / t.k;
-    t.y = state.height / 2 / t.k;
+    let curWidth = state.canvas.width;
+    let curHeight = state.canvas.height;
+    if (curWidth === 300 && curHeight === 150) { // Default canvas dimensions
+      curWidth = curHeight = 0;
+    }
 
+    // Resize canvases
     [state.canvas, state.shadowCanvas].forEach(canvas => {
       canvas.width = state.width;
       canvas.height = state.height;
-
-      const ctx = canvas.getContext('2d');
-      ctx.resetTransform();
-      ctx.translate(t.x, t.y);
-      ctx.scale(t.k, t.k);
     });
+
+    // Relative center panning based on 0,0
+    const k = d3ZoomTransform(state.canvas).k;
+    state.zoom.translateBy(state.zoom.__baseElem,
+      (state.width - curWidth) / 2 / k,
+      (state.height - curHeight) / 2 / k
+    );
   }
 }
 
@@ -109,7 +114,7 @@ export default Kapsule({
   },
 
   stateInit: () => ({
-    curTransform: { k: 1, x: 0, y: 0 },
+    lastSetZoom: 1,
     forceGraph: new CanvasForceGraph(),
     shadowGraph: new CanvasForceGraph()
       .cooldownTicks(0)
@@ -134,25 +139,25 @@ export default Kapsule({
     //state.shadowCanvas.style.left = '0';
     //domNode.appendChild(state.shadowCanvas);
 
-    adjustCanvasSize(state);
     const ctx = state.canvas.getContext('2d');
     const shadowCtx = state.shadowCanvas.getContext('2d');
 
     // Setup zoom / pan interaction
-    d3Select(state.canvas).call(d3Zoom().scaleExtent([0.01, 1000]).on('zoom', () => {
-      const transform = d3Event.transform;
+    state.zoom = d3Zoom();
+    state.zoom(state.zoom.__baseElem = d3Select(state.canvas)); // Attach controlling elem for easy access
 
-      const t = state.curTransform = Object.assign({}, transform);
-      // center on 0,0
-      t.x += state.width / 2 * t.k;
-      t.y += state.height / 2 * t.k;
-
-      [ctx, shadowCtx].forEach(c => {
-        c.resetTransform();
-        c.translate(t.x, t.y);
-        c.scale(t.k, t.k);
+    state.zoom
+      .scaleExtent([0.01, 1000])
+      .on('zoom', function() {
+        const t = d3ZoomTransform(this); // Same as d3.event.transform
+        [ctx, shadowCtx].forEach(c => {
+          c.resetTransform();
+          c.translate(t.x, t.y);
+          c.scale(t.k, t.k);
+        });
       });
-    }));
+
+    adjustCanvasSize(state);
 
     // Setup tooltip
     const toolTipElem = document.createElement('div');
@@ -224,7 +229,7 @@ export default Kapsule({
       }
 
       // Wipe canvas
-      const t = state.curTransform;
+      const t = d3ZoomTransform(state.canvas);
       [ctx, shadowCtx].forEach(c =>
         c.clearRect(-t.x / t.k, -t.y / t.k, state.width / t.k, state.height / t.k)
       );
