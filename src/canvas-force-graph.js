@@ -7,6 +7,7 @@ import {
 
 import Kapsule from 'kapsule';
 import accessorFn from 'accessor-fn';
+import indexBy from 'index-array-by';
 
 import { autoColorObjects } from './color-utils';
 
@@ -105,17 +106,28 @@ export default Kapsule({
         const ctx = state.ctx;
 
         ctx.save();
-        state.graphData.links.forEach(link => {
-          const start = link.source;
-          const end = link.target;
 
-          ctx.beginPath();
-          ctx.moveTo(start.x, start.y);
-          ctx.lineWidth = (getWidth(link) || 1) / state.globalScale;
-          ctx.lineTo(end.x, end.y);
-          ctx.strokeStyle = getColor(link) || 'rgba(0,0,0,0.15)';
-          ctx.stroke();
+        // Bundle strokes per unique color/width for performance optimization
+        const linksPerColor = indexBy(state.graphData.links, [getColor, getWidth]);
+
+        Object.entries(linksPerColor).forEach(([color, linksPerWidth]) => {
+          const lineColor = color || 'rgba(0,0,0,0.15)';
+          Object.entries(linksPerWidth).forEach(([width, links]) => {
+            const lineWidth = (width || 1) / state.globalScale;
+
+            ctx.beginPath();
+            links.forEach(link => {
+              const start = link.source;
+              const end = link.target;
+              ctx.moveTo(start.x, start.y);
+              ctx.lineTo(end.x, end.y);
+            });
+            ctx.strokeStyle = lineColor;
+            ctx.lineWidth = lineWidth;
+            ctx.stroke();
+          });
         });
+
         ctx.restore();
       }
 
@@ -138,6 +150,8 @@ export default Kapsule({
           const photonR = Math.max(0, getDiameter(link) / 2) / Math.sqrt(state.globalScale);
           const photonColor = getColor(link) || 'rgba(0,0,0,0.28)';
 
+          ctx.fillStyle = photonColor;
+
           photons.forEach((photon, idx) => {
             const photonPosRatio = photon.__progressRatio =
               ((photon.__progressRatio || (idx / photons.length)) + particleSpeed) % 1;
@@ -148,7 +162,6 @@ export default Kapsule({
 
             ctx.beginPath();
             ctx.arc(coords[0], coords[1], photonR, 0, 2 * Math.PI, false);
-            ctx.fillStyle = photonColor;
             ctx.fill();
           });
         });
