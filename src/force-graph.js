@@ -1,5 +1,6 @@
 import { select as d3Select } from 'd3-selection';
 import { zoom as d3Zoom, zoomTransform as d3ZoomTransform } from 'd3-zoom';
+import throttle from 'lodash.throttle';
 import Kapsule from 'kapsule';
 import accessorFn from 'accessor-fn';
 
@@ -7,6 +8,7 @@ import ColorTracker from './object-color-tracker.js';
 import CanvasForceGraph from './canvas-force-graph';
 import linkKapsule from './kapsule-link.js';
 
+const HOVER_CANVAS_THROTTLE_DELAY = 800; // ms to throttle shadow canvas updates for perf improvement
 const ZOOM2NODES_FACTOR = 4;
 
 // Expose config from forceGraph
@@ -187,6 +189,8 @@ export default Kapsule({
       toolTipElem.style.top = `${mousePos.y}px`;
       toolTipElem.style.left = `${mousePos.x}px`;
 
+      //
+
       function getOffset(el) {
         const rect = el.getBoundingClientRect(),
           scrollLeft = window.pageXOffset || document.documentElement.scrollLeft,
@@ -206,6 +210,18 @@ export default Kapsule({
     state.shadowGraph(shadowCtx);
 
     //
+
+    const refreshShadowCanvas = throttle(() => {
+      // wipe canvas
+      const t = d3ZoomTransform(state.canvas);
+      shadowCtx.clearRect(-t.x / t.k, -t.y / t.k, state.width / t.k, state.height / t.k);
+
+      // Adjust link hover area
+      state.shadowGraph.linkWidth(l => accessorFn(state.linkWidth)(l) + state.linkHoverPrecision);
+
+      // redraw
+      state.shadowGraph.globalScale(t.k).tickFrame();
+    }, HOVER_CANVAS_THROTTLE_DELAY);
 
     // Kick-off renderer
     (function animate() { // IIFE
@@ -235,22 +251,16 @@ export default Kapsule({
 
           state.hoverObj = hoverObj;
         }
+
+        refreshShadowCanvas();
       }
 
       // Wipe canvas
       const t = d3ZoomTransform(state.canvas);
-      [ctx, shadowCtx].forEach(c =>
-        c.clearRect(-t.x / t.k, -t.y / t.k, state.width / t.k, state.height / t.k)
-      );
-
-      // Adjust link hover area
-      state.shadowGraph.linkWidth(l => accessorFn(state.linkWidth)(l) + state.linkHoverPrecision);
+      ctx.clearRect(-t.x / t.k, -t.y / t.k, state.width / t.k, state.height / t.k);
 
       // Frame cycle
-      [state.forceGraph, state.shadowGraph].forEach(graph => {
-        graph.globalScale(t.k)
-          .tickFrame();
-      });
+      state.forceGraph.globalScale(t.k).tickFrame();
 
       state.animationFrameRequestId = requestAnimationFrame(animate);
     })();
