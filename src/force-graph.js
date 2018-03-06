@@ -3,7 +3,7 @@ import { zoom as d3Zoom, zoomTransform as d3ZoomTransform } from 'd3-zoom';
 import Kapsule from 'kapsule';
 import accessorFn from 'accessor-fn';
 
-import { int2HexColor, rgb2Int } from './color-utils.js';
+import ColorTracker from './object-color-tracker.js';
 import CanvasForceGraph from './canvas-force-graph';
 import linkKapsule from './kapsule-link.js';
 
@@ -86,9 +86,8 @@ export default Kapsule({
           objs
             .filter(obj => !obj.hasOwnProperty('__indexColor'))
             .forEach(obj => {
-              // index per color hex key
-              obj.__indexColor = int2HexColor(state.objs.length);
-              state.objs.push(obj);
+              // store object lookup color
+              obj.__indexColor = state.colorTracker.register(obj);
             });
         }
       }),
@@ -123,7 +122,7 @@ export default Kapsule({
       .cooldownTicks(0)
       .nodeColor('__indexColor')
       .linkColor('__indexColor'),
-    objs: ['__reserved for background__'] // indexed objects for rgb lookup
+    colorTracker: new ColorTracker() // indexed objects for rgb lookup
   }),
 
   init: function(domNode, state) {
@@ -211,12 +210,10 @@ export default Kapsule({
     // Kick-off renderer
     (function animate() { // IIFE
       if (state.enablePointerInteraction) {
-
         // Update tooltip and trigger onHover events
-        const [r, g, b] = shadowCtx.getImageData(mousePos.x, mousePos.y, 1, 1).data;
-        const objIndex = rgb2Int(r, g, b); // Convert from rgb to int (obj list index)
 
-        const hoverObj = objIndex ? state.objs[objIndex] : null;
+        // Lookup object per pixel color
+        const hoverObj = state.colorTracker.lookup(shadowCtx.getImageData(mousePos.x, mousePos.y, 1, 1).data);
 
         if (hoverObj !== state.hoverObj) {
           const prevObj = state.hoverObj;
