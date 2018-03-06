@@ -1,9 +1,10 @@
 const CS_BITS = 6; // How many bits to reserve for checksum. Will eat away into the usable size of the registry.
+const ENTROPY = 123; // Raise numbers to prevent collisions in lower indexes
 
 const int2HexColor = num => `#${Math.min(num, Math.pow(2, 24)).toString(16).padStart(6, '0')}`;
 const rgb2Int = (r, g, b) => (r << 16) + (g << 8) + b;
 
-const checksum = n => n % Math.pow(2, CS_BITS);
+const checksum = n => (n * 123) % Math.pow(2, CS_BITS);
 
 export default class {
   constructor() {
