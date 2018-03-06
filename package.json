@@ -11,14 +11,12 @@
   },
   "homepage": "https://github.com/vasturiano/force-graph",
   "keywords": [
-    "3d",
+    "2d",
     "force",
     "simulation",
     "graph",
-    "three",
-    "d3",
-    "ngraph",
-    "webgl"
+    "canvas",
+    "d3"
   ],
   "author": {
     "name": "Vasco Asturiano",
