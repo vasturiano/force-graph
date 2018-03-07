@@ -108,6 +108,31 @@ export default Kapsule({
   },
 
   methods: {
+    centerAt: function(state, x, y) {
+      if (!state.canvas) return null; // no canvas yet
+      const t = d3ZoomTransform(state.canvas);
+
+      if (x !== undefined || y !== undefined) {
+        state.zoom.translateTo(
+          state.zoom.__baseElem,
+          x === undefined ? t.x : x,
+          y === undefined ? t.y : y
+        );
+        return this;
+      }
+
+      return { x: (state.width / 2 - t.x) / t.k, y: (state.height / 2 - t.y) / t.k };
+    },
+    zoom: function(state, k) {
+      if (!state.canvas) return null; // no canvas yet
+
+      if (k !== undefined) {
+        state.zoom.scaleTo(state.zoom.__baseElem, k);
+        return this;
+      }
+
+      return d3ZoomTransform(state.canvas).k;
+    },
     stopAnimation: function(state) {
       if (state.animationFrameRequestId) {
         cancelAnimationFrame(state.animationFrameRequestId);
