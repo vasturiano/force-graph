@@ -9,7 +9,7 @@
   <div id="graph"></div>
 
   <script>
-    fetch('../_datasets/blocks.json').then(res => res.json()).then(data => {
+    fetch('../datasets/blocks.json').then(res => res.json()).then(data => {
         const Graph = ForceGraph()
         (document.getElementById('graph'))
           .backgroundColor('#101020')
