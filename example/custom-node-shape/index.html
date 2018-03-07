@@ -1,0 +1,43 @@
+<head>
+  <style> body { margin: 0; } </style>
+
+  <script src="//unpkg.com/force-graph"></script>
+  <!--<script src="../../dist/force-graph.js"></script>-->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/89/three.min.js"></script>
+</head>
+
+<body>
+  <div id="graph"></div>
+
+  <script>
+    // Random tree
+    const N = 20;
+    const gData = {
+      nodes: [...Array(N).keys()].map(i => ({ id: i })),
+      links: [...Array(N).keys()]
+        .filter(id => id)
+        .map(id => ({
+          source: id,
+          target: Math.round(Math.random() * (id-1))
+        }))
+    };
+
+    // gen a number persistent color from around the palette
+    const getColor = n => '#' + ((n * 1234567) % Math.pow(2, 24)).toString(16).padStart(6, '0');
+
+    const Graph = ForceGraph()
+      (document.getElementById('graph'))
+        .nodeCanvasObject(({ id, x, y }, ctx) => {
+          ctx.fillStyle = getColor(id);
+          [
+            () => { ctx.fillRect(x - 6, y - 4, 12, 8); }, // rectangle
+            () => { ctx.beginPath(); ctx.moveTo(x, y - 5); ctx.lineTo(x - 5, y + 5); ctx.lineTo(x + 5, y + 5); ctx.fill(); }, // triangle
+            () => { ctx.beginPath(); ctx.arc(x, y, 5, 0, 2 * Math.PI, false); ctx.fill(); }, // circle
+            () => { ctx.font = '10px Sans-Serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('Text', x, y); } // text
+          ][id%4]();
+        })
+        .nodeLabel('id')
+        .graphData(gData);
+  </script>
+</body>
