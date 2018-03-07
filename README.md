@@ -16,12 +16,13 @@ Check out the examples:
 * [Basic](https://vasturiano.github.io/force-graph/example/basic/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/basic/index.html))
 * [Load JSON](https://vasturiano.github.io/force-graph/example/load-json/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/load-json/index.html))
 * [Larger graph](https://vasturiano.github.io/force-graph/example/larger-graph/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/larger-graph/index.html))
-* [Dynamic data changes](https://vasturiano.github.io/force-graph/example/dynamic/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/dynamic/index.html))
+* [Text as nodes](https://vasturiano.github.io/force-graph/example/text-nodes/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/text-nodes/index.html))
+* [Directional links](https://vasturiano.github.io/force-graph/example/directional-links/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/directional-links/index.html))
 * [Auto-colored nodes/links](https://vasturiano.github.io/force-graph/example/auto-colored/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/auto-colored/index.html))
 * [Custom node shapes](https://vasturiano.github.io/force-graph/example/custom-node-shape/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/custom-node-shape/index.html))
 * [Zoom/pan viewport](https://vasturiano.github.io/force-graph/example/move-viewport/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/move-viewport/index.html))
+* [Dynamic data changes](https://vasturiano.github.io/force-graph/example/dynamic/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/dynamic/index.html))
 * [Node collision detection](https://vasturiano.github.io/force-graph/example/collision-detection/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/collision-detection/index.html))
-* [Directional links](https://vasturiano.github.io/force-graph/example/directional-links/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/directional-links/index.html))
 
 See also the [3D version](https://github.com/vasturiano/3d-force-graph).
 
