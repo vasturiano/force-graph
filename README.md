@@ -15,7 +15,8 @@ Supports zooming/panning and hover/click interaction.
 Check out the examples:
 * [Basic](https://vasturiano.github.io/force-graph/example/basic/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/basic/index.html))
 * [Load JSON](https://vasturiano.github.io/force-graph/example/load-json/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/load-json/index.html))
-* [Larger graph](https://vasturiano.github.io/force-graph/example/larger-graph/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/larger-graph/index.html))
+* [Medium size graph (~4k elements)](https://vasturiano.github.io/force-graph/example/medium-graph/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/medium-graph/index.html))
+* [Large size graph (~75k elements)](https://vasturiano.github.io/force-graph/example/large-graph/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/large-graph/index.html))
 * [Text as nodes](https://vasturiano.github.io/force-graph/example/text-nodes/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/text-nodes/index.html))
 * [Directional links](https://vasturiano.github.io/force-graph/example/directional-links/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/directional-links/index.html))
 * [Auto-colored nodes/links](https://vasturiano.github.io/force-graph/example/auto-colored/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/auto-colored/index.html))

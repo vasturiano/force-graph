@@ -1,0 +1,39 @@
+<head>
+  <style> body { margin: 0; } </style>
+
+  <script src="//unpkg.com/force-graph"></script>
+  <!--<script src="../../dist/force-graph.js"></script>-->
+</head>
+
+<body>
+  <div id="graph"></div>
+
+  <script>
+    fetch('../datasets/mplate.mtx').then(res => res.text()).then(mtxData => {
+      let nodeSet = new Set();
+
+      const pairs = mtxData.split('\n')
+        .slice(14, -1)
+        .map(d => d.split(' '));
+
+      pairs.forEach(d => {
+        nodeSet.add(d[0]);
+        nodeSet.add(d[1]);
+      });
+
+      const nodes = Array.from(nodeSet).map(d => ({ id: d }));
+      const links = pairs.filter(d => d[0] !== d[1])
+        .map(d => ({ source: d[0], target: d[1] }));
+
+      const Graph = ForceGraph()
+        (document.getElementById('graph'))
+        .graphData({ nodes, links })
+        .d3AlphaDecay(0)
+        .d3VelocityDecay(0.08)
+        .cooldownTime(60000)
+        .linkColor(() => 'rgba(0,0,0,0.05)')
+        .zoom(0.05)
+        .enablePointerInteraction(false);
+    });
+  </script>
+</body>
