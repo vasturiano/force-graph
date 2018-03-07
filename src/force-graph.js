@@ -80,16 +80,16 @@ export default Kapsule({
           console.info('force-graph loading', d.nodes.length + ' nodes', d.links.length + ' links');
         }
 
-        hexIndex([...d.nodes, ...d.links]);
+        [{ type: 'Node', objs: d.nodes }, { type: 'Link', objs: d.links }].forEach(hexIndex);
         state.forceGraph.graphData(d);
         state.shadowGraph.graphData(d);
 
-        function hexIndex(objs) {
+        function hexIndex({ type, objs }) {
           objs
-            .filter(obj => !obj.hasOwnProperty('__indexColor'))
-            .forEach(obj => {
+            .filter(d => !d.hasOwnProperty('__indexColor'))
+            .forEach(d => {
               // store object lookup color
-              obj.__indexColor = state.colorTracker.register(obj);
+              d.__indexColor = state.colorTracker.register({ type, d });
             });
         }
       }),
@@ -202,7 +202,7 @@ export default Kapsule({
     // Handle click events on nodes
     domNode.addEventListener("click", ev => {
       if (state.hoverObj) {
-        state[`on${getObjType(state.hoverObj)}Click`](state.hoverObj);
+        state[`on${state.hoverObj.type}Click`](state.hoverObj.d);
       }
     }, false);
 
@@ -229,27 +229,27 @@ export default Kapsule({
         // Update tooltip and trigger onHover events
 
         // Lookup object per pixel color
-        const hoverObj = state.colorTracker.lookup(shadowCtx.getImageData(mousePos.x, mousePos.y, 1, 1).data);
+        const obj = state.colorTracker.lookup(shadowCtx.getImageData(mousePos.x, mousePos.y, 1, 1).data);
 
-        if (hoverObj !== state.hoverObj) {
+        if (obj !== state.hoverObj) {
           const prevObj = state.hoverObj;
-          const prevObjType = prevObj ? getObjType(prevObj) : null;
-          const obj = hoverObj;
-          const objType = obj ? getObjType(obj) : null;
+          const prevObjType = prevObj ? prevObj.type : null;
+          const objType = obj ? obj.type : null;
+
           if (prevObjType && prevObjType !== objType) {
             // Hover out
-            state[`on${prevObjType}Hover`](null, prevObj);
+            state[`on${prevObjType}Hover`](null, prevObj.d);
           }
           if (objType) {
             // Hover in
-            state[`on${objType}Hover`](obj, prevObjType === objType ? prevObj : null);
+            state[`on${objType}Hover`](obj.d, prevObjType === objType ? prevObj.d : null);
           }
 
-          const tooltipContent = hoverObj ? accessorFn(state[`${objType.toLowerCase()}Label`])(obj) || '' : '';
+          const tooltipContent = obj ? accessorFn(state[`${obj.type.toLowerCase()}Label`])(obj.d) || '' : '';
           toolTipElem.style.visibility = tooltipContent.length ? 'visible' : 'hidden';
           toolTipElem.innerHTML = tooltipContent;
 
-          state.hoverObj = hoverObj;
+          state.hoverObj = obj;
         }
 
         refreshShadowCanvas();
@@ -264,10 +264,6 @@ export default Kapsule({
 
       state.animationFrameRequestId = requestAnimationFrame(animate);
     })();
-
-    function getObjType(obj) {
-      return obj.hasOwnProperty('source') && obj.hasOwnProperty('target') ? 'Link' : 'Node';
-    }
   },
 
   update: function updateFn(state) {}
