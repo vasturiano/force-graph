@@ -5,7 +5,7 @@ Force-directed graph rendered on HTML5 canvas.
 [![NPM](https://nodei.co/npm/force-graph.png?compact=true)](https://nodei.co/npm/force-graph/)
 
 <p align="center">
-     <a href="https://vasturiano.github.io/force-graph/example/larger-graph"><img width="80%" src="https://vasturiano.github.io/force-graph/example/larger-graph/preview.png"></a>
+     <a href="https://vasturiano.github.io/force-graph/example/medium-graph"><img width="80%" src="https://vasturiano.github.io/force-graph/example/medium-graph/preview.png"></a>
 </p>
 
 A web component to represent a graph data structure in a 2-dimensional canvas using a force-directed iterative layout.
