@@ -1,0 +1,35 @@
+<head>
+  <style> body { margin: 0; } </style>
+
+  <script src="//unpkg.com/force-graph"></script>
+  <!--<script src="../../dist/force-graph.js"></script>-->
+</head>
+
+<body>
+  <div id="graph"></div>
+
+  <script>
+    // Random tree
+    const N = 500000;
+    const gData = {
+      nodes: [...Array(N).keys()].map(i => ({ id: i })),
+      links: [...Array(N).keys()]
+        .filter(id => id)
+        .map(id => ({
+          source: id,
+          target: Math.round(Math.random() * (id-1))
+        }))
+    };
+
+    const Graph = ForceGraph()
+      (document.getElementById('graph'))
+        .linkColor(() => 'rgba(0,0,0,0.03)')
+        .enablePointerInteraction(false)
+        .d3AlphaDecay(0)
+        .d3VelocityDecay(0.08)
+        .warmupTicks(20)
+        .cooldownTicks(0)
+        .zoom(0.01)
+        .graphData(gData);
+  </script>
+</body>
