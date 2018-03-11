@@ -29,6 +29,7 @@
       (document.getElementById('graph'))
         .nodeAutoColorBy('group')
         .linkAutoColorBy(d => gData.nodes[d.source].group)
+        .enableNodeDrag(true)
         .graphData(gData);
   </script>
 </body>

@@ -16,7 +16,8 @@
         .nodeLabel('id')
         .nodeAutoColorBy('group')
         .linkDirectionalParticles("value")
-        .linkDirectionalParticleSpeed(d => d.value * 0.001);
+        .linkDirectionalParticleSpeed(d => d.value * 0.001)
+        .enableNodeDrag(true);
     });
   </script>
 </body>

@@ -13,6 +13,7 @@
       const Graph = ForceGraph()
       (document.getElementById('graph'))
         .graphData(data)
+        .enableNodeDrag(true)
         .nodeId('id')
         .nodeAutoColorBy('group')
         .nodeCanvasObject((node, ctx, globalScale) => {

@@ -1,5 +1,6 @@
-import { select as d3Select } from 'd3-selection';
+import { select as d3Select, event as d3Event } from 'd3-selection';
 import { zoom as d3Zoom, zoomTransform as d3ZoomTransform } from 'd3-zoom';
+import { drag as d3Drag } from 'd3-drag';
 import throttle from 'lodash.throttle';
 import Kapsule from 'kapsule';
 import accessorFn from 'accessor-fn';
@@ -99,6 +100,8 @@ export default Kapsule({
     nodeLabel: { default: 'name', triggerUpdate: false },
     linkLabel: { default: 'name', triggerUpdate: false },
     linkHoverPrecision: { default: 4, triggerUpdate: false },
+    enableNodeDrag: { default: false, triggerUpdate: false },
+    enableZoomPanInteraction: { default: true, triggerUpdate: false },
     enablePointerInteraction: { default: true, onChange(_, state) { state.hoverObj = null; }, triggerUpdate: false },
     onNodeClick: { default: () => {}, triggerUpdate: false },
     onNodeHover: { default: () => {}, triggerUpdate: false },
@@ -171,11 +174,50 @@ export default Kapsule({
     const ctx = state.canvas.getContext('2d');
     const shadowCtx = state.shadowCanvas.getContext('2d');
 
+    // Setup node drag interaction
+    d3Select(state.canvas).call(
+      d3Drag()
+        .subject(() => {
+          if (!state.enableNodeDrag) { return null; }
+          const obj = state.colorTracker.lookup(shadowCtx.getImageData(d3Event.x, d3Event.y, 1, 1).data);
+          return (obj && obj.type === 'Node') ? obj.d : null; // Only drag nodes
+        })
+        .on('start', () => {
+          const obj = d3Event.subject;
+          obj.__initialDragPos = { x: obj.x, y: obj.y, fx: obj.fx, fy: obj.fy };
+
+          // re-ignite force engine, without warmup phase or alpha decay
+          if (!d3Event.active) state.forceGraph.d3AlphaDecay(0).warmupTicks(0);
+        })
+        .on('drag', () => {
+          const obj = d3Event.subject;
+          const initPos = obj.__initialDragPos;
+          const dragPos = d3Event;
+
+          const k = d3ZoomTransform(state.canvas).k;
+
+          // Move fx/fy of nodes based on the scaled drag distance since the drag start
+          ['x', 'y'].forEach(c => obj[`f${c}`] = initPos[c] + (dragPos[c] - initPos[c]) / k);
+        })
+        .on('end', () => {
+          const obj = d3Event.subject;
+          const initPos = obj.__initialDragPos;
+
+          if (!initPos.fx) { obj.fx = undefined; }
+          if (!initPos.fy) { obj.fy = undefined; }
+          delete(obj.__initialDragPos);
+
+          // put back force engine options
+          state.forceGraph.d3AlphaDecay(state.d3AlphaDecay).warmupTicks(state.warmupTicks);
+        })
+    );
+
     // Setup zoom / pan interaction
     state.zoom = d3Zoom();
     state.zoom(state.zoom.__baseElem = d3Select(state.canvas)); // Attach controlling elem for easy access
 
     state.zoom
+      .filter(() => state.enableZoomPanInteraction ? !d3Event.button : false) // disable zoom interaction
       .scaleExtent([0.01, 1000])
       .on('zoom', function() {
         const t = d3ZoomTransform(this); // Same as d3.event.transform
