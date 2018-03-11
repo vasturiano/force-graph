@@ -3,8 +3,8 @@ import { zoom as d3Zoom, zoomTransform as d3ZoomTransform } from 'd3-zoom';
 import throttle from 'lodash.throttle';
 import Kapsule from 'kapsule';
 import accessorFn from 'accessor-fn';
+import ColorTracker from 'canvas-color-tracker';
 
-import ColorTracker from './object-color-tracker.js';
 import CanvasForceGraph from './canvas-force-graph';
 import linkKapsule from './kapsule-link.js';
 
