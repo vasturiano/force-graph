@@ -196,11 +196,14 @@ export default Kapsule({
 
           const k = d3ZoomTransform(state.canvas).k;
 
-          // Move fx/fy of nodes based on the scaled drag distance since the drag start
-          ['x', 'y'].forEach(c => obj[`f${c}`] = initPos[c] + (dragPos[c] - initPos[c]) / k);
+          // Move fx/fy (and x/y) of nodes based on the scaled drag distance since the drag start
+          ['x', 'y'].forEach(c => obj[`f${c}`] = obj[c] = initPos[c] + (dragPos[c] - initPos[c]) / k);
 
           // prevent freeze while dragging
           state.forceGraph.resetCountdown();
+
+          // Persist grab cursor
+          state.canvas.className = 'grabbable';
         })
         .on('end', () => {
           const obj = d3Event.subject;
@@ -309,10 +312,15 @@ export default Kapsule({
 
           if (prevObjType && prevObjType !== objType) {
             // Hover out
+            state.canvas.className = ''; // Reset cursor
             state[`on${prevObjType}Hover`](null, prevObj.d);
           }
           if (objType) {
             // Hover in
+            if (state.enableNodeDrag && objType === 'Node') {
+              // Set cursor
+              state.canvas.className = 'grabbable';
+            }
             state[`on${objType}Hover`](obj.d, prevObjType === objType ? prevObj.d : null);
           }
 
