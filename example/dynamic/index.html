@@ -13,10 +13,13 @@
       nodes: [ {id: 0 } ],
       links: []
     };
-    const Graph = ForceGraph()
-      (document.getElementById("graph"))
-        .onNodeClick(removeNode)
-        .graphData(initData);
+
+    const elem = document.getElementById("graph");
+
+    const Graph = ForceGraph()(elem)
+      .onNodeHover(node => elem.style.cursor = node ? 'pointer' : null)
+      .onNodeClick(removeNode)
+      .graphData(initData);
 
     setInterval(() => {
       const { nodes, links } = Graph.graphData();

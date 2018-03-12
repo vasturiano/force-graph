@@ -187,7 +187,13 @@ export default Kapsule({
           obj.__initialDragPos = { x: obj.x, y: obj.y, fx: obj.fx, fy: obj.fy };
 
           // keep engine running at low intensity throughout drag
-          if (!d3Event.active) state.forceGraph.d3AlphaTarget(0.3);
+          if (!d3Event.active) {
+            state.forceGraph.d3AlphaTarget(0.3); // keep engine running at low intensity throughout drag
+            obj.fx = obj.x; obj.fy = obj.y; // Fix points
+          }
+
+          // drag cursor
+          state.canvas.classList.add('grabbable');
         })
         .on('drag', () => {
           const obj = d3Event.subject;
@@ -201,21 +207,21 @@ export default Kapsule({
 
           // prevent freeze while dragging
           state.forceGraph.resetCountdown();
-
-          // Persist grab cursor
-          state.canvas.className = 'grabbable';
         })
         .on('end', () => {
           const obj = d3Event.subject;
           const initPos = obj.__initialDragPos;
 
-          if (!initPos.fx) { obj.fx = undefined; }
-          if (!initPos.fy) { obj.fy = undefined; }
+          if (initPos.fx === undefined) { obj.fx = undefined; }
+          if (initPos.fy === undefined) { obj.fy = undefined; }
           delete(obj.__initialDragPos);
 
           state.forceGraph
             .d3AlphaTarget(0)   // release engine low intensity
             .resetCountdown();  // let the engine readjust after releasing fixed nodes
+
+          // drag cursor
+          state.canvas.classList.remove('grabbable');
         })
     );
 
@@ -312,15 +318,10 @@ export default Kapsule({
 
           if (prevObjType && prevObjType !== objType) {
             // Hover out
-            state.canvas.className = ''; // Reset cursor
             state[`on${prevObjType}Hover`](null, prevObj.d);
           }
           if (objType) {
             // Hover in
-            if (state.enableNodeDrag && objType === 'Node') {
-              // Set cursor
-              state.canvas.className = 'grabbable';
-            }
             state[`on${objType}Hover`](obj.d, prevObjType === objType ? prevObj.d : null);
           }
 
