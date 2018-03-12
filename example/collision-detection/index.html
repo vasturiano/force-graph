@@ -20,8 +20,7 @@
     }));
 
     const Graph = ForceGraph()
-      (document.getElementById('graph'))
-      .enableNodeDrag(true);
+      (document.getElementById('graph'));
 
     Graph.cooldownTime(Infinity)
       .d3AlphaDecay(0)

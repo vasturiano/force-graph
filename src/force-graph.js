@@ -100,7 +100,7 @@ export default Kapsule({
     nodeLabel: { default: 'name', triggerUpdate: false },
     linkLabel: { default: 'name', triggerUpdate: false },
     linkHoverPrecision: { default: 4, triggerUpdate: false },
-    enableNodeDrag: { default: false, triggerUpdate: false },
+    enableNodeDrag: { default: true, triggerUpdate: false },
     enableZoomPanInteraction: { default: true, triggerUpdate: false },
     enablePointerInteraction: { default: true, onChange(_, state) { state.hoverObj = null; }, triggerUpdate: false },
     onNodeClick: { default: () => {}, triggerUpdate: false },
@@ -179,15 +179,15 @@ export default Kapsule({
       d3Drag()
         .subject(() => {
           if (!state.enableNodeDrag) { return null; }
-          const obj = state.colorTracker.lookup(shadowCtx.getImageData(d3Event.x, d3Event.y, 1, 1).data);
+          const obj = state.hoverObj;
           return (obj && obj.type === 'Node') ? obj.d : null; // Only drag nodes
         })
         .on('start', () => {
           const obj = d3Event.subject;
           obj.__initialDragPos = { x: obj.x, y: obj.y, fx: obj.fx, fy: obj.fy };
 
-          // re-ignite force engine, without warmup phase or alpha decay
-          if (!d3Event.active) state.forceGraph.d3AlphaDecay(0).warmupTicks(0);
+          // keep engine running at low intensity throughout drag
+          if (!d3Event.active) state.forceGraph.d3AlphaTarget(0.3);
         })
         .on('drag', () => {
           const obj = d3Event.subject;
@@ -198,6 +198,9 @@ export default Kapsule({
 
           // Move fx/fy of nodes based on the scaled drag distance since the drag start
           ['x', 'y'].forEach(c => obj[`f${c}`] = initPos[c] + (dragPos[c] - initPos[c]) / k);
+
+          // prevent freeze while dragging
+          state.forceGraph.resetCountdown();
         })
         .on('end', () => {
           const obj = d3Event.subject;
@@ -207,8 +210,9 @@ export default Kapsule({
           if (!initPos.fy) { obj.fy = undefined; }
           delete(obj.__initialDragPos);
 
-          // put back force engine options
-          state.forceGraph.d3AlphaDecay(state.d3AlphaDecay).warmupTicks(state.warmupTicks);
+          state.forceGraph
+            .d3AlphaTarget(0)   // release engine low intensity
+            .resetCountdown();  // let the engine readjust after releasing fixed nodes
         })
     );
 

@@ -39,11 +39,12 @@ export default Kapsule({
     linkDirectionalParticleWidth: { default: 4, triggerUpdate: false },
     linkDirectionalParticleColor: { triggerUpdate: false },
     globalScale: { default: 1, triggerUpdate: false },
-    d3AlphaDecay: { default: 0.0228 },
-    d3VelocityDecay: { default: 0.4 },
-    warmupTicks: { default: 0 }, // how many times to tick the force engine at init before starting to render
-    cooldownTicks: { default: Infinity },
-    cooldownTime: { default: 15000 }, // ms
+    d3AlphaDecay: { default: 0.0228, triggerUpdate: false, onChange(alphaDecay, state) { state.forceLayout.alphaDecay(alphaDecay) }},
+    d3AlphaTarget: { default: 0, triggerUpdate: false, onChange(alphaTarget, state) { state.forceLayout.alphaTarget(alphaTarget) }},
+    d3VelocityDecay: { default: 0.4, triggerUpdate: false, onChange(velocityDecay, state) { state.forceLayout.velocityDecay(velocityDecay) } },
+    warmupTicks: { default: 0, triggerUpdate: false }, // how many times to tick the force engine at init before starting to render
+    cooldownTicks: { default: Infinity, triggerUpdate: false },
+    cooldownTime: { default: 15000, triggerUpdate: false }, // ms
     onLoading: { default: () => {}, triggerUpdate: false },
     onFinishLoading: { default: () => {}, triggerUpdate: false }
   },
@@ -55,6 +56,13 @@ export default Kapsule({
         return state.forceLayout.force(forceName); // Force getter
       }
       state.forceLayout.force(forceName, forceFn); // Force setter
+      return this;
+    },
+    // reset cooldown state
+    resetCountdown: function(state) {
+      state.cntTicks = 0;
+      state.startTickTime = new Date();
+      state.engineRunning = true;
       return this;
     },
     tickFrame: function(state) {
@@ -215,9 +223,7 @@ export default Kapsule({
     // Feed data to force-directed layout
     state.forceLayout
       .stop()
-      .alpha(1)// re-heat the simulation
-      .alphaDecay(state.d3AlphaDecay)
-      .velocityDecay(state.d3VelocityDecay)
+      .alpha(1) // re-heat the simulation
       .nodes(state.graphData.nodes)
       .force('link')
         .id(d => d[state.nodeId])
@@ -225,9 +231,7 @@ export default Kapsule({
 
     for (let i=0; i<state.warmupTicks; i++) { state.forceLayout.tick(); } // Initial ticks before starting to render
 
-    state.cntTicks = 0;
-    state.startTickTime = new Date();
-    state.engineRunning = true;
+    this.resetCountdown();
     state.onFinishLoading();
   }
 });
