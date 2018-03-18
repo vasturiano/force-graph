@@ -151,7 +151,8 @@ export default Kapsule({
     shadowGraph: new CanvasForceGraph()
       .cooldownTicks(0)
       .nodeColor('__indexColor')
-      .linkColor('__indexColor'),
+      .linkColor('__indexColor')
+      .isShadow(true),
     colorTracker: new ColorTracker() // indexed objects for rgb lookup
   }),
 

@@ -46,7 +46,8 @@ export default Kapsule({
     cooldownTicks: { default: Infinity, triggerUpdate: false },
     cooldownTime: { default: 15000, triggerUpdate: false }, // ms
     onLoading: { default: () => {}, triggerUpdate: false },
-    onFinishLoading: { default: () => {}, triggerUpdate: false }
+    onFinishLoading: { default: () => {}, triggerUpdate: false },
+    isShadow: { default: false, triggerUpdate: false }
   },
 
   methods: {
@@ -90,6 +91,9 @@ export default Kapsule({
         const getColor = accessorFn(state.nodeColor);
         const ctx = state.ctx;
 
+        // Draw wider nodes by 1px on shadow canvas for more precise hovering (due to boundary anti-aliasing)
+        const padAmount = state.isShadow / state.globalScale;
+
         ctx.save();
         state.graphData.nodes.forEach(node => {
           if (state.nodeCanvasObject) {
@@ -98,7 +102,8 @@ export default Kapsule({
             return;
           }
 
-          const r = Math.sqrt(Math.max(0, getVal(node) || 1)) * state.nodeRelSize;
+          // Draw wider nodes by 1px on shadow canvas for more precise hovering (due to boundary anti-aliasing)
+          const r = Math.sqrt(Math.max(0, getVal(node) || 1)) * state.nodeRelSize + padAmount;
 
           ctx.beginPath();
           ctx.arc(node.x, node.y, r, 0, 2 * Math.PI, false);
@@ -113,6 +118,9 @@ export default Kapsule({
         const getWidth = accessorFn(state.linkWidth);
         const ctx = state.ctx;
 
+        // Draw wider lines by 2px on shadow canvas for more precise hovering (due to boundary anti-aliasing)
+        const padAmount = state.isShadow * 2;
+
         ctx.save();
 
         // Bundle strokes per unique color/width for performance optimization
@@ -121,7 +129,7 @@ export default Kapsule({
         Object.entries(linksPerColor).forEach(([color, linksPerWidth]) => {
           const lineColor = !color || color === 'undefined' ? 'rgba(0,0,0,0.15)' : color;
           Object.entries(linksPerWidth).forEach(([width, links]) => {
-            const lineWidth = (width || 1) / state.globalScale;
+            const lineWidth = (width || 1) / state.globalScale + padAmount;
 
             ctx.beginPath();
             links.forEach(link => {
