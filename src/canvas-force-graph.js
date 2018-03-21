@@ -28,7 +28,7 @@ export default Kapsule({
     nodeVal: { default: 'val', triggerUpdate: false },
     nodeColor: { default: 'color', triggerUpdate: false },
     nodeAutoColorBy: {},
-    nodeCanvasObject: {},
+    nodeCanvasObject: { triggerUpdate: false },
     linkSource: { default: 'source' },
     linkTarget: { default: 'target' },
     linkColor: { default: 'color', triggerUpdate: false },
