@@ -28,6 +28,8 @@ Check out the examples:
 
 See also the [3D version](https://github.com/vasturiano/3d-force-graph).
 
+And check out the [React bindings](https://github.com/vasturiano/react-force-graph).
+
 ## Quick start
 
 ```
