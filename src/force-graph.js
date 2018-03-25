@@ -248,7 +248,7 @@ export default Kapsule({
       // re-zoom, if still in default position (not user modified)
       if (d3ZoomTransform(state.canvas).k === state.lastSetZoom) {
         state.zoom.scaleTo(state.zoom.__baseElem,
-          state.lastSetZoom = ZOOM2NODES_FACTOR / Math.cbrt(state.forceGraph.graphData().nodes.length)
+          state.lastSetZoom = ZOOM2NODES_FACTOR / Math.cbrt(state.graphData.nodes.length)
         );
       }
     });
