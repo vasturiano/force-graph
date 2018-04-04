@@ -107,7 +107,7 @@ export default Kapsule({
 
           ctx.beginPath();
           ctx.arc(node.x, node.y, r, 0, 2 * Math.PI, false);
-          ctx.fillStyle = getColor(node) || 'rgb(31, 120, 180, 0.92)';
+          ctx.fillStyle = getColor(node) || 'rgba(31, 120, 180, 0.92)';
           ctx.fill();
         });
         ctx.restore();

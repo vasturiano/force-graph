@@ -259,7 +259,7 @@ export default Kapsule({
     domNode.appendChild(toolTipElem);
 
     // Capture mouse coords on move
-    const mousePos = { x: -Infinity, y: -Infinity };
+    const mousePos = { x: -1e12, y: -1e12 };
     state.canvas.addEventListener("mousemove", ev => {
       // update the mouse pos
       const offset = getOffset(domNode);
@@ -310,7 +310,8 @@ export default Kapsule({
         // Update tooltip and trigger onHover events
 
         // Lookup object per pixel color
-        const obj = state.colorTracker.lookup(shadowCtx.getImageData(mousePos.x, mousePos.y, 1, 1).data);
+        const px = shadowCtx.getImageData(mousePos.x, mousePos.y, 1, 1);
+        const obj = px ? state.colorTracker.lookup(px.data) : null;
 
         if (obj !== state.hoverObj) {
           const prevObj = state.hoverObj;
