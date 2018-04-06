@@ -2,6 +2,7 @@ import { select as d3Select, event as d3Event } from 'd3-selection';
 import { zoom as d3Zoom, zoomTransform as d3ZoomTransform } from 'd3-zoom';
 import { drag as d3Drag } from 'd3-drag';
 import throttle from 'lodash.throttle';
+import TweenLite from 'gsap';
 import Kapsule from 'kapsule';
 import accessorFn from 'accessor-fn';
 import ColorTracker from 'canvas-color-tracker';
@@ -111,30 +112,76 @@ export default Kapsule({
   },
 
   methods: {
-    centerAt: function(state, x, y) {
+    centerAt: function(state, x, y, transitionDuration) {
       if (!state.canvas) return null; // no canvas yet
-      const t = d3ZoomTransform(state.canvas);
 
+      // setter
       if (x !== undefined || y !== undefined) {
+        const finalPos = Object.assign({},
+          x !== undefined ? { x } : {},
+          y !== undefined ? { y } : {}
+        );
+        if (!transitionDuration) { // no animation
+          setCenter(finalPos);
+        } else {
+          const coords = getCenter();
+          TweenLite.to(
+            coords,
+            transitionDuration / 1000,
+            Object.assign({ onUpdate: () => setCenter(coords) }, finalPos)
+          );
+        }
+        return this;
+      }
+
+      // getter
+      return getCenter();
+
+      //
+
+      function getCenter() {
+        const t = d3ZoomTransform(state.canvas);
+        return { x: (state.width / 2 - t.x) / t.k, y: (state.height / 2 - t.y) / t.k };
+      }
+
+      function setCenter({ x, y }) {
         state.zoom.translateTo(
           state.zoom.__baseElem,
-          x === undefined ? t.x : x,
-          y === undefined ? t.y : y
+          x === undefined ? getCenter().x : x,
+          y === undefined ? getCenter().y : y
         );
-        return this;
       }
-
-      return { x: (state.width / 2 - t.x) / t.k, y: (state.height / 2 - t.y) / t.k };
     },
-    zoom: function(state, k) {
+    zoom: function(state, k, transitionDuration) {
       if (!state.canvas) return null; // no canvas yet
 
+      // setter
       if (k !== undefined) {
-        state.zoom.scaleTo(state.zoom.__baseElem, k);
+        if (!transitionDuration) { // no animation
+          setZoom(k);
+        } else {
+          const scale = { k: getZoom() };
+          TweenLite.to(
+            scale,
+            transitionDuration / 1000,
+            { k, onUpdate: () => setZoom(scale.k) }
+          );
+        }
         return this;
       }
 
-      return d3ZoomTransform(state.canvas).k;
+      // getter
+      return getZoom();
+
+      //
+
+      function getZoom() {
+        return d3ZoomTransform(state.canvas).k;
+      }
+
+      function setZoom(k) {
+        state.zoom.scaleTo(state.zoom.__baseElem, k);
+      }
     },
     stopAnimation: function(state) {
       if (state.animationFrameRequestId) {
