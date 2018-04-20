@@ -135,6 +135,8 @@ export default Kapsule({
             links.forEach(link => {
               const start = link.source;
               const end = link.target;
+              if (!start.hasOwnProperty('x') || !end.hasOwnProperty('x')) return; // skip invalid link
+
               ctx.moveTo(start.x, start.y);
               ctx.lineTo(end.x, end.y);
             });
@@ -160,6 +162,8 @@ export default Kapsule({
 
           const start = link.source;
           const end = link.target;
+
+          if (!start.hasOwnProperty('x') || !end.hasOwnProperty('x')) return; // skip invalid link
 
           const particleSpeed = getSpeed(link);
           const photons = link.__photons || [];
@@ -232,10 +236,15 @@ export default Kapsule({
     state.forceLayout
       .stop()
       .alpha(1) // re-heat the simulation
-      .nodes(state.graphData.nodes)
-      .force('link')
+      .nodes(state.graphData.nodes);
+
+    // add links (if link force is still active)
+    const linkForce = state.forceLayout.force('link');
+    if (linkForce) {
+      linkForce
         .id(d => d[state.nodeId])
         .links(state.graphData.links);
+    }
 
     for (let i=0; i<state.warmupTicks; i++) { state.forceLayout.tick(); } // Initial ticks before starting to render
 
