@@ -31,6 +31,8 @@ export default Kapsule({
     nodeCanvasObject: { triggerUpdate: false },
     linkSource: { default: 'source' },
     linkTarget: { default: 'target' },
+    linkLabel: {default: 'label' },
+    linkLabelSize: {default: 12 },
     linkColor: { default: 'color', triggerUpdate: false },
     linkAutoColorBy: {},
     linkWidth: { default: 1, triggerUpdate: false },
@@ -127,10 +129,9 @@ export default Kapsule({
         const linksPerColor = indexBy(state.graphData.links, [getColor, getWidth]);
 
         Object.entries(linksPerColor).forEach(([color, linksPerWidth]) => {
-          const lineColor = !color || color === 'undefined' ? 'rgba(0,0,0,0.15)' : color;
+          const lineColor = !color || color === 'undefined' ? 'rgba(150,0,0,0.15)' : color;
           Object.entries(linksPerWidth).forEach(([width, links]) => {
             const lineWidth = (width || 1) / state.globalScale + padAmount;
-
             ctx.beginPath();
             links.forEach(link => {
               const start = link.source;
@@ -139,7 +140,34 @@ export default Kapsule({
 
               ctx.moveTo(start.x, start.y);
               ctx.lineTo(end.x, end.y);
-            });
+              if(link[state.linkLabel]){
+								ctx.save();
+								const fontSize = state.linkLabelSize/state.globalScale;
+								ctx.font = `${fontSize}px Sans-Serif`;
+								ctx.textAlign = 'center';
+								const deltaX = end.x - start.x,
+									deltaY = end.y - start.y,
+									dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY),
+									normX = deltaX / dist,
+									normY = deltaY / dist,
+									sourceX = start.x + (state.nodeRelSize * normX),
+									sourceY = start.y + (state.nodeRelSize * normY),
+									targetX = end.x - (state.nodeRelSize * normX),
+									targetY = end.y - (state.nodeRelSize * normY);
+
+								const x = (sourceX + targetX) / 2;
+								const y = (sourceY + targetY) / 2;
+								ctx.translate(x,y);,
+                // TODO performance issues
+
+								/*
+								const angleDeg = Math.atan2(sourceY - targetY, sourceX - targetX);
+								ctx.rotate(angleDeg);
+								*/
+								ctx.fillText(link[state.linkLabel],0,0);
+								ctx.restore();
+              }
+						});
             ctx.strokeStyle = lineColor;
             ctx.lineWidth = lineWidth;
             ctx.stroke();

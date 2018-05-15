@@ -36,6 +36,7 @@ const linkedProps = Object.assign(
   ].map(p => ({ [p]: bindFG.linkProp(p)})),
   ...[
     'nodeRelSize',
+    'linkLabel',
     'nodeId',
     'nodeVal',
     'linkSource',
