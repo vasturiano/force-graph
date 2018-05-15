@@ -129,7 +129,7 @@ export default Kapsule({
         const linksPerColor = indexBy(state.graphData.links, [getColor, getWidth]);
 
         Object.entries(linksPerColor).forEach(([color, linksPerWidth]) => {
-          const lineColor = !color || color === 'undefined' ? 'rgba(150,0,0,0.15)' : color;
+          const lineColor = !color || color === 'undefined' ? 'rgba(0,0,0,0.15)' : color;
           Object.entries(linksPerWidth).forEach(([width, links]) => {
             const lineWidth = (width || 1) / state.globalScale + padAmount;
             ctx.beginPath();
