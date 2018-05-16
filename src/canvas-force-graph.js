@@ -5,6 +5,8 @@ import {
   forceCenter as d3ForceCenter
 } from 'd3-force';
 
+import { default as Bezier } from 'bezier-js';
+
 import Kapsule from 'kapsule';
 import accessorFn from 'accessor-fn';
 import indexBy from 'index-array-by';
@@ -34,6 +36,7 @@ export default Kapsule({
     linkColor: { default: 'color', triggerUpdate: false },
     linkAutoColorBy: {},
     linkWidth: { default: 1, triggerUpdate: false },
+    linkCurvature: { default: 0, triggerUpdate: false },
     linkDirectionalParticles: { default: 0 }, // animate photons travelling in the link direction
     linkDirectionalParticleSpeed: { default: 0.01, triggerUpdate: false }, // in link length ratio per frame
     linkDirectionalParticleWidth: { default: 4, triggerUpdate: false },
@@ -116,6 +119,7 @@ export default Kapsule({
       function paintLinks() {
         const getColor = accessorFn(state.linkColor);
         const getWidth = accessorFn(state.linkWidth);
+        const getCurvature = accessorFn(state.linkCurvature);
         const ctx = state.ctx;
 
         // Draw wider lines by 2px on shadow canvas for more precise hovering (due to boundary anti-aliasing)
@@ -137,8 +141,36 @@ export default Kapsule({
               const end = link.target;
               if (!start.hasOwnProperty('x') || !end.hasOwnProperty('x')) return; // skip invalid link
 
+              const curvature = getCurvature(link);
+
               ctx.moveTo(start.x, start.y);
-              ctx.lineTo(end.x, end.y);
+
+              if (!curvature) { // Straight line
+                ctx.lineTo(end.x, end.y);
+                link.__controlPoints = null;
+                return;
+              }
+
+              const l = Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2)); // line length
+
+              if (l > 0) {
+                const a = Math.atan2(end.y - start.y, end.x - start.x); // line angle
+                const d = l * curvature; // control point distance
+
+                const cp = { // control point
+                  x: (start.x + end.x) / 2 + d * Math.cos(a - Math.PI / 2),
+                  y: (start.y + end.y) / 2 + d * Math.sin(a - Math.PI / 2)
+                };
+                ctx.quadraticCurveTo(cp.x, cp.y, end.x, end.y);
+
+                link.__controlPoints = [cp.x, cp.y];
+              } else { // Same point, draw a loop
+                const d = curvature * 70;
+                const cps = [end.x, end.y - d, end.x + d, end.y];
+                ctx.bezierCurveTo(...cps, end.x, end.y);
+
+                link.__controlPoints = cps;
+              }
             });
             ctx.strokeStyle = lineColor;
             ctx.lineWidth = lineWidth;
@@ -172,16 +204,24 @@ export default Kapsule({
 
           ctx.fillStyle = photonColor;
 
+          // Construct bezier for curved lines
+          const bzLine = link.__controlPoints
+            ? new Bezier(start.x, start.y, ...link.__controlPoints, end.x, end.y)
+            : null;
+
           photons.forEach((photon, idx) => {
             const photonPosRatio = photon.__progressRatio =
               ((photon.__progressRatio || (idx / photons.length)) + particleSpeed) % 1;
 
-            const coords = ['x', 'y'].map(dim =>
-              start[dim] + (end[dim] - start[dim]) * photonPosRatio || 0
-            );
+            const coords = bzLine
+              ? bzLine.get(photonPosRatio)  // get position along bezier line
+              : { // straight line: interpolate linearly
+                x: start.x + (end.x - start.x) * photonPosRatio || 0,
+                y: start.y + (end.y - start.y) * photonPosRatio || 0
+              };
 
             ctx.beginPath();
-            ctx.arc(coords[0], coords[1], photonR, 0, 2 * Math.PI, false);
+            ctx.arc(coords.x, coords.y, photonR, 0, 2 * Math.PI, false);
             ctx.fill();
           });
         });
