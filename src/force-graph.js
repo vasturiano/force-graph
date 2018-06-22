@@ -24,7 +24,6 @@ const linkedProps = Object.assign(
     'linkColor',
     'linkAutoColorBy',
     'linkWidth',
-    'linkCurvature',
     'linkDirectionalArrowLength',
     'linkDirectionalArrowColor',
     'linkDirectionalArrowRelPos',
@@ -43,7 +42,8 @@ const linkedProps = Object.assign(
     'nodeId',
     'nodeVal',
     'linkSource',
-    'linkTarget'
+    'linkTarget',
+    'linkCurvature'
   ].map(p => ({ [p]: bindBoth.linkProp(p)}))
 );
 const linkedMethods = Object.assign(...[
