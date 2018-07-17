@@ -59,6 +59,8 @@ function adjustCanvasSize(state) {
     }
 
     const pxScale = window.devicePixelRatio; // 2 on retina displays
+    curWidth /= pxScale;
+    curHeight /= pxScale;
 
     // Resize canvases
     [state.canvas, state.shadowCanvas].forEach(canvas => {
@@ -83,6 +85,18 @@ function adjustCanvasSize(state) {
       (state.height - curHeight) / 2 / k
     );
   }
+}
+
+function resetTransform(ctx) {
+  const pxRatio = window.devicePixelRatio;
+  ctx.setTransform(pxRatio, 0, 0, pxRatio, 0, 0);
+}
+
+function clearCanvas(ctx, width, height) {
+  ctx.save();
+  resetTransform(ctx);  // reset transform
+  ctx.clearRect(0, 0, width, height);
+  ctx.restore();        //restore transforms
 }
 
 //
@@ -297,13 +311,11 @@ export default Kapsule({
       .filter(() => state.enableZoomPanInteraction ? !d3Event.button : false) // disable zoom interaction
       .scaleExtent([0.01, 1000])
       .on('zoom', function() {
-        const pxScale = window.devicePixelRatio;
-
         const t = d3ZoomTransform(this); // Same as d3.event.transform
         [ctx, shadowCtx].forEach(c => {
-          c.resetTransform();
+          resetTransform(c);
           c.translate(t.x, t.y);
-          c.scale(t.k * pxScale, t.k * pxScale);
+          c.scale(t.k, t.k);
         });
       });
 
@@ -359,13 +371,13 @@ export default Kapsule({
 
     const refreshShadowCanvas = throttle(() => {
       // wipe canvas
-      const t = d3ZoomTransform(state.canvas);
-      shadowCtx.clearRect(-t.x / t.k, -t.y / t.k, state.width / t.k, state.height / t.k);
+      clearCanvas(shadowCtx, state.width, state.height);
 
       // Adjust link hover area
       state.shadowGraph.linkWidth(l => accessorFn(state.linkWidth)(l) + state.linkHoverPrecision);
 
       // redraw
+      const t = d3ZoomTransform(state.canvas);
       state.shadowGraph.globalScale(t.k).tickFrame();
     }, HOVER_CANVAS_THROTTLE_DELAY);
 
@@ -375,7 +387,8 @@ export default Kapsule({
         // Update tooltip and trigger onHover events
 
         // Lookup object per pixel color
-        const px = shadowCtx.getImageData(mousePos.x, mousePos.y, 1, 1);
+        const pxScale = window.devicePixelRatio;
+        const px = shadowCtx.getImageData(mousePos.x * pxScale, mousePos.y * pxScale, 1, 1);
         const obj = px ? state.colorTracker.lookup(px.data) : null;
 
         if (obj !== state.hoverObj) {
@@ -403,10 +416,10 @@ export default Kapsule({
       }
 
       // Wipe canvas
-      const t = d3ZoomTransform(state.canvas);
-      ctx.clearRect(-t.x / t.k, -t.y / t.k, state.width / t.k, state.height / t.k);
+      clearCanvas(ctx, state.width, state.height);
 
       // Frame cycle
+      const t = d3ZoomTransform(state.canvas);
       state.forceGraph.globalScale(t.k).tickFrame();
 
       state.animationFrameRequestId = requestAnimationFrame(animate);
