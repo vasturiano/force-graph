@@ -9,6 +9,8 @@
   <div id="graph"></div>
 
   <script>
+    window.devicePixelRatio = 1; // use standard resolution in retina displays
+
     fetch('../datasets/mplate.mtx').then(res => res.text()).then(mtxData => {
       let nodeSet = new Set();
 
