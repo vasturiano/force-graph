@@ -58,10 +58,22 @@ function adjustCanvasSize(state) {
       curWidth = curHeight = 0;
     }
 
+    const pxScale = window.devicePixelRatio; // 2 on retina displays
+
     // Resize canvases
     [state.canvas, state.shadowCanvas].forEach(canvas => {
-      canvas.width = state.width;
-      canvas.height = state.height;
+      // Element size
+      canvas.style.width = `${state.width}px`;
+      canvas.style.height = `${state.height}px`;
+
+      // Memory size (scaled to avoid blurriness)
+      canvas.width = state.width * pxScale;
+      canvas.height = state.height * pxScale;
+
+      // Normalize coordinate system to use css pixels (on init only)
+      if (!curWidth && !curHeight) {
+        canvas.getContext('2d').scale(pxScale, pxScale);
+      }
     });
 
     // Relative center panning based on 0,0
@@ -285,11 +297,13 @@ export default Kapsule({
       .filter(() => state.enableZoomPanInteraction ? !d3Event.button : false) // disable zoom interaction
       .scaleExtent([0.01, 1000])
       .on('zoom', function() {
+        const pxScale = window.devicePixelRatio;
+
         const t = d3ZoomTransform(this); // Same as d3.event.transform
         [ctx, shadowCtx].forEach(c => {
           c.resetTransform();
           c.translate(t.x, t.y);
-          c.scale(t.k, t.k);
+          c.scale(t.k * pxScale, t.k * pxScale);
         });
       });
 
