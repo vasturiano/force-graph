@@ -34,8 +34,8 @@
   },
   "dependencies": {
     "accessor-fn": "^1.2.2",
-    "bezier-js": "^2.2.5",
-    "canvas-color-tracker": "^1.0.0",
+    "bezier-js": "^2.2.14",
+    "canvas-color-tracker": "^1.0.1",
     "d3-drag": "^1.2.1",
     "d3-force": "^1.1.0",
     "d3-scale-chromatic": "^1.3.0",
@@ -55,12 +55,12 @@
     "postcss-nested": "^3.0.0",
     "postcss-simple-vars": "^4.1.0",
     "rimraf": "^2.6.2",
-    "rollup": "^0.60.7",
-    "rollup-plugin-babel": "^3.0.4",
+    "rollup": "^0.63.2",
+    "rollup-plugin-babel": "^3.0.7",
     "rollup-plugin-commonjs": "^9.1.3",
     "rollup-plugin-node-resolve": "^3.3.0",
     "rollup-plugin-postcss": "^1.6.2",
     "rollup-watch": "^4.3.1",
-    "uglify-js": "^3.4.1"
+    "uglify-js": "^3.4.5"
   }
 }
