@@ -53,6 +53,8 @@ export default Kapsule({
     cooldownTime: { default: 15000, triggerUpdate: false }, // ms
     onLoading: { default: () => {}, triggerUpdate: false },
     onFinishLoading: { default: () => {}, triggerUpdate: false },
+    onEngineTick: { default: () => {}, triggerUpdate: false },
+    onEngineStop: { default: () => {}, triggerUpdate: false },
     isShadow: { default: false, triggerUpdate: false }
   },
 
@@ -87,8 +89,10 @@ export default Kapsule({
         if (state.engineRunning) {
           if (++state.cntTicks > state.cooldownTicks || (new Date()) - state.startTickTime > state.cooldownTime) {
             state.engineRunning = false; // Stop ticking graph
+            state.onEngineStop();
           } else {
             state.forceLayout.tick(); // Tick it
+            state.onEngineTick();
           }
         }
       }

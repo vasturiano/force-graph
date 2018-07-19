@@ -35,7 +35,9 @@ const linkedProps = Object.assign(
     'd3VelocityDecay',
     'warmupTicks',
     'cooldownTicks',
-    'cooldownTime'
+    'cooldownTime',
+    'onEngineTick',
+    'onEngineStop'
   ].map(p => ({ [p]: bindFG.linkProp(p)})),
   ...[
     'nodeRelSize',
