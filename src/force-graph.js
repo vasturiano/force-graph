@@ -136,6 +136,8 @@ export default Kapsule({
     enableNodeDrag: { default: true, triggerUpdate: false },
     enableZoomPanInteraction: { default: true, triggerUpdate: false },
     enablePointerInteraction: { default: true, onChange(_, state) { state.hoverObj = null; }, triggerUpdate: false },
+    onNodeDrag: { default: () => {}, triggerUpdate: false },
+    onNodeDragEnd: { default: () => {}, triggerUpdate: false },
     onNodeClick: { default: () => {}, triggerUpdate: false },
     onNodeHover: { default: () => {}, triggerUpdate: false },
     onLinkClick: { default: () => {}, triggerUpdate: false },
@@ -287,6 +289,8 @@ export default Kapsule({
 
           // prevent freeze while dragging
           state.forceGraph.resetCountdown();
+
+          state.onNodeDrag(obj);
         })
         .on('end', () => {
           const obj = d3Event.subject;
@@ -302,6 +306,8 @@ export default Kapsule({
 
           // drag cursor
           state.canvas.classList.remove('grabbable');
+
+          state.onNodeDragEnd(obj);
         })
     );
 
