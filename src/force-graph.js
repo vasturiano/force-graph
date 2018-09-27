@@ -352,8 +352,8 @@ export default Kapsule({
       mousePos.y = ev.pageY - offset.top;
 
       // Move tooltip
-      toolTipElem.style.top = `${mousePos.y}px`;
-      toolTipElem.style.left = `${mousePos.x}px`;
+      toolTipElem.style.top = `${ev.pageY}px`;
+      toolTipElem.style.left = `${ev.pageX}px`;
 
       //
 
