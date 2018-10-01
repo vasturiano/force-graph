@@ -241,9 +241,14 @@ export default Kapsule({
     // Wipe DOM
     domNode.innerHTML = '';
 
+    // Container anchor for canvas and tooltip
+    const container = document.createElement('div');
+    container.style.position = 'relative';
+    domNode.appendChild(container);
+
     state.canvas = document.createElement('canvas');
     if (state.backgroundColor) state.canvas.style.background = state.backgroundColor;
-    domNode.appendChild(state.canvas);
+    container.appendChild(state.canvas);
 
     state.shadowCanvas = document.createElement('canvas');
 
@@ -251,7 +256,7 @@ export default Kapsule({
     //state.shadowCanvas.style.position = 'absolute';
     //state.shadowCanvas.style.top = '0';
     //state.shadowCanvas.style.left = '0';
-    //domNode.appendChild(state.shadowCanvas);
+    //container.appendChild(state.shadowCanvas);
 
     const ctx = state.canvas.getContext('2d');
     const shadowCtx = state.shadowCanvas.getContext('2d');
@@ -341,13 +346,13 @@ export default Kapsule({
     // Setup tooltip
     const toolTipElem = document.createElement('div');
     toolTipElem.classList.add('graph-tooltip');
-    domNode.appendChild(toolTipElem);
+    container.appendChild(toolTipElem);
 
     // Capture mouse coords on move
     const mousePos = { x: -1e12, y: -1e12 };
     state.canvas.addEventListener("mousemove", ev => {
       // update the mouse pos
-      const offset = getOffset(domNode);
+      const offset = getOffset(container);
       mousePos.x = ev.pageX - offset.left;
       mousePos.y = ev.pageY - offset.top;
 
@@ -366,7 +371,7 @@ export default Kapsule({
     }, false);
 
     // Handle click events on nodes
-    domNode.addEventListener("click", ev => {
+    container.addEventListener("click", ev => {
       if (state.hoverObj) {
         state[`on${state.hoverObj.type}Click`](state.hoverObj.d);
       }
