@@ -2,7 +2,7 @@ import { select as d3Select, event as d3Event } from 'd3-selection';
 import { zoom as d3Zoom, zoomTransform as d3ZoomTransform } from 'd3-zoom';
 import { drag as d3Drag } from 'd3-drag';
 import throttle from 'lodash.throttle';
-import TweenLite from 'gsap';
+import TWEEN from '@tweenjs/tween.js';
 import Kapsule from 'kapsule';
 import accessorFn from 'accessor-fn';
 import ColorTracker from 'canvas-color-tracker';
@@ -158,12 +158,11 @@ export default Kapsule({
         if (!transitionDuration) { // no animation
           setCenter(finalPos);
         } else {
-          const coords = getCenter();
-          TweenLite.to(
-            coords,
-            transitionDuration / 1000,
-            Object.assign({ onUpdate: () => setCenter(coords) }, finalPos)
-          );
+          new TWEEN.Tween(getCenter())
+            .to(finalPos, transitionDuration)
+            .easing(TWEEN.Easing.Quadratic.Out)
+            .onUpdate(setCenter)
+            .start();
         }
         return this;
       }
@@ -194,12 +193,11 @@ export default Kapsule({
         if (!transitionDuration) { // no animation
           setZoom(k);
         } else {
-          const scale = { k: getZoom() };
-          TweenLite.to(
-            scale,
-            transitionDuration / 1000,
-            { k, onUpdate: () => setZoom(scale.k) }
-          );
+          new TWEEN.Tween({ k: getZoom() })
+            .to({ k }, transitionDuration)
+            .easing(TWEEN.Easing.Quadratic.Out)
+            .onUpdate(({ k }) => setZoom(k))
+            .start();
         }
         return this;
       }
@@ -434,6 +432,8 @@ export default Kapsule({
       // Frame cycle
       const t = d3ZoomTransform(state.canvas);
       state.forceGraph.globalScale(t.k).tickFrame();
+
+      TWEEN.update(); // update canvas animation tweens
 
       state.animationFrameRequestId = requestAnimationFrame(animate);
     })();
