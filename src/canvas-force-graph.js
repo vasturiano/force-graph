@@ -2,7 +2,8 @@ import {
   forceSimulation as d3ForceSimulation,
   forceLink as d3ForceLink,
   forceManyBody as d3ForceManyBody,
-  forceCenter as d3ForceCenter
+  forceCenter as d3ForceCenter,
+  forceRadial as d3ForceRadial
 } from 'd3-force';
 
 import { default as Bezier } from 'bezier-js';
@@ -12,8 +13,11 @@ import accessorFn from 'accessor-fn';
 import indexBy from 'index-array-by';
 
 import { autoColorObjects } from './color-utils';
+import getDagDepths from './dagDepths';
 
 //
+
+const DAG_LEVEL_NODE_RATIO = 2;
 
 export default Kapsule({
 
@@ -25,6 +29,8 @@ export default Kapsule({
       },
       onChange(_, state) { state.engineRunning = false; } // Pause simulation
     },
+    dagMode: {}, // td, bu, lr, rl, radialin, radialout
+    dagLevelDistance: {},
     nodeRelSize: { default: 4, triggerUpdate: false }, // area per val unit
     nodeId: { default: 'id' },
     nodeVal: { default: 'val', triggerUpdate: false },
@@ -305,6 +311,7 @@ export default Kapsule({
       .force('link', d3ForceLink())
       .force('charge', d3ForceManyBody())
       .force('center', d3ForceCenter())
+      .force('dagRadial', null)
       .stop(),
     engineRunning: false
   }),
@@ -355,6 +362,40 @@ export default Kapsule({
         .id(d => d[state.nodeId])
         .links(state.graphData.links);
     }
+
+    // setup dag force constraints
+    const nodeDepths = state.dagMode && getDagDepths(state.graphData, node => node[state.nodeId]);
+    const maxDepth = Math.max(...Object.values(nodeDepths || []));
+    const dagLevelDistance = state.dagLevelDistance || (
+        state.graphData.nodes.length / (maxDepth || 1) * DAG_LEVEL_NODE_RATIO
+        * (['radialin', 'radialout'].indexOf(state.dagMode) !== -1 ? 0.7 : 1)
+      );
+
+    // Fix nodes to x,y for dag mode
+    if (state.dagMode) {
+      const getFFn = (fix, invert) => node => !fix
+        ? undefined
+        : (nodeDepths[node[state.nodeId]] - maxDepth / 2) * dagLevelDistance * (invert ? -1 : 1);
+
+      const fxFn = getFFn(['lr', 'rl'].indexOf(state.dagMode) !== -1, state.dagMode === 'rl');
+      const fyFn = getFFn(['td', 'bu'].indexOf(state.dagMode) !== -1, state.dagMode === 'bu');
+
+      state.graphData.nodes.forEach(node => {
+        node.fx = fxFn(node);
+        node.fy = fyFn(node);
+      });
+    };
+
+    // Use radial force for radial dags
+    state.forceLayout.force('dagRadial',
+      ['radialin', 'radialout'].indexOf(state.dagMode) !== -1
+        ? d3ForceRadial(node => {
+        const nodeDepth = nodeDepths[node[state.nodeId]];
+        return (state.dagMode === 'radialin' ? maxDepth - nodeDepth : nodeDepth) * dagLevelDistance;
+      })
+        .strength(1)
+        : null
+    );
 
     for (let i=0; i<state.warmupTicks; i++) { state.forceLayout.tick(); } // Initial ticks before starting to render
 

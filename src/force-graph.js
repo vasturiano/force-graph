@@ -31,6 +31,8 @@ const linkedProps = Object.assign(
     'linkDirectionalParticleSpeed',
     'linkDirectionalParticleWidth',
     'linkDirectionalParticleColor',
+    'dagMode',
+    'dagLevelDistance',
     'd3AlphaDecay',
     'd3VelocityDecay',
     'warmupTicks',
