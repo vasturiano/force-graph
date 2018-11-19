@@ -38,7 +38,7 @@
     "bezier-js": "^2.2.18",
     "canvas-color-tracker": "^1.0.1",
     "d3-drag": "^1.2.3",
-    "d3-force": "^1.1.2",
+    "d3-force-3d": "^1.1.2",
     "d3-scale-chromatic": "^1.3.3",
     "d3-selection": "^1.3.2",
     "d3-zoom": "^1.7.3",

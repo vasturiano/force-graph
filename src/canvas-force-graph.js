@@ -4,7 +4,7 @@ import {
   forceManyBody as d3ForceManyBody,
   forceCenter as d3ForceCenter,
   forceRadial as d3ForceRadial
-} from 'd3-force';
+} from 'd3-force-3d';
 
 import { default as Bezier } from 'bezier-js';
 
