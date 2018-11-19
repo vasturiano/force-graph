@@ -39,6 +39,7 @@ export default Kapsule({
     nodeCanvasObject: { triggerUpdate: false },
     linkSource: { default: 'source' },
     linkTarget: { default: 'target' },
+    linkVisibility: { default: true, triggerUpdate: false },
     linkColor: { default: 'color', triggerUpdate: false },
     linkAutoColorBy: {},
     linkWidth: { default: 1, triggerUpdate: false },
@@ -131,6 +132,7 @@ export default Kapsule({
       }
 
       function paintLinks() {
+        const getVisibility = accessorFn(state.linkVisibility);
         const getColor = accessorFn(state.linkColor);
         const getWidth = accessorFn(state.linkWidth);
         const getCurvature = accessorFn(state.linkCurvature);
@@ -141,8 +143,10 @@ export default Kapsule({
 
         ctx.save();
 
+        const visibleLinks = state.graphData.links.filter(getVisibility);
+
         // Bundle strokes per unique color/width for performance optimization
-        const linksPerColor = indexBy(state.graphData.links, [getColor, getWidth]);
+        const linksPerColor = indexBy(visibleLinks, [getColor, getWidth]);
 
         Object.entries(linksPerColor).forEach(([color, linksPerWidth]) => {
           const lineColor = !color || color === 'undefined' ? 'rgba(0,0,0,0.15)' : color;
@@ -201,12 +205,13 @@ export default Kapsule({
 
         const getLength = accessorFn(state.linkDirectionalArrowLength);
         const getRelPos = accessorFn(state.linkDirectionalArrowRelPos);
+        const getVisibility = accessorFn(state.linkVisibility);
         const getColor = accessorFn(state.linkDirectionalArrowColor || state.linkColor);
         const getNodeVal = accessorFn(state.nodeVal);
         const ctx = state.ctx;
 
         ctx.save();
-        state.graphData.links.forEach(link => {
+        state.graphData.links.filter(getVisibility).forEach(link => {
           const arrowLength = getLength(link);
           if (!arrowLength || arrowLength < 0) return;
 
@@ -261,11 +266,12 @@ export default Kapsule({
         const getNumPhotons = accessorFn(state.linkDirectionalParticles);
         const getSpeed = accessorFn(state.linkDirectionalParticleSpeed);
         const getDiameter = accessorFn(state.linkDirectionalParticleWidth);
+        const getVisibility = accessorFn(state.linkVisibility);
         const getColor = accessorFn(state.linkDirectionalParticleColor || state.linkColor);
         const ctx = state.ctx;
 
         ctx.save();
-        state.graphData.links.forEach(link => {
+        state.graphData.links.filter(getVisibility).forEach(link => {
           if (!getNumPhotons(link)) return;
 
           const start = link.source;

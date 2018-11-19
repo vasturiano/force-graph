@@ -47,6 +47,7 @@ const linkedProps = Object.assign(
     'nodeVal',
     'linkSource',
     'linkTarget',
+    'linkVisibility',
     'linkCurvature'
   ].map(p => ({ [p]: bindBoth.linkProp(p)}))
 );
