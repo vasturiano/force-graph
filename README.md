@@ -29,7 +29,7 @@ Check out the examples:
 * [Dynamic data changes](https://vasturiano.github.io/force-graph/example/dynamic/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/dynamic/index.html))
 * [Node collision detection](https://vasturiano.github.io/force-graph/example/collision-detection/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/collision-detection/index.html))
 * [Force-directed tree (DAG mode)](https://vasturiano.github.io/force-graph/example/tree/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/tree/index.html))
-* [DAG view of yarn.lock](https://vasturiano.github.io/force-graph/example/dag-yarn/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/dag-yarn/index.html))
+* [yarn.lock dependency graph (DAG mode)](https://vasturiano.github.io/force-graph/example/dag-yarn/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/dag-yarn/index.html))
 
 See also the [3D version](https://github.com/vasturiano/3d-force-graph).
 
