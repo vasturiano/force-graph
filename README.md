@@ -18,6 +18,7 @@ Check out the examples:
 * [Medium size graph (~4k elements)](https://vasturiano.github.io/force-graph/example/medium-graph/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/medium-graph/index.html))
 * [Large size graph (~75k elements)](https://vasturiano.github.io/force-graph/example/large-graph/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/large-graph/index.html))
 * [Text as nodes](https://vasturiano.github.io/force-graph/example/text-nodes/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/text-nodes/index.html))
+* [Images as nodes](https://vasturiano.github.io/force-graph/example/img-nodes/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/img-nodes/index.html))
 * [Directional links (using arrows)](https://vasturiano.github.io/force-graph/example/directional-links-arrows/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/directional-links-arrows/index.html))
 * [Directional links (using moving particles)](https://vasturiano.github.io/force-graph/example/directional-links-particles/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/directional-links-particles/index.html))
 * [Curved lines and self links](https://vasturiano.github.io/force-graph/example/curved-links/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/curved-links/index.html))

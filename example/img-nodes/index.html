@@ -1,0 +1,41 @@
+<head>
+  <style> body { margin: 0; } </style>
+
+  <script src="//unpkg.com/force-graph"></script>
+  <!--<script src="../../dist/force-graph.js"></script>-->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/89/three.min.js"></script>
+</head>
+
+<body>
+  <div id="graph"></div>
+
+  <script>
+    const imgs = ['cat.jpg', 'dog.jpg', 'eagle.jpg', 'elephant.jpg', 'grasshopper.jpg', 'octopus.jpg', 'owl.jpg', 'panda.jpg', 'squirrel.jpg', 'tiger.jpg', 'whale.jpg']
+      .map(src => {
+        const img = new Image();
+        img.src = `./imgs/${src}`;
+        return img;
+      });
+
+    // Random connected graph
+    const N = 30;
+    const gData = {
+      nodes: imgs.map((img, id) => ({ id, img })),
+      links: [...Array(imgs.length).keys()]
+        .filter(id => id)
+        .map(id => ({
+          source: id,
+          target: Math.round(Math.random() * (id-1))
+        }))
+    };
+
+    const Graph = ForceGraph()
+      (document.getElementById('graph'))
+      .nodeCanvasObject(({ img, x, y }, ctx) => {
+        const size = 12;
+        ctx.drawImage(img, x - size / 2, y - size / 2, size, size);
+      })
+      .graphData(gData);
+  </script>
+</body>
