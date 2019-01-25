@@ -44,6 +44,7 @@ export default Kapsule({
     linkAutoColorBy: {},
     linkWidth: { default: 1, triggerUpdate: false },
     linkCurvature: { default: 0, triggerUpdate: false },
+    linkCanvasObject: { triggerUpdate: false },
     linkDirectionalArrowLength: { default: 0, triggerUpdate: false },
     linkDirectionalArrowColor: { triggerUpdate: false },
     linkDirectionalArrowRelPos: { default: 0.5, triggerUpdate: false }, // value between 0<>1 indicating the relative pos along the (exposed) line
@@ -144,6 +145,12 @@ export default Kapsule({
         ctx.save();
 
         const visibleLinks = state.graphData.links.filter(getVisibility);
+
+        if (state.linkCanvasObject) {
+          // Custom link paints
+          visibleLinks.forEach(link => state.linkCanvasObject(link, state.ctx, state.globalScale));
+          return;
+        }
 
         // Bundle strokes per unique color/width for performance optimization
         const linksPerColor = indexBy(visibleLinks, [getColor, getWidth]);
