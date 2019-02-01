@@ -38,7 +38,7 @@
     "example/**/*"
   ],
   "dependencies": {
-    "@tweenjs/tween.js": "^17.2.0",
+    "@tweenjs/tween.js": "^17.3.0",
     "accessor-fn": "^1.2.2",
     "bezier-js": "^2.3.1",
     "canvas-color-tracker": "^1.0.1",
@@ -63,7 +63,7 @@
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-node-resolve": "^4.0.0",
-    "rollup-plugin-postcss": "^2.0.0",
+    "rollup-plugin-postcss": "^2.0.3",
     "rollup-watch": "^4.3.1",
     "terser": "^3.14.1"
   }
