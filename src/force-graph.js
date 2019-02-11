@@ -238,6 +238,10 @@ export default Kapsule({
       }
       return this;
     },
+    _destructor: function() {
+      this.pauseAnimation();
+      this.graphData({ nodes: [], links: []});
+    },
     ...linkedMethods
   },
 
