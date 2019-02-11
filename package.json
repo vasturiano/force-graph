@@ -40,7 +40,7 @@
   "dependencies": {
     "@tweenjs/tween.js": "^17.3.0",
     "accessor-fn": "^1.2.2",
-    "bezier-js": "^2.3.1",
+    "bezier-js": "^2.3.2",
     "canvas-color-tracker": "^1.0.1",
     "d3-drag": "^1.2.3",
     "d3-force-3d": "^2.0.1",
@@ -54,7 +54,7 @@
   "devDependencies": {
     "@babel/core": "^7.2.2",
     "@babel/plugin-proposal-class-properties": "^7.3.0",
-    "@babel/plugin-proposal-object-rest-spread": "^7.3.1",
+    "@babel/plugin-proposal-object-rest-spread": "^7.3.2",
     "@babel/preset-env": "^7.3.1",
     "postcss-nested": "^4.1.1",
     "postcss-simple-vars": "^5.0.1",
@@ -65,6 +65,6 @@
     "rollup-plugin-node-resolve": "^4.0.0",
     "rollup-plugin-postcss": "^2.0.3",
     "rollup-watch": "^4.3.1",
-    "terser": "^3.14.1"
+    "terser": "^3.16.1"
   }
 }
