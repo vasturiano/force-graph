@@ -339,6 +339,8 @@ export default Kapsule({
     state.zoom = d3Zoom();
     state.zoom(state.zoom.__baseElem = d3Select(state.canvas)); // Attach controlling elem for easy access
 
+    state.zoom.__baseElem.on('dblclick.zoom', null); // Disable double-click to zoom
+
     state.zoom
       .filter(() => state.enableZoomPanInteraction ? !d3Event.button : false) // disable zoom interaction
       .scaleExtent([0.01, 1000])
