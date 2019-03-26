@@ -434,7 +434,9 @@ export default Kapsule({
 
         // Lookup object per pixel color
         const pxScale = window.devicePixelRatio;
-        const px = shadowCtx.getImageData(mousePos.x * pxScale, mousePos.y * pxScale, 1, 1);
+        const px = (mousePos.x > 0 && mousePos.y > 0)
+          ? shadowCtx.getImageData(mousePos.x * pxScale, mousePos.y * pxScale, 1, 1)
+          : null;
         const obj = px ? state.colorTracker.lookup(px.data) : null;
 
         if (obj !== state.hoverObj) {
