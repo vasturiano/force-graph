@@ -27,9 +27,13 @@ export default Kapsule({
         nodes: [],
         links: []
       },
-      onChange(_, state) { state.engineRunning = false; } // Pause simulation
+      onChange(_, state) {
+        state.engineRunning = false;
+      } // Pause simulation
     },
-    dagMode: {}, // td, bu, lr, rl, radialin, radialout
+    dagMode: { onChange(dagMode, state) { // td, bu, lr, rl, radialin, radialout
+      !dagMode && (state.graphData.nodes || []).forEach(n => n.fx = n.fy = undefined); // unfix nodes when disabling dag mode
+    }},
     dagLevelDistance: {},
     nodeRelSize: { default: 4, triggerUpdate: false }, // area per val unit
     nodeId: { default: 'id' },
@@ -397,7 +401,7 @@ export default Kapsule({
         node.fx = fxFn(node);
         node.fy = fyFn(node);
       });
-    };
+    }
 
     // Use radial force for radial dags
     state.forceLayout.force('dagRadial',
