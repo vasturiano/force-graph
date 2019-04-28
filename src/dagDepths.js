@@ -30,7 +30,8 @@ export default function({ nodes, links }, idAccessor) {
     for (var i=0, l=nodes.length; i<l; i++) {
       const node = nodes[i];
       if (nodeStack.indexOf(node) !== -1) {
-        throw `Invalid DAG structure! Found cycle from node ${idAccessor(nodeStack[nodeStack.length - 1].data)} to ${idAccessor(node.data)}`;
+        const loop = [...nodeStack.slice(nodeStack.indexOf(node)), node].map(d => idAccessor(d.data));
+        throw `Invalid DAG structure! Found cycle in node path: ${loop.join(' -> ')}.`;
       }
       if (currentDepth > node.depth) { // Don't unnecessarily revisit chunks of the graph
         node.depth = currentDepth;
