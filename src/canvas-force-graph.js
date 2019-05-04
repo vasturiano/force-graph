@@ -71,6 +71,10 @@ export default Kapsule({
   },
 
   methods: {
+    refresh: function(state) {
+      state._rerender();
+      return this;
+    },
     // Expose d3 forces for external manipulation
     d3Force: function(state, forceName, forceFn) {
       if (forceFn === undefined) {
