@@ -21,6 +21,7 @@ const linkedProps = Object.assign(
     'nodeColor',
     'nodeAutoColorBy',
     'nodeCanvasObject',
+    'nodeCanvasObjectMode',
     'linkColor',
     'linkAutoColorBy',
     'linkWidth',

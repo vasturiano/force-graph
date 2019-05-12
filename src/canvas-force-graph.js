@@ -41,6 +41,7 @@ export default Kapsule({
     nodeColor: { default: 'color', triggerUpdate: false },
     nodeAutoColorBy: {},
     nodeCanvasObject: { triggerUpdate: false },
+    nodeCanvasObjectMode: { default: 'replace', triggerUpdate: false },
     linkSource: { default: 'source' },
     linkTarget: { default: 'target' },
     linkVisibility: { default: true, triggerUpdate: false },
@@ -124,10 +125,13 @@ export default Kapsule({
 
         ctx.save();
         state.graphData.nodes.forEach(node => {
-          if (state.nodeCanvasObject) {
+          if (state.nodeCanvasObject && (state.nodeCanvasObjectMode === 'before' || state.nodeCanvasObjectMode === 'replace')) {
             // Custom node paint
             state.nodeCanvasObject(node, state.ctx, state.globalScale);
-            return;
+            if (state.nodeCanvasObjectMode === 'replace') {
+              ctx.restore();
+              return;
+            }
           }
 
           // Draw wider nodes by 1px on shadow canvas for more precise hovering (due to boundary anti-aliasing)
@@ -137,6 +141,11 @@ export default Kapsule({
           ctx.arc(node.x, node.y, r, 0, 2 * Math.PI, false);
           ctx.fillStyle = getColor(node) || 'rgba(31, 120, 180, 0.92)';
           ctx.fill();
+
+          if (state.nodeCanvasObject && state.nodeCanvasObjectMode === 'after') {
+            // Custom node paint
+            state.nodeCanvasObject(node, state.ctx, state.globalScale);
+          }
         });
         ctx.restore();
       }
