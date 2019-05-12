@@ -16,6 +16,7 @@
         .nodeId('id')
         .nodeLabel('id')
         .nodeAutoColorBy('group')
+        .linkCanvasObjectMode('after')
         .linkCanvasObject((link, ctx, globalScale) => {
           const MAX_FONT_SIZE = 4;
           const LABEL_NODE_MARGIN = Graph.nodeRelSize() * 1.5;
@@ -25,14 +26,6 @@
 
           // ignore unbound links
           if (typeof start !== 'object' || typeof end !== 'object') return;
-
-          // draw link line
-          ctx.beginPath();
-          ctx.moveTo(start.x, start.y);
-          ctx.lineTo(end.x, end.y);
-          ctx.strokeStyle = 'rgba(0,0,0,0.15)';
-          ctx.lineWidth = 1 / globalScale;
-          ctx.stroke();
 
           // calculate label positioning
           const textPos = Object.assign(...['x', 'y'].map(c => ({

@@ -49,6 +49,7 @@ export default Kapsule({
     linkWidth: { default: 1, triggerUpdate: false },
     linkCurvature: { default: 0, triggerUpdate: false },
     linkCanvasObject: { triggerUpdate: false },
+    linkCanvasObjectMode: { default: 'replace', triggerUpdate: false },
     linkDirectionalArrowLength: { default: 0, triggerUpdate: false },
     linkDirectionalArrowColor: { triggerUpdate: false },
     linkDirectionalArrowRelPos: { default: 0.5, triggerUpdate: false }, // value between 0<>1 indicating the relative pos along the (exposed) line
@@ -154,10 +155,13 @@ export default Kapsule({
 
         const visibleLinks = state.graphData.links.filter(getVisibility);
 
-        if (state.linkCanvasObject) {
+        if (state.linkCanvasObject && (state.linkCanvasObjectMode === 'replace' || state.linkCanvasObjectMode === 'before')) {
           // Custom link paints
           visibleLinks.forEach(link => state.linkCanvasObject(link, state.ctx, state.globalScale));
-          return;
+          if (state.linkCanvasObjectMode === 'replace') {
+            ctx.restore();
+            return;
+          }
         }
 
         // Bundle strokes per unique color/width for performance optimization
@@ -210,6 +214,11 @@ export default Kapsule({
             ctx.stroke();
           });
         });
+
+        if (state.linkCanvasObject && state.linkCanvasObjectMode === 'after') {
+          // Custom link paints
+          visibleLinks.forEach(link => state.linkCanvasObject(link, state.ctx, state.globalScale));
+        }
 
         ctx.restore();
       }
