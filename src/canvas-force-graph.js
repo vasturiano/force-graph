@@ -50,7 +50,7 @@ export default Kapsule({
     linkWidth: { default: 1, triggerUpdate: false },
     linkCurvature: { default: 0, triggerUpdate: false },
     linkCanvasObject: { triggerUpdate: false },
-    linkCanvasObjectMode: { default: 'replace', triggerUpdate: false },
+    linkCanvasObjectMode: { triggerUpdate: false },
     linkDirectionalArrowLength: { default: 0, triggerUpdate: false },
     linkDirectionalArrowColor: { triggerUpdate: false },
     linkDirectionalArrowRelPos: { default: 0.5, triggerUpdate: false }, // value between 0<>1 indicating the relative pos along the (exposed) line
@@ -160,6 +160,15 @@ export default Kapsule({
         const getColor = accessorFn(state.linkColor);
         const getWidth = accessorFn(state.linkWidth);
         const getCurvature = accessorFn(state.linkCurvature);
+        const getLinkCanvasObjectMode = (link) => {
+          if (!state.linkCanvasObject) { 
+            return undefined;
+          }
+          if (!state.linkCanvasObjectMode) {
+            return 'replace';
+          }
+          return accessorFn(state.linkCanvasObjectMode)(link);
+        }
         const ctx = state.ctx;
 
         // Draw wider lines by 2px on shadow canvas for more precise hovering (due to boundary anti-aliasing)
@@ -169,70 +178,74 @@ export default Kapsule({
 
         const visibleLinks = state.graphData.links.filter(getVisibility);
 
-        if (state.linkCanvasObject && (state.linkCanvasObjectMode === 'replace' || state.linkCanvasObjectMode === 'before')) {
-          // Custom link paints
-          visibleLinks.forEach(link => state.linkCanvasObject(link, state.ctx, state.globalScale));
-          if (state.linkCanvasObjectMode === 'replace') {
-            ctx.restore();
-            return;
-          }
-        }
-
         // Bundle strokes per unique color/width for performance optimization
-        const linksPerColor = indexBy(visibleLinks, [getColor, getWidth]);
+        const linksPerColor = indexBy(visibleLinks, [getColor, getWidth, getLinkCanvasObjectMode]);
 
         Object.entries(linksPerColor).forEach(([color, linksPerWidth]) => {
           const lineColor = !color || color === 'undefined' ? 'rgba(0,0,0,0.15)' : color;
-          Object.entries(linksPerWidth).forEach(([width, links]) => {
+          Object.entries(linksPerWidth).forEach(([width, linksPerCanvasObjectMode]) => {
             const lineWidth = (width || 1) / state.globalScale + padAmount;
-
-            ctx.beginPath();
-            links.forEach(link => {
-              const start = link.source;
-              const end = link.target;
-              if (!start.hasOwnProperty('x') || !end.hasOwnProperty('x')) return; // skip invalid link
-
-              const curvature = getCurvature(link);
-
-              ctx.moveTo(start.x, start.y);
-
-              if (!curvature) { // Straight line
-                ctx.lineTo(end.x, end.y);
-                link.__controlPoints = null;
-                return;
+            Object.entries(linksPerCanvasObjectMode).forEach(([linkCanvasObjectMode, links]) => {
+              ctx.beginPath();
+              links.forEach(link => {
+                if ((linkCanvasObjectMode === 'replace') || (linkCanvasObjectMode === 'before')) {
+                  ctx.save();
+                  state.linkCanvasObject(link, state.ctx, state.globalScale);
+                  ctx.restore();
+                  if (linkCanvasObjectMode === 'replace') {
+                    return;
+                  }
+                }
+  
+                const start = link.source;
+                const end = link.target;
+                if (!start.hasOwnProperty('x') || !end.hasOwnProperty('x')) return; // skip invalid link
+  
+                const curvature = getCurvature(link);
+  
+                ctx.moveTo(start.x, start.y);
+  
+                if (!curvature) { // Straight line
+                  ctx.lineTo(end.x, end.y);
+                  link.__controlPoints = null;
+                } else {
+                  const l = Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2)); // line length
+  
+                  if (l > 0) {
+                    const a = Math.atan2(end.y - start.y, end.x - start.x); // line angle
+                    const d = l * curvature; // control point distance
+  
+                    const cp = { // control point
+                      x: (start.x + end.x) / 2 + d * Math.cos(a - Math.PI / 2),
+                      y: (start.y + end.y) / 2 + d * Math.sin(a - Math.PI / 2)
+                    };
+                    ctx.quadraticCurveTo(cp.x, cp.y, end.x, end.y);
+  
+                    link.__controlPoints = [cp.x, cp.y];
+                  } else { // Same point, draw a loop
+                    const d = curvature * 70;
+                    const cps = [end.x, end.y - d, end.x + d, end.y];
+                    ctx.bezierCurveTo(...cps, end.x, end.y);
+  
+                    link.__controlPoints = cps;
+                  }
+                }
+              });
+              if (linkCanvasObjectMode !== 'replace') {
+                ctx.strokeStyle = lineColor;
+                ctx.lineWidth = lineWidth;
+                ctx.stroke();
               }
-
-              const l = Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2)); // line length
-
-              if (l > 0) {
-                const a = Math.atan2(end.y - start.y, end.x - start.x); // line angle
-                const d = l * curvature; // control point distance
-
-                const cp = { // control point
-                  x: (start.x + end.x) / 2 + d * Math.cos(a - Math.PI / 2),
-                  y: (start.y + end.y) / 2 + d * Math.sin(a - Math.PI / 2)
-                };
-                ctx.quadraticCurveTo(cp.x, cp.y, end.x, end.y);
-
-                link.__controlPoints = [cp.x, cp.y];
-              } else { // Same point, draw a loop
-                const d = curvature * 70;
-                const cps = [end.x, end.y - d, end.x + d, end.y];
-                ctx.bezierCurveTo(...cps, end.x, end.y);
-
-                link.__controlPoints = cps;
+              if (linkCanvasObjectMode === 'after') {
+                links.forEach(link => {
+                  ctx.save();
+                  state.linkCanvasObject(link, state.ctx, state.globalScale);
+                  ctx.restore();
+                });
               }
             });
-            ctx.strokeStyle = lineColor;
-            ctx.lineWidth = lineWidth;
-            ctx.stroke();
           });
         });
-
-        if (state.linkCanvasObject && state.linkCanvasObjectMode === 'after') {
-          // Custom link paints
-          visibleLinks.forEach(link => state.linkCanvasObject(link, state.ctx, state.globalScale));
-        }
 
         ctx.restore();
       }
