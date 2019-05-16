@@ -41,7 +41,7 @@ export default Kapsule({
     nodeColor: { default: 'color', triggerUpdate: false },
     nodeAutoColorBy: {},
     nodeCanvasObject: { triggerUpdate: false },
-    nodeCanvasObjectMode: { default: 'replace', triggerUpdate: false },
+    nodeCanvasObjectMode: { triggerUpdate: false },
     linkSource: { default: 'source' },
     linkTarget: { default: 'target' },
     linkVisibility: { default: true, triggerUpdate: false },
@@ -125,10 +125,15 @@ export default Kapsule({
 
         ctx.save();
         state.graphData.nodes.forEach(node => {
-          if (state.nodeCanvasObject && (state.nodeCanvasObjectMode === 'before' || state.nodeCanvasObjectMode === 'replace')) {
+          let nodeCanvasObjectMode = undefined;
+          if (state.nodeCanvasObject) {
+            nodeCanvasObjectMode = state.nodeCanvasObjectMode ? accessorFn(state.nodeCanvasObjectMode)(node) : 'replace';
+          }
+
+          if (nodeCanvasObjectMode === 'before' || nodeCanvasObjectMode === 'replace') {
             // Custom node paint
             state.nodeCanvasObject(node, state.ctx, state.globalScale);
-            if (state.nodeCanvasObjectMode === 'replace') {
+            if (nodeCanvasObjectMode === 'replace') {
               ctx.restore();
               return;
             }
@@ -142,7 +147,7 @@ export default Kapsule({
           ctx.fillStyle = getColor(node) || 'rgba(31, 120, 180, 0.92)';
           ctx.fill();
 
-          if (state.nodeCanvasObject && state.nodeCanvasObjectMode === 'after') {
+          if (nodeCanvasObjectMode === 'after') {
             // Custom node paint
             state.nodeCanvasObject(node, state.ctx, state.globalScale);
           }
