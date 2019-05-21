@@ -41,7 +41,7 @@ export default Kapsule({
     nodeColor: { default: 'color', triggerUpdate: false },
     nodeAutoColorBy: {},
     nodeCanvasObject: { triggerUpdate: false },
-    nodeCanvasObjectMode: { triggerUpdate: false },
+    nodeCanvasObjectMode: { default: () => 'replace', triggerUpdate: false },
     linkSource: { default: 'source' },
     linkTarget: { default: 'target' },
     linkVisibility: { default: true, triggerUpdate: false },
@@ -118,6 +118,7 @@ export default Kapsule({
       function paintNodes() {
         const getVal = accessorFn(state.nodeVal);
         const getColor = accessorFn(state.nodeColor);
+        const getNodeCanvasObjectMode = state.nodeCanvasObject ? accessorFn(state.nodeCanvasObjectMode) : () => undefined;
         const ctx = state.ctx;
 
         // Draw wider nodes by 1px on shadow canvas for more precise hovering (due to boundary anti-aliasing)
@@ -125,11 +126,7 @@ export default Kapsule({
 
         ctx.save();
         state.graphData.nodes.forEach(node => {
-          let nodeCanvasObjectMode = undefined;
-          if (state.nodeCanvasObject) {
-            nodeCanvasObjectMode = state.nodeCanvasObjectMode ? accessorFn(state.nodeCanvasObjectMode)(node) : 'replace';
-          }
-
+          const nodeCanvasObjectMode = getNodeCanvasObjectMode(node);
           if (nodeCanvasObjectMode === 'before' || nodeCanvasObjectMode === 'replace') {
             // Custom node paint
             state.nodeCanvasObject(node, state.ctx, state.globalScale);
@@ -161,7 +158,7 @@ export default Kapsule({
         const getWidth = accessorFn(state.linkWidth);
         const getCurvature = accessorFn(state.linkCurvature);
         const getLinkCanvasObjectMode = (link) => {
-          if (!state.linkCanvasObject) { 
+          if (!state.linkCanvasObject) {
             return undefined;
           }
           if (!state.linkCanvasObjectMode) {
@@ -196,37 +193,37 @@ export default Kapsule({
                     return;
                   }
                 }
-  
+
                 const start = link.source;
                 const end = link.target;
                 if (!start.hasOwnProperty('x') || !end.hasOwnProperty('x')) return; // skip invalid link
-  
+
                 const curvature = getCurvature(link);
-  
+
                 ctx.moveTo(start.x, start.y);
-  
+
                 if (!curvature) { // Straight line
                   ctx.lineTo(end.x, end.y);
                   link.__controlPoints = null;
                 } else {
                   const l = Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2)); // line length
-  
+
                   if (l > 0) {
                     const a = Math.atan2(end.y - start.y, end.x - start.x); // line angle
                     const d = l * curvature; // control point distance
-  
+
                     const cp = { // control point
                       x: (start.x + end.x) / 2 + d * Math.cos(a - Math.PI / 2),
                       y: (start.y + end.y) / 2 + d * Math.sin(a - Math.PI / 2)
                     };
                     ctx.quadraticCurveTo(cp.x, cp.y, end.x, end.y);
-  
+
                     link.__controlPoints = [cp.x, cp.y];
                   } else { // Same point, draw a loop
                     const d = curvature * 70;
                     const cps = [end.x, end.y - d, end.x + d, end.y];
                     ctx.bezierCurveTo(...cps, end.x, end.y);
-  
+
                     link.__controlPoints = cps;
                   }
                 }
