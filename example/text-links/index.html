@@ -16,7 +16,8 @@
         .nodeId('id')
         .nodeLabel('id')
         .nodeAutoColorBy('group')
-        .linkCanvasObject((link, ctx, globalScale) => {
+        .linkCanvasObjectMode(() => 'after')
+        .linkCanvasObject((link, ctx) => {
           const MAX_FONT_SIZE = 4;
           const LABEL_NODE_MARGIN = Graph.nodeRelSize() * 1.5;
 
