@@ -41,6 +41,7 @@ export default Kapsule({
     nodeColor: { default: 'color', triggerUpdate: false },
     nodeAutoColorBy: {},
     nodeCanvasObject: { triggerUpdate: false },
+    nodeCanvasObjectMode: { default: () => 'replace', triggerUpdate: false },
     linkSource: { default: 'source' },
     linkTarget: { default: 'target' },
     linkVisibility: { default: true, triggerUpdate: false },
@@ -49,6 +50,7 @@ export default Kapsule({
     linkWidth: { default: 1, triggerUpdate: false },
     linkCurvature: { default: 0, triggerUpdate: false },
     linkCanvasObject: { triggerUpdate: false },
+    linkCanvasObjectMode: { default: () => 'replace', triggerUpdate: false },
     linkDirectionalArrowLength: { default: 0, triggerUpdate: false },
     linkDirectionalArrowColor: { triggerUpdate: false },
     linkDirectionalArrowRelPos: { default: 0.5, triggerUpdate: false }, // value between 0<>1 indicating the relative pos along the (exposed) line
@@ -116,6 +118,7 @@ export default Kapsule({
       function paintNodes() {
         const getVal = accessorFn(state.nodeVal);
         const getColor = accessorFn(state.nodeColor);
+        const getNodeCanvasObjectMode = accessorFn(state.nodeCanvasObjectMode);
         const ctx = state.ctx;
 
         // Draw wider nodes by 1px on shadow canvas for more precise hovering (due to boundary anti-aliasing)
@@ -123,10 +126,16 @@ export default Kapsule({
 
         ctx.save();
         state.graphData.nodes.forEach(node => {
-          if (state.nodeCanvasObject) {
-            // Custom node paint
-            state.nodeCanvasObject(node, state.ctx, state.globalScale);
-            return;
+          const nodeCanvasObjectMode = getNodeCanvasObjectMode(node);
+
+          if (state.nodeCanvasObject && (nodeCanvasObjectMode === 'before' || nodeCanvasObjectMode === 'replace')) {
+            // Custom node before/replace paint
+            state.nodeCanvasObject(node, ctx, state.globalScale);
+
+            if (nodeCanvasObjectMode === 'replace') {
+              ctx.restore();
+              return;
+            }
           }
 
           // Draw wider nodes by 1px on shadow canvas for more precise hovering (due to boundary anti-aliasing)
@@ -136,6 +145,11 @@ export default Kapsule({
           ctx.arc(node.x, node.y, r, 0, 2 * Math.PI, false);
           ctx.fillStyle = getColor(node) || 'rgba(31, 120, 180, 0.92)';
           ctx.fill();
+
+          if (state.nodeCanvasObject && nodeCanvasObjectMode === 'after') {
+            // Custom node after paint
+            state.nodeCanvasObject(node, state.ctx, state.globalScale);
+          }
         });
         ctx.restore();
       }
@@ -145,24 +159,39 @@ export default Kapsule({
         const getColor = accessorFn(state.linkColor);
         const getWidth = accessorFn(state.linkWidth);
         const getCurvature = accessorFn(state.linkCurvature);
+        const getLinkCanvasObjectMode = accessorFn(state.linkCanvasObjectMode);
+
         const ctx = state.ctx;
 
         // Draw wider lines by 2px on shadow canvas for more precise hovering (due to boundary anti-aliasing)
         const padAmount = state.isShadow * 2;
 
-        ctx.save();
-
         const visibleLinks = state.graphData.links.filter(getVisibility);
 
+        let beforeCustomLinks = [], afterCustomLinks = [], defaultPaintLinks = visibleLinks;
         if (state.linkCanvasObject) {
-          // Custom link paints
-          visibleLinks.forEach(link => state.linkCanvasObject(link, state.ctx, state.globalScale));
-          return;
+          const replaceCustomLinks = [], otherCustomLinks = [];
+
+          visibleLinks.forEach(d =>
+            ({
+              before: beforeCustomLinks,
+              after: afterCustomLinks,
+              replace: replaceCustomLinks
+            }[getLinkCanvasObjectMode(d)] || otherCustomLinks).push(d)
+          );
+          defaultPaintLinks = [...beforeCustomLinks, ...afterCustomLinks, ...otherCustomLinks];
+          beforeCustomLinks = beforeCustomLinks.concat(replaceCustomLinks);
         }
 
-        // Bundle strokes per unique color/width for performance optimization
-        const linksPerColor = indexBy(visibleLinks, [getColor, getWidth]);
+        // Custom link before paints
+        ctx.save();
+        beforeCustomLinks.forEach(link => state.linkCanvasObject(link, ctx, state.globalScale));
+        ctx.restore();
 
+        // Bundle strokes per unique color/width for performance optimization
+        const linksPerColor = indexBy(defaultPaintLinks, [getColor, getWidth]);
+
+        ctx.save();
         Object.entries(linksPerColor).forEach(([color, linksPerWidth]) => {
           const lineColor = !color || color === 'undefined' ? 'rgba(0,0,0,0.15)' : color;
           Object.entries(linksPerWidth).forEach(([width, links]) => {
@@ -210,7 +239,11 @@ export default Kapsule({
             ctx.stroke();
           });
         });
+        ctx.restore();
 
+        // Custom link after paints
+        ctx.save();
+        afterCustomLinks.forEach(link => state.linkCanvasObject(link, ctx, state.globalScale));
         ctx.restore();
       }
 
