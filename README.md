@@ -61,6 +61,7 @@ myGraph(<myDOMElement>)
 ## API reference
 
 ### Data input
+
 | Method | Description | Default |
 | --- | --- | :--: |
 | <b>graphData</b>([<i>data</i>]) | Getter/setter for graph data structure (see below for syntax details). Can also be used to apply [incremental updates](https://vasturiano.github.io/force-graph/example/dynamic/). | `{ nodes: [], links: [] }` |
@@ -69,6 +70,7 @@ myGraph(<myDOMElement>)
 | <b>linkTarget</b>([<i>str</i>]) | Link object accessor attribute referring to id of target node. | `target` |
 
 ### Container layout 
+
 | Method | Description | Default |
 | --- | --- | :--: |
 | <b>width</b>([<i>px</i>]) | Getter/setter for the canvas width. | *&lt;window width&gt;* |
@@ -76,6 +78,7 @@ myGraph(<myDOMElement>)
 | <b>backgroundColor</b>([<i>str</i>]) | Getter/setter for the chart background color. | *&lt;transparent&gt;* |
 
 ### Node styling
+
 | Method | Description | Default |
 | --- | --- | :--: |
 | <b>nodeRelSize</b>([<i>num</i>]) | Getter/setter for the ratio of node circle area (square px) per value unit. | 4 |
@@ -87,6 +90,7 @@ myGraph(<myDOMElement>)
 | <b>nodeCanvasObjectMode</b>([<i>str</i> or <i>fn</i>]) | Node object accessor function or attribute for the custom drawing mode. Use in combination with `nodeCanvasObject` to specify how to customize nodes painting. Possible values are: <ul><li>`replace`: the node is rendered using just `nodeCanvasObject`.</li><li>`before`: the node is rendered by invoking `nodeCanvasObject` and then proceeding with the default node painting.</li><li>`after`: `nodeCanvasObject` is applied after the default node painting takes place.</li></ul>Any other value will be ignored and the default drawing will be applied. | `() => 'replace'` |
 
 ### Link styling
+
 | Method | Description | Default |
 | --- | --- | :--: |
 | <b>linkLabel</b>([<i>str</i> or <i>fn</i>]) | Link object accessor function or attribute for name (shown in label). Supports plain text or HTML content. Note that this method uses `innerHTML` internally, so make sure to pre-sanitize any user-input content to prevent XSS vulnerabilities. | `name` |
@@ -106,6 +110,7 @@ myGraph(<myDOMElement>)
 | <b>linkDirectionalParticleColor</b>([<i>str</i> or <i>fn</i>]) | Link object accessor function or attribute for the directional particles color. | `color` |
 
 ### Render control
+
 | Method | Description | Default |
 | --- | --- | :--: |
 | <b>pauseAnimation</b>() <br/><sub>(alias: <i>stopAnimation</i>)</sub> | Pauses the rendering cycle of the component, effectively freezing the current view and cancelling all user interaction. This method can be used to save performance in circumstances when a static image is sufficient. | |
@@ -114,7 +119,8 @@ myGraph(<myDOMElement>)
 | <b>zoom</b>([<i>num</i>], [<i>ms</i>]) | Getter/setter for the canvas zoom amount. The zoom is defined in terms of the scale transform of each px. A value of `1` indicates unity, larger values zoom in and smaller values zoom out. An optional 2nd argument defines the duration of the transition (in ms) to animate the canvas motion. A value of 0 (default) jumps immediately to the final position. | By default the zoom is set to a value inversely proportional to the amount of nodes in the system. |
 | <b>refresh</b>() | Redraws all the nodes/links and reheats the force simulation engine. |
 
-### Force engine (d3-force) configuration 
+### Force engine (d3-force) configuration
+
 | Method | Description | Default |
 | --- | --- | :--: |
 | <b>dagMode</b>([<i>str</i>]) | Apply layout constraints based on the graph directionality. Only works for [DAG](https://en.wikipedia.org/wiki/Directed_acyclic_graph) graph structures (without cycles). Choice between `td` (top-down), `bu` (bottom-up), `lr` (left-to-right), `rl` (right-to-left), `radialout` (outwards-radially) or `radialin` (inwards-radially). | |
@@ -129,6 +135,7 @@ myGraph(<myDOMElement>)
 | <b>onEngineStop</b>(<i>fn</i>) | Callback function invoked when the simulation engine stops and the layout is frozen. | - |
 
 ### Interaction
+
 | Method | Description | Default |
 | --- | --- | :--: |
 | <b>onNodeClick</b>(<i>fn</i>) | Callback function for node (left-button) clicks. The node object is included as single argument `onNodeClick(node)`. | - |
@@ -169,6 +176,7 @@ myGraph(<myDOMElement>)
     ]
 }
 ```
+
 ## Giving Back
 
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=L398E7PKP47E8&currency_code=USD&source=url) If this project has helped you and you'd like to contribute back, you can always [buy me a ☕](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=L398E7PKP47E8&currency_code=USD&source=url)!
