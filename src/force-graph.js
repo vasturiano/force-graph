@@ -355,7 +355,7 @@ export default Kapsule({
           c.translate(t.x, t.y);
           c.scale(t.k, t.k);
         });
-        state.onZoom(t)
+        state.onZoom({ ...t })
       });
 
     adjustCanvasSize(state);
