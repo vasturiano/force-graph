@@ -151,6 +151,7 @@ export default Kapsule({
     onLinkClick: { default: () => {}, triggerUpdate: false },
     onLinkRightClick: { triggerUpdate: false },
     onLinkHover: { default: () => {}, triggerUpdate: false },
+    onZoom: { default: () => {}, triggerUpdate: false },
     ...linkedProps
   },
 
@@ -354,6 +355,7 @@ export default Kapsule({
           c.translate(t.x, t.y);
           c.scale(t.k, t.k);
         });
+        state.onZoom({ ...t })
       });
 
     adjustCanvasSize(state);
