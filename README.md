@@ -9,7 +9,7 @@ Force-directed graph rendered on HTML5 canvas.
 </p>
 
 A web component to represent a graph data structure in a 2-dimensional canvas using a force-directed iterative layout.
-Uses HTML5 canvas for rendering and [d3-force](https://github.com/d3/d3-force) for the underlying physics engine. 
+Uses HTML5 canvas for rendering and [d3-force](https://github.com/d3/d3-force) for the underlying physics engine.
 Supports canvas zooming/panning, node dragging and node/link hover/click interactions.
 
 Check out the examples:
@@ -68,7 +68,7 @@ myGraph(<myDOMElement>)
 | <b>linkSource</b>([<i>str</i>]) | Link object accessor attribute referring to id of source node. | `source` |
 | <b>linkTarget</b>([<i>str</i>]) | Link object accessor attribute referring to id of target node. | `target` |
 
-### Container layout 
+### Container layout
 | Method | Description | Default |
 | --- | --- | :--: |
 | <b>width</b>([<i>px</i>]) | Getter/setter for the canvas width. | *&lt;window width&gt;* |
@@ -114,7 +114,7 @@ myGraph(<myDOMElement>)
 | <b>zoom</b>([<i>num</i>], [<i>ms</i>]) | Getter/setter for the canvas zoom amount. The zoom is defined in terms of the scale transform of each px. A value of `1` indicates unity, larger values zoom in and smaller values zoom out. An optional 2nd argument defines the duration of the transition (in ms) to animate the canvas motion. A value of 0 (default) jumps immediately to the final position. | By default the zoom is set to a value inversely proportional to the amount of nodes in the system. |
 | <b>refresh</b>() | Redraws all the nodes/links and reheats the force simulation engine. |
 
-### Force engine (d3-force) configuration 
+### Force engine (d3-force) configuration
 | Method | Description | Default |
 | --- | --- | :--: |
 | <b>dagMode</b>([<i>str</i>]) | Apply layout constraints based on the graph directionality. Only works for [DAG](https://en.wikipedia.org/wiki/Directed_acyclic_graph) graph structures (without cycles). Choice between `td` (top-down), `bu` (bottom-up), `lr` (left-to-right), `rl` (right-to-left), `radialout` (outwards-radially) or `radialin` (inwards-radially). | |
@@ -143,20 +143,21 @@ myGraph(<myDOMElement>)
 | <b>enableNodeDrag</b>([<i>boolean</i>]) | Getter/setter for whether to enable the user interaction to drag nodes by click-dragging. If enabled, every time a node is dragged the simulation is re-heated so the other nodes react to the changes. Only applicable if enablePointerInteraction is `true`. | `true` |
 | <b>enableZoomPanInteraction</b>([<i>boolean</i>]) | Getter/setter for whether to enable zooming and panning user interactions. | `true` |
 | <b>enablePointerInteraction</b>([<i>boolean</i>]) | Getter/setter for whether to enable the mouse tracking events. This activates an internal tracker of the canvas mouse position and enables the functionality of object hover/click/drag and tooltip labels, at the cost of performance. If you're looking for maximum gain in your graph performance it's recommended to switch off this property. | `true` |
+| <b>onZoom</b>(<i>fn</i>) | Callback function for zoom/pan events. The current zoom transform is included as single argument `onZoom({ k, x, y })`. Note that `onZoom` is triggered by user interaction as well as programmatic zooming/panning with `zoom()` and `centerAt()`. | - |
 
 ### Input JSON syntax
 ```
 {
-    "nodes": [ 
-        { 
+    "nodes": [
+        {
           "id": "id1",
           "name": "name1",
-          "val": 1 
+          "val": 1
         },
-        { 
+        {
           "id": "id2",
           "name": "name2",
-          "val": 10 
+          "val": 10
         },
         (...)
     ],
