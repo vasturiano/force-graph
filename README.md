@@ -81,7 +81,7 @@ myGraph(<myDOMElement>)
 
 | Method | Description | Default |
 | --- | --- | :--: |
-| <b>nodeRelSize</b>([<i>num</i>]) | Getter/setter for the ratio of node circle area (square px) per value unit. | 4 |
+| <b>nodeRelSize</b>([<i>num</i> or <i>fn</i>]) | Node object accessor function or attribute for node size. Affects the ratio of node circle area (square px) per value unit. | 4 |
 | <b>nodeVal</b>([<i>num</i>, <i>str</i> or <i>fn</i>]) | Node object accessor function, attribute or a numeric constant for the node numeric value (affects circle area). | `val` |
 | <b>nodeLabel</b>([<i>str</i> or <i>fn</i>]) | Node object accessor function or attribute for name (shown in label). Supports plain text or HTML content. Note that this method uses `innerHTML` internally, so make sure to pre-sanitize any user-input content to prevent XSS vulnerabilities. | `name` |
 | <b>nodeColor</b>([<i>str</i> or <i>fn</i>]) | Node object accessor function or attribute for node color (affects circle color). | `color` |
