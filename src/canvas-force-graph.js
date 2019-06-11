@@ -35,7 +35,7 @@ export default Kapsule({
       !dagMode && (state.graphData.nodes || []).forEach(n => n.fx = n.fy = undefined); // unfix nodes when disabling dag mode
     }},
     dagLevelDistance: {},
-    nodeRelSize: { default: 4, triggerUpdate: false }, // area per val unit
+    nodeRelSize: { default: 'relSize', triggerUpdate: false }, // area per val unit
     nodeId: { default: 'id' },
     nodeVal: { default: 'val', triggerUpdate: false },
     nodeColor: { default: 'color', triggerUpdate: false },
@@ -118,6 +118,7 @@ export default Kapsule({
       function paintNodes() {
         const getVal = accessorFn(state.nodeVal);
         const getColor = accessorFn(state.nodeColor);
+        const getRelSize = accessorFn(state.nodeRelSize)
         const getNodeCanvasObjectMode = accessorFn(state.nodeCanvasObjectMode);
         const ctx = state.ctx;
 
@@ -128,7 +129,7 @@ export default Kapsule({
         state.graphData.nodes.forEach(node => {
           const nodeCanvasObjectMode = getNodeCanvasObjectMode(node);
 
-          if (state.nodeCanvasObject && (nodeCanvasObjectMode === 'before' ||Â nodeCanvasObjectMode === 'replace')) {
+          if (state.nodeCanvasObject && (nodeCanvasObjectMode === 'before' || nodeCanvasObjectMode === 'replace')) {
             // Custom node before/replace paint
             state.nodeCanvasObject(node, ctx, state.globalScale);
 
@@ -139,7 +140,7 @@ export default Kapsule({
           }
 
           // Draw wider nodes by 1px on shadow canvas for more precise hovering (due to boundary anti-aliasing)
-          const r = Math.sqrt(Math.max(0, getVal(node) || 1)) * state.nodeRelSize + padAmount;
+          const r = Math.sqrt(Math.max(0, getVal(node) || 1)) * (getRelSize(node) || 4) + padAmount;
 
           ctx.beginPath();
           ctx.arc(node.x, node.y, r, 0, 2 * Math.PI, false);
@@ -250,11 +251,13 @@ export default Kapsule({
       function paintArrows() {
         const ARROW_WH_RATIO = 1.6;
         const ARROW_VLEN_RATIO = 0.2;
+        const getRelSize = accessorFn(state.nodeRelSize)
 
         const getLength = accessorFn(state.linkDirectionalArrowLength);
         const getRelPos = accessorFn(state.linkDirectionalArrowRelPos);
         const getVisibility = accessorFn(state.linkVisibility);
         const getColor = accessorFn(state.linkDirectionalArrowColor || state.linkColor);
+        
         const getNodeVal = accessorFn(state.nodeVal);
         const ctx = state.ctx;
 
@@ -268,8 +271,8 @@ export default Kapsule({
 
           if (!start.hasOwnProperty('x') || !end.hasOwnProperty('x')) return; // skip invalid link
 
-          const startR = Math.sqrt(Math.max(0, getNodeVal(start) || 1)) * state.nodeRelSize;
-          const endR = Math.sqrt(Math.max(0, getNodeVal(end) || 1)) * state.nodeRelSize;
+          const startR = Math.sqrt(Math.max(0, getNodeVal(start) || 1)) * (getRelSize(start) || state.nodeRelSize);
+          const endR = Math.sqrt(Math.max(0, getNodeVal(end) || 1)) * (getRelSize(end) || state.nodeRelSize);
 
           const arrowRelPos = Math.min(1, Math.max(0, getRelPos(link)));
           const arrowColor = getColor(link) || 'rgba(0,0,0,0.28)';
