@@ -1,8 +1,11 @@
-# force-graph
+force-graph
+============================
+
+[![NPM package][npm-img]][npm-url]
+[![Build Size][build-size-img]][build-size-url]
+[![Dependencies][dependencies-img]][dependencies-url]
 
 Force-directed graph rendered on HTML5 canvas.
-
-[![NPM](https://nodei.co/npm/force-graph.png?compact=true)](https://nodei.co/npm/force-graph/)
 
 <p align="center">
      <a href="https://vasturiano.github.io/force-graph/example/medium-graph"><img width="80%" src="https://vasturiano.github.io/force-graph/example/medium-graph/preview.png"></a>
@@ -181,3 +184,10 @@ myGraph(<myDOMElement>)
 ## Giving Back
 
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=L398E7PKP47E8&currency_code=USD&source=url) If this project has helped you and you'd like to contribute back, you can always [buy me a ☕](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=L398E7PKP47E8&currency_code=USD&source=url)!
+
+[npm-img]: https://img.shields.io/npm/v/force-graph.svg
+[npm-url]: https://npmjs.org/package/force-graph
+[build-size-img]: https://img.shields.io/bundlephobia/minzip/force-graph.svg
+[build-size-url]: https://bundlephobia.com/result?p=force-graph
+[dependencies-img]: https://img.shields.io/david/vasturiano/force-graph.svg
+[dependencies-url]: https://david-dm.org/vasturiano/force-graph
