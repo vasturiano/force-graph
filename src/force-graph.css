@@ -1,7 +1,7 @@
 .graph-tooltip {
   position: absolute;
   transform: translate(-50%, 25px);
-  font-family: Sans-serif;
+  font-family: sans-serif;
   font-size: 16px;
   padding: 4px;
   border-radius: 3px;
