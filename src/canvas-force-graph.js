@@ -168,6 +168,8 @@ export default Kapsule({
 
         const visibleLinks = state.graphData.links.filter(getVisibility);
 
+        visibleLinks.forEach(calcLinkControlPoints); // calculate curvature control points for all visible links
+
         let beforeCustomLinks = [], afterCustomLinks = [], defaultPaintLinks = visibleLinks;
         if (state.linkCanvasObject) {
           const replaceCustomLinks = [], otherCustomLinks = [];
@@ -203,35 +205,15 @@ export default Kapsule({
               const end = link.target;
               if (!start.hasOwnProperty('x') || !end.hasOwnProperty('x')) return; // skip invalid link
 
-              const curvature = getCurvature(link);
-
               ctx.moveTo(start.x, start.y);
 
-              if (!curvature) { // Straight line
+              const controlPoints = link.__controlPoints;
+
+              if (!controlPoints) { // Straight line
                 ctx.lineTo(end.x, end.y);
-                link.__controlPoints = null;
-                return;
-              }
-
-              const l = Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2)); // line length
-
-              if (l > 0) {
-                const a = Math.atan2(end.y - start.y, end.x - start.x); // line angle
-                const d = l * curvature; // control point distance
-
-                const cp = { // control point
-                  x: (start.x + end.x) / 2 + d * Math.cos(a - Math.PI / 2),
-                  y: (start.y + end.y) / 2 + d * Math.sin(a - Math.PI / 2)
-                };
-                ctx.quadraticCurveTo(cp.x, cp.y, end.x, end.y);
-
-                link.__controlPoints = [cp.x, cp.y];
-              } else { // Same point, draw a loop
-                const d = curvature * 70;
-                const cps = [end.x, end.y - d, end.x + d, end.y];
-                ctx.bezierCurveTo(...cps, end.x, end.y);
-
-                link.__controlPoints = cps;
+              } else {
+                // Use quadratic curves for regular lines and bezier for loops
+                ctx[controlPoints.length === 2 ? 'quadraticCurveTo' : 'bezierCurveTo'](...controlPoints, end.x, end.y);
               }
             });
             ctx.strokeStyle = lineColor;
@@ -245,6 +227,38 @@ export default Kapsule({
         ctx.save();
         afterCustomLinks.forEach(link => state.linkCanvasObject(link, ctx, state.globalScale));
         ctx.restore();
+
+        //
+
+        function calcLinkControlPoints(link) {
+          const curvature = getCurvature(link);
+
+          if (!curvature) { // straight line
+            link.__controlPoints = null;
+            return;
+          }
+
+          const start = link.source;
+          const end = link.target;
+          if (!start.hasOwnProperty('x') || !end.hasOwnProperty('x')) return; // skip invalid link
+
+          const l = Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2)); // line length
+
+          if (l > 0) {
+            const a = Math.atan2(end.y - start.y, end.x - start.x); // line angle
+            const d = l * curvature; // control point distance
+
+            const cp = { // control point
+              x: (start.x + end.x) / 2 + d * Math.cos(a - Math.PI / 2),
+              y: (start.y + end.y) / 2 + d * Math.sin(a - Math.PI / 2)
+            };
+
+            link.__controlPoints = [cp.x, cp.y];
+          } else { // Same point, draw a loop
+            const d = curvature * 70;
+            link.__controlPoints = [end.x, end.y - d, end.x + d, end.y];
+          }
+        }
       }
 
       function paintArrows() {
