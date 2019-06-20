@@ -758,10 +758,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.12.18.tgz#1d3ca764718915584fcd9f6344621b7672665c67"
   integrity sha512-fh+pAqt4xRzPfqA6eh3Z2y6fyZavRIumvjhaCL753+TVkGKGhpPeyrJG2JftD0T9q4GF00KjefsQ+PQNDdWQaQ==
 
-"@types/node@^12.0.7":
-  version "12.0.7"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.0.7.tgz#4f2563bad652b2acb1722d7e7aae2b0ff62d192c"
-  integrity sha512-1YKeT4JitGgE4SOzyB9eMwO0nGVNkNEsm9qlIt1Lqm/tG2QEiSMTD4kS3aO6L+w5SClLVxALmIBESK6Mk5wX0A==
+"@types/node@^12.0.8":
+  version "12.0.8"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.0.8.tgz#551466be11b2adc3f3d47156758f610bd9f6b1d8"
+  integrity sha512-b8bbUOTwzIY3V5vDTY1fIJ+ePKDUBqt2hC2woVGotdQQhG/2Sh62HOKHrT7ab+VerXAcPyAiTEipPu/FsreUtg==
 
 "@types/q@^1.5.1":
   version "1.5.1"
@@ -1457,7 +1457,7 @@ d3-zoom@^1.7.3:
     d3-selection "1"
     d3-transition "1"
 
-debounce@^1.1.0:
+debounce@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/debounce/-/debounce-1.2.0.tgz#44a540abc0ea9943018dc0eaa95cce87f65cd131"
   integrity sha512-mYtLl1xfZLi1m4RtQYlZgJUNQjl4ZxVnHzIR8nLLgi4q1YT8o/WM+MK/f8yfcc9s5Ir5zRaPZyZU6xs1Syoocg==
@@ -1895,10 +1895,10 @@ import-from@^2.1.0:
   dependencies:
     resolve-from "^3.0.0"
 
-index-array-by@^1.2.3:
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/index-array-by/-/index-array-by-1.2.3.tgz#52a7025144f4184825c69f8e61ea9fa2a62501cc"
-  integrity sha512-HOo76wfh+2yQ5ifRL0zmUHCfGOVQ0v0Bh9E+Vs4OpIlwXgcsTLgCALGB+L0AVemjSUhYBxCTNukxSj4oXwhIzQ==
+index-array-by@^1.2.4:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/index-array-by/-/index-array-by-1.2.4.tgz#6e1673b0bd7860a2a0627f7d4c2fe362ab891c3a"
+  integrity sha512-wYxkFl5C+TvtcndR/xWXy+pS29JYH/Qycs++wFcaJfRpIPfSj6mJ752ASdUmQKhDnjaJexOaDesAAfJHU7p6JA==
 
 indexes-of@^1.0.1:
   version "1.0.1"
@@ -2200,12 +2200,12 @@ json5@^2.1.0:
   dependencies:
     minimist "^1.2.0"
 
-kapsule@^1.10.0:
-  version "1.10.0"
-  resolved "https://registry.yarnpkg.com/kapsule/-/kapsule-1.10.0.tgz#0fe7fd8a98cc3c556912519dce464b4085e9a93f"
-  integrity sha512-RDOVErU2oELzAY3rHNW5NuSx9WTitlQ+jT/kjivJFJ242DwdZU/zlRbJhxWD/QqC4xuyDorG2xmTarqYLTxTKw==
+kapsule@^1.10.1:
+  version "1.10.1"
+  resolved "https://registry.yarnpkg.com/kapsule/-/kapsule-1.10.1.tgz#8a5442899b5f0835bfc9ce3f331c2e0df653cc07"
+  integrity sha512-Cprn3DhiFMBviPupeh6AGZzvdskJ4aLCEUwGu8/FBKVy++vwwvsVDS4Q5Bm2q+zwrLCC9eaacMAkQ1BvkbAi3A==
   dependencies:
-    debounce "^1.1.0"
+    debounce "^1.2.0"
 
 kind-of@^3.0.2, kind-of@^3.0.3, kind-of@^3.2.0:
   version "3.2.2"
@@ -3119,10 +3119,10 @@ rollup-plugin-commonjs@^10.0.0:
     resolve "^1.10.1"
     rollup-pluginutils "^2.7.0"
 
-rollup-plugin-node-resolve@^5.0.1:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/rollup-plugin-node-resolve/-/rollup-plugin-node-resolve-5.0.1.tgz#4619eafdf2ecb4e8ed24177ba47d7f11f027d38b"
-  integrity sha512-9s3dTu44SKQZM/Pwll42GpqXgT+WdvO0Ga01lF8cwZqJGqRUATtD+GrP3uIzZdpnbPonEJbVasfFt80VGPQqKw==
+rollup-plugin-node-resolve@^5.0.3:
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/rollup-plugin-node-resolve/-/rollup-plugin-node-resolve-5.0.3.tgz#5e90fbd04a33fa1e4e1ed6d9b54afbe45af944f1"
+  integrity sha512-Mhhmf0x493xgUPEsRELnU1VM+4+WO82knWkAbZ0d2DvZQZJMbhzyQK/hqtpVscoRru1EqlK3TM1kK9ro469wPw==
   dependencies:
     "@types/resolve" "0.0.8"
     builtin-modules "^3.1.0"
@@ -3173,13 +3173,13 @@ rollup-pluginutils@^2.8.0:
   dependencies:
     estree-walker "^0.6.1"
 
-rollup@^1.14.5:
-  version "1.14.5"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-1.14.5.tgz#a0eb9197f311396870df2ad591277ccd37e7bc79"
-  integrity sha512-XKegaT6NhrKuBvFQCeLfDJ7bNpfnWIMQfLx9+Qe34rrKaVOtNGVIf5vyIKuwS4JlF2l/nA7RvEsItXqyF0ZFZg==
+rollup@^1.15.6:
+  version "1.15.6"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-1.15.6.tgz#caf0ed28d2d78e3a59c1398e5a3695fb600a0ef0"
+  integrity sha512-s3Vn3QJQ5YVFfIG4nXoG9VdL1I37IZsft+4ZyeBhxE0df1kCFz9e+4bEAbR4mKH3pvBO9e9xjdxWPhhIp0r9ow==
   dependencies:
     "@types/estree" "0.0.39"
-    "@types/node" "^12.0.7"
+    "@types/node" "^12.0.8"
     acorn "^6.1.1"
 
 safe-buffer@~5.1.1:
