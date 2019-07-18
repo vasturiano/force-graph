@@ -48,6 +48,7 @@ const linkedProps = Object.assign(
     'nodeRelSize',
     'nodeId',
     'nodeVal',
+    'nodeVisibility',
     'linkSource',
     'linkTarget',
     'linkVisibility',

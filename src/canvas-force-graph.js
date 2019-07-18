@@ -42,6 +42,7 @@ export default Kapsule({
     nodeAutoColorBy: {},
     nodeCanvasObject: { triggerUpdate: false },
     nodeCanvasObjectMode: { default: () => 'replace', triggerUpdate: false },
+    nodeVisibility: { default: true, triggerUpdate: false },
     linkSource: { default: 'source' },
     linkTarget: { default: 'target' },
     linkVisibility: { default: true, triggerUpdate: false },
@@ -116,16 +117,20 @@ export default Kapsule({
       }
 
       function paintNodes() {
+        const getVisibility = accessorFn(state.nodeVisibility);
         const getVal = accessorFn(state.nodeVal);
         const getColor = accessorFn(state.nodeColor);
         const getNodeCanvasObjectMode = accessorFn(state.nodeCanvasObjectMode);
+
         const ctx = state.ctx;
 
         // Draw wider nodes by 1px on shadow canvas for more precise hovering (due to boundary anti-aliasing)
         const padAmount = state.isShadow / state.globalScale;
 
+        const visibleNodes = state.graphData.nodes.filter(getVisibility);
+
         ctx.save();
-        state.graphData.nodes.forEach(node => {
+        visibleNodes.forEach(node => {
           const nodeCanvasObjectMode = getNodeCanvasObjectMode(node);
 
           if (state.nodeCanvasObject && (nodeCanvasObjectMode === 'before' || nodeCanvasObjectMode === 'replace')) {
