@@ -135,7 +135,7 @@ export default Kapsule({
 
           if (state.nodeCanvasObject && (nodeCanvasObjectMode === 'before' || nodeCanvasObjectMode === 'replace')) {
             // Custom node before/replace paint
-            state.nodeCanvasObject(node, ctx, state.globalScale);
+            state.nodeCanvasObject(node, ctx, state.globalScale, state.isShadow);
 
             if (nodeCanvasObjectMode === 'replace') {
               ctx.restore();
