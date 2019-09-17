@@ -49,7 +49,7 @@
       .d3AlphaDecay(0.02)
       .d3VelocityDecay(0.3);
 
-    fetch('//unpkg.com/d3/yarn.lock')
+    fetch('//unpkg.com/d3@5.9.7/yarn.lock')
       .then(r => r.text())
       .then(text => {
         const yarnlock = _yarnpkg_lockfile.parse(text);
