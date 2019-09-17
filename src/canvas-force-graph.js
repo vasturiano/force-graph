@@ -70,7 +70,8 @@ export default Kapsule({
     onFinishLoading: { default: () => {}, triggerUpdate: false },
     onEngineTick: { default: () => {}, triggerUpdate: false },
     onEngineStop: { default: () => {}, triggerUpdate: false },
-    isShadow: { default: false, triggerUpdate: false }
+    isShadow: { default: false, triggerUpdate: false },
+    particlesPushed: { default: [], triggerUpdate: false }
   },
 
   methods: {
@@ -86,6 +87,9 @@ export default Kapsule({
       state.forceLayout.force(forceName, forceFn); // Force setter
       return this;
     },
+    pushDirectionalParticle: function(state, source, target, props = {}) {
+      state.particlesPushed.push({ source, target, props })
+    },
     // reset cooldown state
     resetCountdown: function(state) {
       state.cntTicks = 0;
@@ -98,6 +102,7 @@ export default Kapsule({
       paintLinks();
       paintArrows();
       paintPhotons();
+      paintPushedPhotons();
       paintNodes();
 
       return this;
@@ -372,6 +377,73 @@ export default Kapsule({
             ctx.beginPath();
             ctx.arc(coords.x, coords.y, photonR, 0, 2 * Math.PI, false);
             ctx.fill();
+          });
+        });
+        ctx.restore();
+      }
+
+
+      function paintPushedPhotons() {
+        const getSpeed = accessorFn(state.linkDirectionalParticleSpeed);
+        const getDiameter = accessorFn(state.linkDirectionalParticleWidth);
+        const getVisibility = accessorFn(state.linkVisibility);
+        const getColor = accessorFn(state.linkDirectionalParticleColor || state.linkColor);
+        const ctx = state.ctx;
+
+        ctx.save();
+        state.graphData.links.filter(getVisibility).forEach(link => {
+          const { source, target } = link;
+          if (!source.hasOwnProperty('x') || !target.hasOwnProperty('x')) return; // skip invalid link
+
+          link.__pushedPhotons = link.__pushedPhotons || new Set()
+          state.particlesPushed = state.particlesPushed.filter((p) => {
+            if (source.id === p.source && target.id === p.target) {
+              link.__pushedPhotons.add({ inverse: false, props: p.props })
+              return false
+            }
+
+            if (source.id === p.target && target.id === p.source) {
+              link.__pushedPhotons.add({ inverse: true, props: p.props })
+              return false
+            }
+
+            return true
+          })
+
+          const photons = link.__pushedPhotons
+
+          photons.forEach((photon) => {
+            const { props } = photon
+            const particleSpeed = props.speed || getSpeed(link);
+            const photonR = Math.max(0, props.diameter || getDiameter(link) / 2) / Math.sqrt(state.globalScale);
+            const photonColor = props.color || getColor(link) || 'rgba(0,0,0,0.28)';
+            ctx.fillStyle = photonColor;
+
+            const start = photon.inverse ? target : source
+            const end = photon.inverse ? source : target
+
+            // Construct bezier for curved lines
+            const bzLine = link.__controlPoints
+              ? new Bezier(start.x, start.y, ...link.__controlPoints, end.x, end.y)
+              : null;
+
+            const photonPosRatio = photon.__progressRatio =
+              ((photon.__progressRatio || 0) + particleSpeed) % 1;
+
+            const coords = bzLine
+              ? bzLine.get(photonPosRatio)  // get position along bezier line
+              : { // straight line: interpolate linearly
+                x: start.x + (end.x - start.x) * photonPosRatio || 0,
+                y: start.y + (end.y - start.y) * photonPosRatio || 0
+              };
+
+            ctx.beginPath();
+            ctx.arc(coords.x, coords.y, photonR, 0, 2 * Math.PI, false);
+            ctx.fill();
+            const next = ((photon.__progressRatio || (idx / photons.size)) + particleSpeed) % 1
+            if (next < photon.__progressRatio) {
+              photons.delete(photon)
+            }
           });
         });
         ctx.restore();
