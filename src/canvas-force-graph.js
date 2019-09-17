@@ -87,7 +87,7 @@ export default Kapsule({
       state.forceLayout.force(forceName, forceFn); // Force setter
       return this;
     },
-    pushDirectionalParticle: function(state, source, target, props = {}) {
+    pushParticle: function(state, source, target, props = {}) {
       state.particlesPushed.push({ source, target, props })
     },
     // reset cooldown state
