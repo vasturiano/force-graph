@@ -57,7 +57,7 @@ const linkedProps = Object.assign(
 );
 const linkedMethods = Object.assign(...[
   'd3Force',
-  'refresh'
+  'd3ReheatSimulation'
 ].map(p => ({ [p]: bindFG.linkMethod(p)})));
 
 function adjustCanvasSize(state) {
@@ -361,7 +361,7 @@ export default Kapsule({
 
     adjustCanvasSize(state);
 
-    state.forceGraph.onFinishLoading(() => {
+    state.forceGraph.onFinishUpdate(() => {
       // re-zoom, if still in default position (not user modified)
       if (d3ZoomTransform(state.canvas).k === state.lastSetZoom && state.graphData.nodes.length) {
         state.zoom.scaleTo(state.zoom.__baseElem,

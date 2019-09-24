@@ -66,24 +66,24 @@ export default Kapsule({
     warmupTicks: { default: 0, triggerUpdate: false }, // how many times to tick the force engine at init before starting to render
     cooldownTicks: { default: Infinity, triggerUpdate: false },
     cooldownTime: { default: 15000, triggerUpdate: false }, // ms
-    onLoading: { default: () => {}, triggerUpdate: false },
-    onFinishLoading: { default: () => {}, triggerUpdate: false },
+    onUpdate: { default: () => {}, triggerUpdate: false },
+    onFinishUpdate: { default: () => {}, triggerUpdate: false },
     onEngineTick: { default: () => {}, triggerUpdate: false },
     onEngineStop: { default: () => {}, triggerUpdate: false },
     isShadow: { default: false, triggerUpdate: false }
   },
 
   methods: {
-    refresh: function(state) {
-      state._rerender();
-      return this;
-    },
     // Expose d3 forces for external manipulation
     d3Force: function(state, forceName, forceFn) {
       if (forceFn === undefined) {
         return state.forceLayout.force(forceName); // Force getter
       }
       state.forceLayout.force(forceName, forceFn); // Force setter
+      return this;
+    },
+    d3ReheatSimulation: function(state) {
+      state.forceLayout.alpha(1);
       return this;
     },
     // reset cooldown state
@@ -396,7 +396,7 @@ export default Kapsule({
 
   update(state) {
     state.engineRunning = false; // Pause simulation
-    state.onLoading();
+    state.onUpdate();
 
     if (state.nodeAutoColorBy !== null) {
       // Auto add color to uncolored nodes
@@ -473,6 +473,6 @@ export default Kapsule({
     for (let i=0; i<state.warmupTicks; i++) { state.forceLayout.tick(); } // Initial ticks before starting to render
 
     this.resetCountdown();
-    state.onFinishLoading();
+    state.onFinishUpdate();
   }
 });
