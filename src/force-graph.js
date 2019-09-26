@@ -152,6 +152,8 @@ export default Kapsule({
     onLinkClick: { default: () => {}, triggerUpdate: false },
     onLinkRightClick: { triggerUpdate: false },
     onLinkHover: { default: () => {}, triggerUpdate: false },
+    onBackgroundClick: { default: () => {}, triggerUpdate: false },
+    onBackgroundRightClick: { triggerUpdate: false },
     onZoom: { default: () => {}, triggerUpdate: false },
     ...linkedProps
   },
@@ -401,17 +403,21 @@ export default Kapsule({
     container.addEventListener('click', ev => {
       if (state.hoverObj) {
         state[`on${state.hoverObj.type}Click`](state.hoverObj.d);
+      } else {
+        state.onBackgroundClick();
       }
     }, false);
 
     // Handle right-click events
     container.addEventListener('contextmenu', ev => {
-      if (!state.onNodeRightClick && !state.onLinkRightClick) return true; // default contextmenu behavior
+      if (!state.onBackgroundRightClick && !state.onNodeRightClick && !state.onLinkRightClick) return true; // default contextmenu behavior
 
       ev.preventDefault();
       if (state.hoverObj) {
         const fn = state[`on${state.hoverObj.type}RightClick`];
         fn && fn(state.hoverObj.d);
+      } else {
+        state.onBackgroundRightClick && state.onBackgroundRightClick();
       }
       return false;
     }, false);
