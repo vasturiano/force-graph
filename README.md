@@ -34,6 +34,7 @@ Check out the examples:
 * [Click to focus on node](https://vasturiano.github.io/force-graph/example/click-to-focus/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/click-to-focus/index.html))
 * [Dynamic data changes](https://vasturiano.github.io/force-graph/example/dynamic/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/dynamic/index.html))
 * [Node collision detection](https://vasturiano.github.io/force-graph/example/collision-detection/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/collision-detection/index.html))
+* [Emit link particles on demand](https://vasturiano.github.io/force-graph/example/emit-particles/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/emit-particles/index.html))
 * [Force-directed tree (DAG mode)](https://vasturiano.github.io/force-graph/example/tree/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/tree/index.html))
 * [yarn.lock dependency graph (DAG mode)](https://vasturiano.github.io/force-graph/example/dag-yarn/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/dag-yarn/index.html))
 
@@ -112,6 +113,7 @@ myGraph(<myDOMElement>)
 | <b>linkDirectionalParticleSpeed</b>([<i>num</i>, <i>str</i> or <i>fn</i>]) | Link object accessor function, attribute or a numeric constant for the directional particles speed, expressed as the ratio of the link length to travel per frame. Values above `0.5` are discouraged. | 0.01 |
 | <b>linkDirectionalParticleWidth</b>([<i>num</i>, <i>str</i> or <i>fn</i>]) | Link object accessor function, attribute or a numeric constant for the directional particles width (diameter). | 4 |
 | <b>linkDirectionalParticleColor</b>([<i>str</i> or <i>fn</i>]) | Link object accessor function or attribute for the directional particles color. | `color` |
+| <b>emitParticle</b>(<i>link</i>) | An alternative mechanism for generating particles, this method emits a non-cyclical single particle within a specific link. The emitted particle shares the styling (speed, width, color) of the regular particle props. A valid `link` object that is included in `graphData` should be passed as a single parameter. ||
 
 ### Render control
 

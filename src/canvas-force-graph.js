@@ -339,7 +339,9 @@ export default Kapsule({
 
         ctx.save();
         state.graphData.links.filter(getVisibility).forEach(link => {
-          if (!getNumPhotons(link)) return;
+          const numCyclePhotons = getNumPhotons(link);
+
+          if (!link.hasOwnProperty('__photons') || !link.__photons.length) return;
 
           const start = link.source;
           const end = link.target;
@@ -358,9 +360,29 @@ export default Kapsule({
             ? new Bezier(start.x, start.y, ...link.__controlPoints, end.x, end.y)
             : null;
 
+          let cyclePhotonIdx = 0;
+          let needsCleanup = false; // whether some photons need to be removed from list
           photons.forEach((photon, idx) => {
-            const photonPosRatio = photon.__progressRatio =
-              ((photon.__progressRatio || (idx / photons.length)) + particleSpeed) % 1;
+            const singleHop = !!photon.__singleHop;
+
+            if (!photon.hasOwnProperty('__progressRatio')) {
+              photon.__progressRatio = singleHop ? 0 : cyclePhotonIdx / numCyclePhotons;
+            }
+
+            !singleHop && cyclePhotonIdx++; // increase regular photon index
+
+            photon.__progressRatio += particleSpeed;
+
+            if (photon.__progressRatio >=1) {
+              if (!singleHop) {
+                photon.__progressRatio = photon.__progressRatio % 1;
+              } else {
+                needsCleanup = true;
+                return;
+              }
+            }
+
+            const photonPosRatio = photon.__progressRatio;
 
             const coords = bzLine
               ? bzLine.get(photonPosRatio)  // get position along bezier line
@@ -376,6 +398,14 @@ export default Kapsule({
         });
         ctx.restore();
       }
+    },
+    emitParticle: function(state, link) {
+      if (link) {
+        !link.__photons && (link.__photons = []);
+        link.__photons.push({__singleHop: true}); // add a single hop particle
+      }
+
+      return this;
     }
   },
 
