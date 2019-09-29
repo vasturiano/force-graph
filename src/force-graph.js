@@ -58,7 +58,7 @@ const linkedProps = Object.assign(
 const linkedMethods = Object.assign(...[
   'd3Force',
   'd3ReheatSimulation',
-  'pushParticle'
+  'emitParticle'
 ].map(p => ({ [p]: bindFG.linkMethod(p)})));
 
 function adjustCanvasSize(state) {
