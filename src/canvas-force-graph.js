@@ -400,8 +400,12 @@ export default Kapsule({
       }
     },
     emitParticle: function(state, link) {
-      !link.__photons && (link.__photons = []);
-      link.__photons.push({ __singleHop: true }); // add a single hop particle
+      if (link) {
+        !link.__photons && (link.__photons = []);
+        link.__photons.push({__singleHop: true}); // add a single hop particle
+      }
+
+      return this;
     }
   },
 
