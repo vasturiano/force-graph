@@ -1,0 +1,41 @@
+<head>
+  <style> body { margin: 0; } </style>
+
+  <!--<script src="//unpkg.com/force-graph"></script>-->
+  <script src="../../dist/force-graph.js"></script>
+</head>
+
+<body>
+  <button id="push-random-particle">Push 10 Random Particle</button>
+  <div id="graph"></div>
+
+  <script>
+    // Random tree
+    const N = 50;
+    const links = [...Array(N).keys()]
+      .filter(id => id)
+      .map(id => ({
+        source: id,
+        target: Math.round(Math.random() * (id-1))
+      }));
+    const gData = {
+      nodes: [...Array(N).keys()].map(i => ({ id: i })),
+      links
+    };
+
+    const Graph = ForceGraph()
+      (document.getElementById('graph'))
+        .graphData(gData);
+
+    const colors = ['red', 'green', 'blue', 'black'];
+    document.getElementById('push-random-particle').addEventListener('click', () => {
+      [...Array(10).keys()].forEach(() => {
+        const link = links[Math.floor(Math.random() * links.length)];
+        Graph.pushParticle(link.source.id, link.target.id, {
+          speed: 0.04,
+          color: colors[Math.floor(Math.random() * colors.length)]
+        });
+      });
+    });
+  </script>
+</body>

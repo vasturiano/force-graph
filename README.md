@@ -121,6 +121,7 @@ myGraph(<myDOMElement>)
 | <b>resumeAnimation</b>() | Resumes the rendering cycle of the component, and re-enables the user interaction. This method can be used together with `pauseAnimation` for performance optimization purposes. | |
 | <b>centerAt</b>([<i>x</i>], [<i>y</i>], [<i>ms</i>]) | Getter/setter for the coordinates of the center of the viewport. This method can be used to perform panning on the canvas programmatically. Each of the `x, y` coordinates is optional, allowing for motion in just one dimension. An optional 3rd argument defines the duration of the transition (in ms) to animate the canvas motion. A value of 0 (default) centers immediately in the final position. | 0,0 |
 | <b>zoom</b>([<i>num</i>], [<i>ms</i>]) | Getter/setter for the canvas zoom amount. The zoom is defined in terms of the scale transform of each px. A value of `1` indicates unity, larger values zoom in and smaller values zoom out. An optional 2nd argument defines the duration of the transition (in ms) to animate the canvas motion. A value of 0 (default) jumps immediately to the final position. | By default the zoom is set to a value inversely proportional to the amount of nodes in the system. |
+| <b>pushParticle</b>(<i>[source]</i>, <i>[target]</i>, <i>[props]</i>) | Emit a particle in a specific link. Props could be: `{ speed: num, width: num, color: str }`. The particle doesn't respect the link direction. |
 
 ### Force engine (d3-force) configuration
 
