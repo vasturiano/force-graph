@@ -362,7 +362,7 @@ export default Kapsule({
 
           let cyclePhotonIdx = 0;
           let needsCleanup = false; // whether some photons need to be removed from list
-          photons.forEach((photon, idx) => {
+          photons.forEach(photon => {
             const singleHop = !!photon.__singleHop;
 
             if (!photon.hasOwnProperty('__progressRatio')) {
@@ -395,6 +395,11 @@ export default Kapsule({
             ctx.arc(coords.x, coords.y, photonR, 0, 2 * Math.PI, false);
             ctx.fill();
           });
+
+          if (needsCleanup) {
+            // remove expired single hop photons
+            link.__photons = link.__photons.filter(photon => !photon.__singleHop || photon.__progressRatio <= 1);
+          }
         });
         ctx.restore();
       }
