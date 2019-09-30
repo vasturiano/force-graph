@@ -35,7 +35,10 @@
     const Graph = ForceGraph()
     (document.getElementById('graph'))
       .linkDirectionalParticleColor(() => 'red')
+      .linkHoverPrecision(10)
       .graphData(gData);
+
+    Graph.onLinkClick(Graph.emitParticle); // emit particles on link click
 
     document.getElementById('emit-particles-btn').addEventListener('click', () => {
       [...Array(10).keys()].forEach(() => {
