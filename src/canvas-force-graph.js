@@ -84,6 +84,7 @@ export default Kapsule({
     },
     d3ReheatSimulation: function(state) {
       state.forceLayout.alpha(1);
+      this.resetCountdown();
       return this;
     },
     // reset cooldown state
