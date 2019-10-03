@@ -32,10 +32,12 @@ Check out the examples:
 * [Custom node shapes](https://vasturiano.github.io/force-graph/example/custom-node-shape/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/custom-node-shape/index.html))
 * [Zoom/pan viewport](https://vasturiano.github.io/force-graph/example/move-viewport/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/move-viewport/index.html))
 * [Click to focus on node](https://vasturiano.github.io/force-graph/example/click-to-focus/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/click-to-focus/index.html))
+* [Click to expand/collapse nodes](https://vasturiano.github.io/force-graph/example/expandable-nodes/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/expandable-nodes/index.html))
 * [Dynamic data changes](https://vasturiano.github.io/force-graph/example/dynamic/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/dynamic/index.html))
 * [Node collision detection](https://vasturiano.github.io/force-graph/example/collision-detection/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/collision-detection/index.html))
 * [Emit link particles on demand](https://vasturiano.github.io/force-graph/example/emit-particles/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/emit-particles/index.html))
 * [Force-directed tree (DAG mode)](https://vasturiano.github.io/force-graph/example/tree/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/tree/index.html))
+* [Expandable Tree](https://vasturiano.github.io/force-graph/example/expandable-tree/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/expandable-tree/index.html))
 * [yarn.lock dependency graph (DAG mode)](https://vasturiano.github.io/force-graph/example/dag-yarn/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/dag-yarn/index.html))
 
 See also the [3D version](https://github.com/vasturiano/3d-force-graph).

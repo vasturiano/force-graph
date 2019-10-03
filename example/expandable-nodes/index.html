@@ -1,0 +1,62 @@
+<head>
+  <style> body { margin: 0; } </style>
+
+  <script src="//unpkg.com/force-graph"></script>
+  <!--<script src="../../dist/force-graph.js"></script>-->
+</head>
+
+<body>
+  <div id="graph"></div>
+
+  <script>
+    const rootId = 0;
+
+    // Random tree
+    const N = 300;
+    const gData = {
+      nodes: [...Array(N).keys()].map(i => ({ id: i, collapsed: i !== rootId, childLinks: [] })),
+      links: [...Array(N).keys()]
+        .filter(id => id)
+        .map(id => ({
+          source: Math.round(Math.random() * (id - 1)),
+          target: id
+        }))
+    };
+
+    // link parent/children
+    const nodesById = Object.fromEntries(gData.nodes.map(node => [node.id, node]));
+    gData.links.forEach(link => {
+      nodesById[link.source].childLinks.push(link);
+    });
+
+    const getPrunedTree = () => {
+      const visibleNodes = [];
+      const visibleLinks = [];
+
+      const traverseTree = node => {
+        visibleNodes.push(node);
+        if (node.collapsed) return;
+        visibleLinks.push(...node.childLinks);
+        node.childLinks
+          .map(link => ((typeof link.target) === 'object') ? link.target : nodesById[link.target]) // get child node
+          .forEach(traverseTree);
+      };
+
+      traverseTree(nodesById[rootId]);
+
+      return { nodes: visibleNodes, links: visibleLinks };
+    };
+
+    const elem = document.getElementById('graph');
+    const Graph = ForceGraph()(elem)
+      .graphData(getPrunedTree())
+      .onNodeHover(node => elem.style.cursor = node && node.childLinks.length ? 'pointer' : null)
+      .onNodeClick(node => {
+        node.collapsed = !node.collapsed; // toggle collapse state
+        Graph.graphData(getPrunedTree());
+      })
+      .linkDirectionalParticles(1)
+      .linkDirectionalParticleWidth(2.5)
+      .nodeColor(node => !node.childLinks.length ? 'green' : node.collapsed ? 'red' : 'yellow');
+  </script>
+</body>

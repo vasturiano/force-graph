@@ -1,0 +1,83 @@
+<head>
+  <style> body { margin: 0; } </style>
+
+  <script src="//unpkg.com/d3-dsv"></script>
+  <script src="//unpkg.com/d3-quadtree"></script>
+  <script src="//unpkg.com/d3-force"></script>
+
+  <script src="//unpkg.com/force-graph"></script>
+  <!--<script src="../../dist/force-graph.js"></script>-->
+</head>
+
+<body>
+<div id="graph"></div>
+
+<script>
+  fetch('../datasets/d3-dependencies.csv').then(r => r.text()).then(d3.csvParse).then(data => {
+    const nodes = [], links = [];
+    data.forEach(({ size, path }) => {
+      const levels = path.split('/'),
+        level = levels.length - 1,
+        module = level > 0 ? levels[1] : null,
+        leaf = levels.pop(),
+        parent = levels.join('/');
+
+      const node = {
+        id: path,
+        leaf,
+        module,
+        collapsed: level > 0,
+        childLinks: []
+      };
+
+      nodes.push(node);
+
+      if (parent) {
+        links.push({ source: parent, target: path });
+      }
+    });
+
+    const rootId = 'd3';
+
+    // link parent/children
+    const nodesById = Object.fromEntries(nodes.map(node => [node.id, node]));
+    links.forEach(link => {
+      nodesById[link.source].childLinks.push(link);
+    });
+
+    const getPrunedTree = () => {
+      const visibleNodes = [];
+      const visibleLinks = [];
+
+      const traverseTree = node => {
+        visibleNodes.push(node);
+        if (node.collapsed) return;
+        visibleLinks.push(...node.childLinks);
+        node.childLinks
+          .map(link => ((typeof link.target) === 'object') ? link.target : nodesById[link.target]) // get child node
+      .forEach(traverseTree);
+      };
+
+      traverseTree(nodesById[rootId]);
+
+      return { nodes: visibleNodes, links: visibleLinks };
+    };
+
+    const elem = document.getElementById('graph');
+    const Graph = ForceGraph()
+      (elem)
+        .graphData(getPrunedTree())
+        .nodeLabel('id')
+        .nodeColor(node => !node.childLinks.length ? 'green' : node.collapsed ? 'red' : 'yellow')
+        .onNodeHover(node => elem.style.cursor = node && node.childLinks.length ? 'pointer' : null)
+        .onNodeClick(node => {
+          node.collapsed = !node.collapsed; // toggle collapse state
+          Graph.graphData(getPrunedTree());
+        })
+        .dagMode('td')
+        .dagLevelDistance(90)
+        .d3Force('collision', d3.forceCollide(node => Graph.nodeRelSize()))
+        .warmupTicks(250);
+  });
+</script>
+</body>
