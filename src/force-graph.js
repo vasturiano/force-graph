@@ -302,7 +302,6 @@ export default Kapsule({
 
           // keep engine running at low intensity throughout drag
           if (!d3Event.active) {
-            state.forceGraph.d3AlphaTarget(0.3); // keep engine running at low intensity throughout drag
             obj.fx = obj.x; obj.fy = obj.y; // Fix points
           }
 
@@ -320,7 +319,9 @@ export default Kapsule({
           ['x', 'y'].forEach(c => obj[`f${c}`] = obj[c] = initPos[c] + (dragPos[c] - initPos[c]) / k);
 
           // prevent freeze while dragging
-          state.forceGraph.resetCountdown();
+          state.forceGraph
+            .d3AlphaTarget(0.3) // keep engine running at low intensity throughout drag
+            .resetCountdown();  // prevent freeze while dragging
 
           state.onNodeDrag(obj);
         })
