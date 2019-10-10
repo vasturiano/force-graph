@@ -323,6 +323,7 @@ export default Kapsule({
             .d3AlphaTarget(0.3) // keep engine running at low intensity throughout drag
             .resetCountdown();  // prevent freeze while dragging
 
+          obj.__dragged = true;
           state.onNodeDrag(obj);
         })
         .on('end', () => {
@@ -340,7 +341,10 @@ export default Kapsule({
           // drag cursor
           state.canvas.classList.remove('grabbable');
 
-          state.onNodeDragEnd(obj);
+          if (obj.__dragged) {
+            delete(obj.__dragged);
+            state.onNodeDragEnd(obj);
+          }
         })
     );
 
