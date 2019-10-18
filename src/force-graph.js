@@ -148,9 +148,11 @@ export default Kapsule({
     onNodeDrag: { default: () => {}, triggerUpdate: false },
     onNodeDragEnd: { default: () => {}, triggerUpdate: false },
     onNodeClick: { default: () => {}, triggerUpdate: false },
+    onNodeDoubleClick: { default: () => {}, triggerUpdate: false },
     onNodeRightClick: { triggerUpdate: false },
     onNodeHover: { default: () => {}, triggerUpdate: false },
     onLinkClick: { default: () => {}, triggerUpdate: false },
+    onLinkDoubleClick: { default: () => {}, triggerUpdate: false },
     onLinkRightClick: { triggerUpdate: false },
     onLinkHover: { default: () => {}, triggerUpdate: false },
     onBackgroundClick: { default: () => {}, triggerUpdate: false },
@@ -405,10 +407,11 @@ export default Kapsule({
       }
     }, false);
 
+
     // Handle click events on nodes/links
     container.addEventListener('click', ev => {
       if (state.hoverObj) {
-        state[`on${state.hoverObj.type}Click`](state.hoverObj.d);
+        state[`on${state.hoverObj.type}Click`](state.hoverObj.d, ev);
       } else {
         state.onBackgroundClick();
       }
@@ -421,7 +424,7 @@ export default Kapsule({
       ev.preventDefault();
       if (state.hoverObj) {
         const fn = state[`on${state.hoverObj.type}RightClick`];
-        fn && fn(state.hoverObj.d);
+        fn && fn(state.hoverObj.d, ev);
       } else {
         state.onBackgroundRightClick && state.onBackgroundRightClick();
       }
