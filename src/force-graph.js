@@ -408,9 +408,9 @@ export default Kapsule({
     // Handle click events on nodes/links
     container.addEventListener('click', ev => {
       if (state.hoverObj) {
-        state[`on${state.hoverObj.type}Click`](state.hoverObj.d);
+        state[`on${state.hoverObj.type}Click`](state.hoverObj.d, ev);
       } else {
-        state.onBackgroundClick();
+        state.onBackgroundClick(ev);
       }
     }, false);
 
@@ -421,9 +421,9 @@ export default Kapsule({
       ev.preventDefault();
       if (state.hoverObj) {
         const fn = state[`on${state.hoverObj.type}RightClick`];
-        fn && fn(state.hoverObj.d);
+        fn && fn(state.hoverObj.d, ev);
       } else {
-        state.onBackgroundRightClick && state.onBackgroundRightClick();
+        state.onBackgroundRightClick && state.onBackgroundRightClick(ev);
       }
       return false;
     }, false);
