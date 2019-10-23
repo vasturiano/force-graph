@@ -405,7 +405,6 @@ export default Kapsule({
       }
     }, false);
 
-
     // Handle click events on nodes/links
     container.addEventListener('click', ev => {
       if (state.hoverObj) {
