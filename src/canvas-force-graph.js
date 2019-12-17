@@ -95,10 +95,10 @@ export default Kapsule({
       return this;
     },
     tickFrame: function(state) {
-      layoutTick();
+      !state.isShadow && layoutTick();
       paintLinks();
-      paintArrows();
-      paintPhotons();
+      !state.isShadow && paintArrows();
+      !state.isShadow && paintPhotons();
       paintNodes();
 
       return this;
