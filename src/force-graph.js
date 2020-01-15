@@ -168,6 +168,14 @@ export default Kapsule({
   },
 
   methods: {
+    graph2ScreenCoords: function(state, x, y) {
+      const t = d3ZoomTransform(state.canvas);
+      return { x: x * t.k  + t.x, y: y * t.k + t.y };
+    },
+    screen2GraphCoords: function(state, x, y) {
+      const t = d3ZoomTransform(state.canvas);
+      return { x: (x - t.x) / t.k, y: (y - t.y) / t.k };
+    },
     centerAt: function(state, x, y, transitionDuration) {
       if (!state.canvas) return null; // no canvas yet
 

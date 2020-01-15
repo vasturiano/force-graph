@@ -163,6 +163,13 @@ myGraph(<myDOMElement>)
 | <b>enableZoomPanInteraction</b>([<i>boolean</i>]) | Getter/setter for whether to enable zooming and panning user interactions. | `true` |
 | <b>enablePointerInteraction</b>([<i>boolean</i>]) | Getter/setter for whether to enable the mouse tracking events. This activates an internal tracker of the canvas mouse position and enables the functionality of object hover/click/drag and tooltip labels, at the cost of performance. If you're looking for maximum gain in your graph performance it's recommended to switch off this property. | `true` |
 
+###  Utility
+
+| Method | Description |
+| --- | --- |
+| <b>screen2GraphCoords</b>(<i>x</i>, <i>y</i>) | Utility method to translate viewport coordinates to the graph domain. Given a pair of `x`,`y` screen coordinates, returns the current equivalent `{x, y}` in the domain of graph node coordinates. |
+| <b>graph2ScreenCoords</b>(<i>x</i>, <i>y</i>) | Utility method to translate node coordinates to the viewport domain. Given a pair of `x`,`y` graph coordinates, returns the current equivalent `{x, y}` in viewport coordinates. |
+
 ### Input JSON syntax
 ```
 {
