@@ -18,7 +18,7 @@
         .map(id => ({
           source: id,
           target: Math.round(Math.random() * (id-1)),
-          highlight: id % 2 === 0 ? 'replace' : undefined,
+          highlight: id % 2 === 0 ? undefined : 'replace',
         }))
     };
 
@@ -35,7 +35,9 @@
         ctx.strokeStyle = '#ccc';
         ctx.moveTo(link.source.x, link.source.y);
         ctx.lineTo(link.target.x, link.target.y);
-        ctx.stroke();
+
+        // paint all on last link
+        (link === gData.links[gData.links.length - 1]) && ctx.stroke();
       });
   </script>
 </body>
