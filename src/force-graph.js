@@ -160,6 +160,7 @@ export default Kapsule({
     onBackgroundClick: { default: () => {}, triggerUpdate: false },
     onBackgroundRightClick: { triggerUpdate: false },
     onZoom: { default: () => {}, triggerUpdate: false },
+    onZoomEnd: { default: () => {}, triggerUpdate: false },
     ...linkedProps
   },
 
@@ -376,7 +377,11 @@ export default Kapsule({
           c.translate(t.x, t.y);
           c.scale(t.k, t.k);
         });
-        state.onZoom({ ...t })
+        state.onZoom({ ...t });
+      })
+      .on('end', function() {
+        const t = d3ZoomTransform(this); // Same as d3.event.transform
+        state.onZoomEnd({ ...t });
       });
 
     adjustCanvasSize(state);
