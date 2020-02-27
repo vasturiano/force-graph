@@ -327,6 +327,10 @@ export default Kapsule({
           const dragPos = d3Event;
 
           const k = d3ZoomTransform(state.canvas).k;
+          const transform = {
+            x: (initPos.x + (dragPos.x - initPos.x) / k) - obj.x,
+            y: (initPos.y + (dragPos.y - initPos.y) / k) - obj.y
+          };
 
           // Move fx/fy (and x/y) of nodes based on the scaled drag distance since the drag start
           ['x', 'y'].forEach(c => obj[`f${c}`] = obj[c] = initPos[c] + (dragPos[c] - initPos[c]) / k);
@@ -337,11 +341,12 @@ export default Kapsule({
             .resetCountdown();  // prevent freeze while dragging
 
           obj.__dragged = true;
-          state.onNodeDrag(obj);
+          state.onNodeDrag(obj, transform);
         })
         .on('end', () => {
           const obj = d3Event.subject;
           const initPos = obj.__initialDragPos;
+          const transform = {x: obj.x - initPos.x, y:  obj.y - initPos.y};
 
           if (initPos.fx === undefined) { obj.fx = undefined; }
           if (initPos.fy === undefined) { obj.fy = undefined; }
@@ -356,7 +361,7 @@ export default Kapsule({
 
           if (obj.__dragged) {
             delete(obj.__dragged);
-            state.onNodeDragEnd(obj);
+            state.onNodeDragEnd(obj, transform);
           }
         })
     );
