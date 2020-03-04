@@ -209,7 +209,7 @@ export default Kapsule({
             links.forEach(link => {
               const start = link.source;
               const end = link.target;
-              if (!start.hasOwnProperty('x') || !end.hasOwnProperty('x')) return; // skip invalid link
+              if (!start || !end || !start.hasOwnProperty('x') || !end.hasOwnProperty('x')) return; // skip invalid link
 
               ctx.moveTo(start.x, start.y);
 
@@ -246,7 +246,7 @@ export default Kapsule({
 
           const start = link.source;
           const end = link.target;
-          if (!start.hasOwnProperty('x') || !end.hasOwnProperty('x')) return; // skip invalid link
+          if (!start || !end || !start.hasOwnProperty('x') || !end.hasOwnProperty('x')) return; // skip invalid link
 
           const l = Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2)); // line length
 
@@ -286,7 +286,7 @@ export default Kapsule({
           const start = link.source;
           const end = link.target;
 
-          if (!start.hasOwnProperty('x') || !end.hasOwnProperty('x')) return; // skip invalid link
+          if (!start || !end || !start.hasOwnProperty('x') || !end.hasOwnProperty('x')) return; // skip invalid link
 
           const startR = Math.sqrt(Math.max(0, getNodeVal(start) || 1)) * state.nodeRelSize;
           const endR = Math.sqrt(Math.max(0, getNodeVal(end) || 1)) * state.nodeRelSize;
@@ -347,7 +347,7 @@ export default Kapsule({
           const start = link.source;
           const end = link.target;
 
-          if (!start.hasOwnProperty('x') || !end.hasOwnProperty('x')) return; // skip invalid link
+          if (!start || !end || !start.hasOwnProperty('x') || !end.hasOwnProperty('x')) return; // skip invalid link
 
           const particleSpeed = getSpeed(link);
           const photons = link.__photons || [];
