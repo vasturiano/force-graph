@@ -5,6 +5,7 @@
   "unpkg": "dist/force-graph.min.js",
   "main": "dist/force-graph.common.js",
   "module": "dist/force-graph.module.js",
+  "types": "src/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vasturiano/force-graph.git"
@@ -35,7 +36,8 @@
   },
   "files": [
     "dist/**/*",
-    "example/**/*"
+    "example/**/*",
+    "src/**/*"
   ],
   "dependencies": {
     "@tweenjs/tween.js": "^18.5.0",
