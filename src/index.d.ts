@@ -62,10 +62,12 @@ export interface ForceGraphGenericInstance<ChainableInstance> {
   nodeVal(valAccessor: NodeAccessor<number>): ChainableInstance;
   nodeLabel(): NodeAccessor<string>;
   nodeLabel(labelAccessor: NodeAccessor<string>): ChainableInstance;
+  nodeVisibility(): NodeAccessor<boolean>;
+  nodeVisibility(visibilityAccessor: NodeAccessor<boolean>): ChainableInstance;
   nodeColor(): NodeAccessor<string>;
   nodeColor(colorAccessor: NodeAccessor<string>): ChainableInstance;
-  nodeAutoColorBy(): NodeAccessor<string>;
-  nodeAutoColorBy(colorByAccessor: NodeAccessor<string>): ChainableInstance;
+  nodeAutoColorBy(): NodeAccessor<string | null>;
+  nodeAutoColorBy(colorByAccessor: NodeAccessor<string | null>): ChainableInstance;
   nodeCanvasObject(): CanvasCustomRenderFn<NodeObject>;
   nodeCanvasObject(renderFn: CanvasCustomRenderFn<NodeObject>): ChainableInstance;
   nodeCanvasObjectMode(): string | ((obj: NodeObject) => CanvasCustomRenderMode);
@@ -78,8 +80,8 @@ export interface ForceGraphGenericInstance<ChainableInstance> {
   linkVisibility(visibilityAccessor: LinkAccessor<boolean>): ChainableInstance;
   linkColor(): LinkAccessor<string>;
   linkColor(colorAccessor: LinkAccessor<string>): ChainableInstance;
-  linkAutoColorBy(): LinkAccessor<string>;
-  linkAutoColorBy(colorByAccessor: LinkAccessor<string>): ChainableInstance;
+  linkAutoColorBy(): LinkAccessor<string | null>;
+  linkAutoColorBy(colorByAccessor: LinkAccessor<string | null>): ChainableInstance;
   linkWidth(): LinkAccessor<number>;
   linkWidth(widthAccessor: LinkAccessor<number>): ChainableInstance;
   linkCurvature(): LinkAccessor<number>;
