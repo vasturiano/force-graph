@@ -136,13 +136,13 @@ export interface ForceGraphGenericInstance<ChainableInstance> {
   onEngineStop(callback: () => void): ChainableInstance;
 
   // Interaction
-  onNodeClick(callback: (node: NodeObject) => void): ChainableInstance;
-  onNodeRightClick(callback: (node: NodeObject) => void): ChainableInstance;
+  onNodeClick(callback: (node: NodeObject, event: MouseEvent) => void): ChainableInstance;
+  onNodeRightClick(callback: (node: NodeObject, event: MouseEvent) => void): ChainableInstance;
   onNodeHover(callback: (node: NodeObject | null, previousNode: NodeObject | null) => void): ChainableInstance;
   onNodeDrag(callback: (node: NodeObject, translate: { x: number, y: number }) => void): ChainableInstance;
   onNodeDragEnd(callback: (node: NodeObject, translate: { x: number, y: number }) => void): ChainableInstance;
-  onLinkClick(callback: (link: LinkObject) => void): ChainableInstance;
-  onLinkRightClick(callback: (link: LinkObject) => void): ChainableInstance;
+  onLinkClick(callback: (link: LinkObject, event: MouseEvent) => void): ChainableInstance;
+  onLinkRightClick(callback: (link: LinkObject, event: MouseEvent) => void): ChainableInstance;
   onLinkHover(callback: (link: LinkObject | null, previousLink: LinkObject | null) => void): ChainableInstance;
   linkHoverPrecision(): number;
   linkHoverPrecision(precision: number): ChainableInstance;
