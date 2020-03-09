@@ -1,9 +1,9 @@
-interface GraphData {
+export interface GraphData {
   nodes: NodeObject[];
   links: LinkObject[];
 }
 
-type NodeObject = object & {
+export type NodeObject = object & {
   id?: string | number;
   x?: number;
   y?: number;
@@ -13,7 +13,7 @@ type NodeObject = object & {
   fy?: number;
 };
 
-type LinkObject = object & {
+export type LinkObject = object & {
   source?: string | number | NodeObject;
   target?: string | number | NodeObject;
 };
