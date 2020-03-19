@@ -449,14 +449,18 @@ export default Kapsule({
       link.target = link[state.linkTarget];
     });
 
-    // Add photon particles
-    const linkParticlesAccessor = accessorFn(state.linkDirectionalParticles);
-    state.graphData.links.forEach(link => {
-      const numPhotons = Math.round(Math.abs(linkParticlesAccessor(link)));
-      if (numPhotons) {
-        link.__photons = [...Array(numPhotons)].map(() => ({}));
-      }
-    });
+    if (!state.isShadow) {
+      // Add photon particles
+      const linkParticlesAccessor = accessorFn(state.linkDirectionalParticles);
+      state.graphData.links.forEach(link => {
+        const numPhotons = Math.round(Math.abs(linkParticlesAccessor(link)));
+        if (numPhotons) {
+          link.__photons = [...Array(numPhotons)].map(() => ({}));
+        } else {
+          delete link.__photons;
+        }
+      });
+    }
 
     // Feed data to force-directed layout
     state.forceLayout
