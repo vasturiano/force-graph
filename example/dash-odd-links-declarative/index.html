@@ -1,36 +1,36 @@
 <head>
-    <style> body { margin: 0; } </style>
-  <!--
-    <script src="//unpkg.com/force-graph"></script>-->
-    <script src="../../dist/force-graph.js"></script>
-  </head>
-  
-  <body>
-    <div id="graph"></div>
-  
-    <script>
-      // Random tree
-      const N = 80;
-      const gData = {
-        nodes: [...Array(N).keys()].map(i => ({ id: i })),
-        links: [...Array(N).keys()]
-          .filter(id => id)
-          .map(id => ({
-            source: id,
-            target: Math.round(Math.random() * (id-1)),
-            dashed: (id % 2 === 0)                //Variant 1: Func evaluating dashed property
-            //dashed: (id % 2 === 0) ? [5, 5] : []  //Variant 2: Property accessor to dashed property
-          }))
-      };
-  
-      const elem = document.getElementById('graph');
-  
-      const Graph = ForceGraph()(elem)
-        .graphData(gData)
-        .nodeRelSize(8)
-        .linkWidth(3)
-        .linkLineDash(link => link.dashed === true ? [5, 5] : []) //Variant 1
-        //.linkLineDash("dashed")                                   //Variant 2
-        //.linkLineDash([5, 5])                                     //Variant 3: Constant value
-    </script>
-  </body>
+  <style> body { margin: 0; } </style>
+
+  <script src="//unpkg.com/force-graph"></script>
+  <!--<script src="../../dist/force-graph.js"></script>-->
+</head>
+
+<body>
+  <div id="graph"></div>
+
+  <script>
+    // Random tree
+    const N = 80;
+    const gData = {
+      nodes: [...Array(N).keys()].map(i => ({ id: i })),
+      links: [...Array(N).keys()]
+        .filter(id => id)
+        .map(id => ({
+          source: id,
+          target: Math.round(Math.random() * (id-1)),
+          dashed: (id % 2 === 0)                //Variant 1: Func evaluating dashed property
+          //dashed: (id % 2 === 0) ? [5, 5] : []  //Variant 2: Property accessor to dashed property
+        }))
+    };
+
+    const elem = document.getElementById('graph');
+
+    const Graph = ForceGraph()(elem)
+      .graphData(gData)
+      .nodeRelSize(8)
+      .linkWidth(3)
+      .linkLineDash(link => link.dashed === true ? [5, 5] : []) //Variant 1
+      //.linkLineDash("dashed")                                   //Variant 2
+      //.linkLineDash([5, 5])                                     //Variant 3: Constant value
+  </script>
+</body>
