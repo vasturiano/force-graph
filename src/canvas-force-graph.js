@@ -48,6 +48,7 @@ export default Kapsule({
     linkVisibility: { default: true, triggerUpdate: false },
     linkColor: { default: 'color', triggerUpdate: false },
     linkAutoColorBy: {},
+    linkLineDash: { default: [], triggerUpdate: false },
     linkWidth: { default: 1, triggerUpdate: false },
     linkCurvature: { default: 0, triggerUpdate: false },
     linkCanvasObject: { triggerUpdate: false },
@@ -160,10 +161,20 @@ export default Kapsule({
         ctx.restore();
       }
 
+      function parseLineDashSegments(segments) {
+        if (typeof(segments) == 'string') {
+          return segments.split(',').map(s => parseFloat(s));
+        } else if (Array.isArray(segments)) {
+          return segments;
+        }
+        return [];
+      }
+
       function paintLinks() {
         const getVisibility = accessorFn(state.linkVisibility);
         const getColor = accessorFn(state.linkColor);
         const getWidth = accessorFn(state.linkWidth);
+        const getLineDash = accessorFn(state.linkLineDash);
         const getCurvature = accessorFn(state.linkCurvature);
         const getLinkCanvasObjectMode = accessorFn(state.linkCanvasObjectMode);
 
@@ -196,35 +207,38 @@ export default Kapsule({
         beforeCustomLinks.forEach(link => state.linkCanvasObject(link, ctx, state.globalScale));
         ctx.restore();
 
-        // Bundle strokes per unique color/width for performance optimization
-        const linksPerColor = indexBy(defaultPaintLinks, [getColor, getWidth]);
+        // Bundle strokes per unique color/width/dash for performance optimization
+        const linksPerColor = indexBy(defaultPaintLinks, [getColor, getWidth, getLineDash]);
 
         ctx.save();
         Object.entries(linksPerColor).forEach(([color, linksPerWidth]) => {
           const lineColor = !color || color === 'undefined' ? 'rgba(0,0,0,0.15)' : color;
-          Object.entries(linksPerWidth).forEach(([width, links]) => {
+          Object.entries(linksPerWidth).forEach(([width, linesPerLineDash]) => {
             const lineWidth = (width || 1) / state.globalScale + padAmount;
-
-            ctx.beginPath();
-            links.forEach(link => {
-              const start = link.source;
-              const end = link.target;
-              if (!start || !end || !start.hasOwnProperty('x') || !end.hasOwnProperty('x')) return; // skip invalid link
-
-              ctx.moveTo(start.x, start.y);
-
-              const controlPoints = link.__controlPoints;
-
-              if (!controlPoints) { // Straight line
-                ctx.lineTo(end.x, end.y);
-              } else {
-                // Use quadratic curves for regular lines and bezier for loops
-                ctx[controlPoints.length === 2 ? 'quadraticCurveTo' : 'bezierCurveTo'](...controlPoints, end.x, end.y);
-              }
+            Object.entries(linesPerLineDash).forEach(([dashSegments, links]) => {
+              const lineDashSegments = (!dashSegments || dashSegments == 'undefined' || dashSegments == '') ? [] : parseLineDashSegments(dashSegments);
+              ctx.beginPath();
+              links.forEach(link => {
+                const start = link.source;
+                const end = link.target;
+                if (!start || !end || !start.hasOwnProperty('x') || !end.hasOwnProperty('x')) return; // skip invalid link
+  
+                ctx.moveTo(start.x, start.y);
+  
+                const controlPoints = link.__controlPoints;
+  
+                if (!controlPoints) { // Straight line
+                  ctx.lineTo(end.x, end.y);
+                } else {
+                  // Use quadratic curves for regular lines and bezier for loops
+                  ctx[controlPoints.length === 2 ? 'quadraticCurveTo' : 'bezierCurveTo'](...controlPoints, end.x, end.y);
+                }
+              });
+              ctx.strokeStyle = lineColor;
+              ctx.lineWidth = lineWidth;
+              ctx.setLineDash(lineDashSegments);
+              ctx.stroke();
             });
-            ctx.strokeStyle = lineColor;
-            ctx.lineWidth = lineWidth;
-            ctx.stroke();
           });
         });
         ctx.restore();
