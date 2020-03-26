@@ -48,7 +48,7 @@ export default Kapsule({
     linkVisibility: { default: true, triggerUpdate: false },
     linkColor: { default: 'color', triggerUpdate: false },
     linkAutoColorBy: {},
-    linkLineDash: { default: [], triggerUpdate: false },
+    linkLineDash: { default: null, triggerUpdate: false },
     linkWidth: { default: 1, triggerUpdate: false },
     linkCurvature: { default: 0, triggerUpdate: false },
     linkCanvasObject: { triggerUpdate: false },
@@ -161,15 +161,6 @@ export default Kapsule({
         ctx.restore();
       }
 
-      function parseLineDashSegments(segments) {
-        if (typeof(segments) == 'string') {
-          return segments.split(',').map(s => parseFloat(s));
-        } else if (Array.isArray(segments)) {
-          return segments;
-        }
-        return [];
-      }
-
       function paintLinks() {
         const getVisibility = accessorFn(state.linkVisibility);
         const getColor = accessorFn(state.linkColor);
@@ -216,7 +207,7 @@ export default Kapsule({
           Object.entries(linksPerWidth).forEach(([width, linesPerLineDash]) => {
             const lineWidth = (width || 1) / state.globalScale + padAmount;
             Object.entries(linesPerLineDash).forEach(([dashSegments, links]) => {
-              const lineDashSegments = (!dashSegments || dashSegments == 'undefined' || dashSegments == '') ? [] : parseLineDashSegments(dashSegments);
+              const lineDashSegments = (dashSegments == '' || dashSegments == 'null') ? null : dashSegments.split(',').map(s => parseFloat(s));
               ctx.beginPath();
               links.forEach(link => {
                 const start = link.source;
@@ -236,7 +227,7 @@ export default Kapsule({
               });
               ctx.strokeStyle = lineColor;
               ctx.lineWidth = lineWidth;
-              ctx.setLineDash(lineDashSegments);
+              lineDashSegments && ctx.setLineDash(lineDashSegments);
               ctx.stroke();
             });
           });
