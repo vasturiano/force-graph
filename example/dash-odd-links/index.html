@@ -18,7 +18,8 @@
         .map(id => ({
           source: id,
           target: Math.round(Math.random() * (id-1)),
-          highlight: id % 2 === 0 ? undefined : 'replace',
+          dashed: (id % 2 === 0)                //Variant 1: Func evaluating dashed property
+          //dashed: (id % 2 === 0) ? [5, 5] : []  //Variant 2: Property accessor to dashed property
         }))
     };
 
@@ -28,16 +29,8 @@
       .graphData(gData)
       .nodeRelSize(8)
       .linkWidth(3)
-      .linkCanvasObjectMode('highlight')
-      .linkCanvasObject((link, ctx) => {
-        ctx.setLineDash([5, 5]);
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = '#ccc';
-        ctx.moveTo(link.source.x, link.source.y);
-        ctx.lineTo(link.target.x, link.target.y);
-
-        // paint all on last link
-        (link === gData.links[gData.links.length - 1]) && ctx.stroke();
-      });
+      .linkLineDash(link => link.dashed === true ? [5, 5] : []) //Variant 1
+      //.linkLineDash("dashed")                                   //Variant 2
+      //.linkLineDash([5, 5])                                     //Variant 3: Constant value
   </script>
 </body>
