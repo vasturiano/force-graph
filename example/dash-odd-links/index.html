@@ -2,7 +2,7 @@
   <style> body { margin: 0; } </style>
 
   <script src="//unpkg.com/force-graph"></script>
-  <!--<script src="../../dist/force-graph.js"></script>-->
+<!--  <script src="../../dist/force-graph.js"></script>-->
 </head>
 
 <body>
@@ -10,7 +10,7 @@
 
   <script>
     // Random tree
-    const N = 80;
+    const N = 100;
     const gData = {
       nodes: [...Array(N).keys()].map(i => ({ id: i })),
       links: [...Array(N).keys()]
@@ -24,10 +24,24 @@
 
     const elem = document.getElementById('graph');
 
+    const dashLen = 6;
+    const gapLen = 8;
+
     const Graph = ForceGraph()(elem)
       .graphData(gData)
       .nodeRelSize(8)
       .linkWidth(3)
-      .linkLineDash(link => link.dashed === true ? [5, 5] : [])
+      .linkLineDash(link => link.dashed && [dashLen, gapLen]);
+
+    // Dash animation
+    const st = +new Date();
+    const dashAnimateTime = 300; // time to animate a single dash
+    (function animate() {
+      const t = ((+new Date() - st) % dashAnimateTime) / dashAnimateTime;
+      const lineDash = t < 0.5 ? [0, gapLen * t * 2, dashLen, gapLen * (1 - t * 2)] : [dashLen * (t - 0.5) * 2, gapLen, dashLen * (1 - (t - 0.5) * 2), 0];
+      Graph.linkLineDash(link => link.dashed && lineDash);
+
+      requestAnimationFrame(animate);
+    })(); // IIFE
   </script>
 </body>
