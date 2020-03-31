@@ -207,7 +207,7 @@ export default Kapsule({
           Object.entries(linksPerWidth).forEach(([width, linesPerLineDash]) => {
             const lineWidth = (width || 1) / state.globalScale + padAmount;
             Object.entries(linesPerLineDash).forEach(([dashSegments, links]) => {
-              const lineDashSegments = (dashSegments == '' || dashSegments == 'null') ? null : dashSegments.split(',').map(s => parseFloat(s));
+              const lineDashSegments = getLineDash(links[0]);
               ctx.beginPath();
               links.forEach(link => {
                 const start = link.source;
