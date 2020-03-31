@@ -83,7 +83,7 @@ export interface ForceGraphGenericInstance<ChainableInstance> {
   linkAutoColorBy(): LinkAccessor<string | null>;
   linkAutoColorBy(colorByAccessor: LinkAccessor<string | null>): ChainableInstance;
   linkLineDash(): LinkAccessor<number[] | null>;
-  linkLineDash(linkLineDashAccessor: LinkAccessor<number[]>): ChainableInstance;
+  linkLineDash(linkLineDashAccessor: LinkAccessor<number[] | null>): ChainableInstance;
   linkWidth(): LinkAccessor<number>;
   linkWidth(widthAccessor: LinkAccessor<number>): ChainableInstance;
   linkCurvature(): LinkAccessor<number>;
