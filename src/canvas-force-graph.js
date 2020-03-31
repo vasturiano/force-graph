@@ -48,7 +48,7 @@ export default Kapsule({
     linkVisibility: { default: true, triggerUpdate: false },
     linkColor: { default: 'color', triggerUpdate: false },
     linkAutoColorBy: {},
-    linkLineDash: { default: null, triggerUpdate: false },
+    linkLineDash: { triggerUpdate: false },
     linkWidth: { default: 1, triggerUpdate: false },
     linkCurvature: { default: 0, triggerUpdate: false },
     linkCanvasObject: { triggerUpdate: false },
@@ -227,7 +227,7 @@ export default Kapsule({
               });
               ctx.strokeStyle = lineColor;
               ctx.lineWidth = lineWidth;
-              lineDashSegments && ctx.setLineDash(lineDashSegments);
+              ctx.setLineDash(lineDashSegments || []);
               ctx.stroke();
             });
           });
