@@ -2,7 +2,7 @@
   <style> body { margin: 0; } </style>
 
   <script src="//unpkg.com/force-graph"></script>
-  <!--<script src="../../dist/force-graph.js"></script>-->
+<!--  <script src="../../dist/force-graph.js"></script>-->
 </head>
 
 <body>
@@ -10,7 +10,7 @@
 
   <script>
     // Random tree
-    const N = 80;
+    const N = 100;
     const gData = {
       nodes: [...Array(N).keys()].map(i => ({ id: i })),
       links: [...Array(N).keys()]
@@ -18,26 +18,30 @@
         .map(id => ({
           source: id,
           target: Math.round(Math.random() * (id-1)),
-          highlight: id % 2 === 0 ? undefined : 'replace',
+          dashed: (id % 2 === 0)
         }))
     };
 
     const elem = document.getElementById('graph');
 
+    const dashLen = 6;
+    const gapLen = 8;
+
     const Graph = ForceGraph()(elem)
       .graphData(gData)
       .nodeRelSize(8)
       .linkWidth(3)
-      .linkCanvasObjectMode('highlight')
-      .linkCanvasObject((link, ctx) => {
-        ctx.setLineDash([5, 5]);
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = '#ccc';
-        ctx.moveTo(link.source.x, link.source.y);
-        ctx.lineTo(link.target.x, link.target.y);
+      .linkLineDash(link => link.dashed && [dashLen, gapLen]);
 
-        // paint all on last link
-        (link === gData.links[gData.links.length - 1]) && ctx.stroke();
-      });
+    // Dash animation
+    const st = +new Date();
+    const dashAnimateTime = 300; // time to animate a single dash
+    (function animate() {
+      const t = ((+new Date() - st) % dashAnimateTime) / dashAnimateTime;
+      const lineDash = t < 0.5 ? [0, gapLen * t * 2, dashLen, gapLen * (1 - t * 2)] : [dashLen * (t - 0.5) * 2, gapLen, dashLen * (1 - (t - 0.5) * 2), 0];
+      Graph.linkLineDash(link => link.dashed && lineDash);
+
+      requestAnimationFrame(animate);
+    })(); // IIFE
   </script>
 </body>
