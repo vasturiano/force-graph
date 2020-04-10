@@ -28,6 +28,7 @@ Check out the examples:
 * [Text in links](https://vasturiano.github.io/force-graph/example/text-links/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/text-links/index.html))
 * [Dash odd links](https://vasturiano.github.io/force-graph/example/dash-odd-links/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/dash-odd-links/index.html))
 * [Highlight nodes/links](https://vasturiano.github.io/force-graph/example/highlight/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/highlight/index.html))
+* [Multiple Node Selection](https://vasturiano.github.io/force-graph/example/multi-selection/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/multi-selection/index.html))
 * [Auto-colored nodes/links](https://vasturiano.github.io/force-graph/example/auto-colored/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/auto-colored/index.html))
 * [Custom node shapes](https://vasturiano.github.io/force-graph/example/custom-node-shape/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/custom-node-shape/index.html))
 * [Zoom/pan viewport](https://vasturiano.github.io/force-graph/example/move-viewport/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/move-viewport/index.html))
