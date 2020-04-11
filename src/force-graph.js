@@ -37,6 +37,7 @@ const linkedProps = Object.assign(
     'linkDirectionalParticleColor',
     'dagMode',
     'dagLevelDistance',
+    'd3AlphaMin',
     'd3AlphaDecay',
     'd3VelocityDecay',
     'warmupTicks',
@@ -57,9 +58,10 @@ const linkedProps = Object.assign(
   ].map(p => ({ [p]: bindBoth.linkProp(p)}))
 );
 const linkedMethods = Object.assign(...[
+  'd3Alpha',
   'd3Force',
   'd3ReheatSimulation',
-  'emitParticle'
+  'emitParticle',
 ].map(p => ({ [p]: bindFG.linkMethod(p)})));
 
 function adjustCanvasSize(state) {
