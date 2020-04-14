@@ -58,7 +58,6 @@ const linkedProps = Object.assign(
   ].map(p => ({ [p]: bindBoth.linkProp(p)}))
 );
 const linkedMethods = Object.assign(...[
-  'd3Alpha',
   'd3Force',
   'd3ReheatSimulation',
   'emitParticle',
