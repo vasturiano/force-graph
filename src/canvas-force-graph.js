@@ -61,6 +61,7 @@ export default Kapsule({
     linkDirectionalParticleWidth: { default: 4, triggerUpdate: false },
     linkDirectionalParticleColor: { triggerUpdate: false },
     globalScale: { default: 1, triggerUpdate: false },
+    d3AlphaMin: { default: 0, triggerUpdate: false},
     d3AlphaDecay: { default: 0.0228, triggerUpdate: false, onChange(alphaDecay, state) { state.forceLayout.alphaDecay(alphaDecay) }},
     d3AlphaTarget: { default: 0, triggerUpdate: false, onChange(alphaTarget, state) { state.forceLayout.alphaTarget(alphaTarget) }},
     d3VelocityDecay: { default: 0.4, triggerUpdate: false, onChange(velocityDecay, state) { state.forceLayout.velocityDecay(velocityDecay) } },
@@ -108,7 +109,11 @@ export default Kapsule({
 
       function layoutTick() {
         if (state.engineRunning) {
-          if (++state.cntTicks > state.cooldownTicks || (new Date()) - state.startTickTime > state.cooldownTime) {
+          if (
+            ++state.cntTicks > state.cooldownTicks ||
+            (new Date()) - state.startTickTime > state.cooldownTime ||
+            (state.d3AlphaMin > 0 && state.forceLayout.alpha() < state.d3AlphaMin)
+          ) {
             state.engineRunning = false; // Stop ticking graph
             state.onEngineStop();
           } else {
@@ -515,7 +520,9 @@ export default Kapsule({
         : null
     );
 
-    for (let i=0; i<state.warmupTicks; i++) { state.forceLayout.tick(); } // Initial ticks before starting to render
+    for (let i=0; (i<state.warmupTicks) && !(state.d3AlphaMin > 0 && state.forceLayout.alpha() < state.d3AlphaMin); i++) {
+      state.forceLayout.tick();
+    } // Initial ticks before starting to render
 
     this.resetCountdown();
     state.onFinishUpdate();
