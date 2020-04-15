@@ -121,6 +121,8 @@ export interface ForceGraphGenericInstance<ChainableInstance> {
   dagMode(mode: DagMode): ChainableInstance;
   dagLevelDistance(): number | null;
   dagLevelDistance(distance: number): ChainableInstance;
+  d3AlphaMin(): number;
+  d3AlphaMin(alphaMin: number): ChainableInstance;
   d3AlphaDecay(): number;
   d3AlphaDecay(alphaDecay: number): ChainableInstance;
   d3VelocityDecay(): number;
