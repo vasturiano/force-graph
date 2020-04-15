@@ -41,7 +41,6 @@ Check out the examples:
 * [Force-directed tree (DAG mode)](https://vasturiano.github.io/force-graph/example/tree/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/tree/index.html))
 * [Expandable Tree](https://vasturiano.github.io/force-graph/example/expandable-tree/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/expandable-tree/index.html))
 * [yarn.lock dependency graph (DAG mode)](https://vasturiano.github.io/force-graph/example/dag-yarn/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/dag-yarn/index.html))
-* [Alpha (graph energy)](https://vasturiano.github.io/force-graph/example/alpha/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/alpha/index.html))
 
 See also the [3D version](https://github.com/vasturiano/3d-force-graph).
 
