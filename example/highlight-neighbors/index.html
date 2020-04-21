@@ -1,0 +1,97 @@
+<head>
+  <style>
+    body {
+      margin: 0;
+    }
+  </style>
+
+  <script src="//unpkg.com/force-graph"></script>
+  <!--<script src="../../dist/force-graph.js"></script>-->
+</head>
+
+<body>
+  <div id="graph"></div>
+
+  <script>
+    // Random tree
+    const N = 80;
+    const gData = {
+      nodes: [...Array(N).keys()].map(i => ({ id: i })),
+      links: [...Array(N).keys()]
+        .filter(id => id)
+        .map(id => ({
+          source: id,
+          target: Math.round(Math.random() * (id - 1))
+        }))
+    };
+
+    const NODE_R = 8;
+
+    let highlightNodes = [];
+    let highlightLinks = [];
+
+    const elem = document.getElementById('graph');
+
+    ForceGraph()(elem)
+      .graphData(gData)
+      .nodeRelSize(NODE_R)
+      .onNodeHover(node => {
+        highlightNodes = [];
+        highlightLinks = [];
+        elem.style.cursor = node ? '-webkit-grab' : null;
+        for (let i = 0; i < gData.links.length; i++) {
+          let link = gData.links[i]
+          if (node === null) {
+            return
+          }
+          else if (link.target.id === node.id) {
+            highlightNodes.push(link.source)
+            highlightLinks.push(link)
+          }
+          else if (link.source.id === node.id) {
+            highlightNodes.push(link.target)
+            highlightLinks.push(link)
+          }
+        }
+        highlightNodes.push(node)
+      })
+      .onLinkHover(link => {
+        highlightLinks = [link];
+        highlightNodes = link ? [link.source, link.target] : [];
+      })
+      .linkWidth((link) => {
+        if (link === null) {
+          return 1
+        }
+        for (let i = 0; i < highlightLinks.length; i++) {
+          let highlightLink = highlightLinks[i]
+          if (highlightLink === null) {
+            return 1
+          }
+          else if (highlightLink.source.id === link.source.id && highlightLink.target.id === link.target.id) {
+            return 4
+          }
+        }
+        return 1
+      })
+      .nodeCanvasObjectMode(node => {
+        if (node === null) {
+          return undefined
+        }
+        for (let i = 0; i < highlightNodes.length; i++) {
+          let highlightNode = highlightNodes[i]
+          if (highlightNode.id === node.id) {
+            return 'before'
+          }
+        }
+        return undefined
+      })
+      .nodeCanvasObject((node, ctx) => {
+        // add ring just for highlighted nodes
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, NODE_R * 1.4, 0, 2 * Math.PI, false);
+        ctx.fillStyle = 'red';
+        ctx.fill();
+      });
+  </script>
+</body>
