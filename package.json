@@ -64,9 +64,9 @@
     "postcss-nested": "^4.2.1",
     "postcss-simple-vars": "^5.0.2",
     "rimraf": "^3.0.2",
-    "rollup": "^2.6.1",
+    "rollup": "^2.7.1",
     "rollup-plugin-babel": "^4.4.0",
-    "rollup-plugin-postcss": "^2.6.4",
+    "rollup-plugin-postcss": "^2.9.0",
     "terser": "^4.6.11"
   }
 }
