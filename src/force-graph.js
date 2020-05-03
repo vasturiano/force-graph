@@ -1,6 +1,7 @@
 import { select as d3Select, event as d3Event } from 'd3-selection';
 import { zoom as d3Zoom, zoomTransform as d3ZoomTransform } from 'd3-zoom';
 import { drag as d3Drag } from 'd3-drag';
+import { max as d3Max, min as d3Min } from 'd3-array';
 import throttle from 'lodash.throttle';
 import TWEEN from '@tweenjs/tween.js';
 import Kapsule from 'kapsule';
@@ -247,6 +248,45 @@ export default Kapsule({
       function setZoom(k) {
         state.zoom.scaleTo(state.zoom.__baseElem, k);
       }
+    },
+    zoomToFit: function(state, transitionDuration = 0, padding = 10) {
+      const bbox = this.getGraphBbox();
+
+      const center = {
+        x: (bbox.x[0] + bbox.x[1]) / 2,
+        y: (bbox.y[0] + bbox.y[1]) / 2,
+      };
+
+      const zoomK = Math.max(1e-12, Math.min(1e12,
+        (state.width - padding * 2) / (bbox.x[1] - bbox.x[0]),
+        (state.height - padding * 2) / (bbox.y[1] - bbox.y[0]))
+      );
+
+      this.centerAt(center.x, center.y, transitionDuration);
+      this.zoom(zoomK, transitionDuration);
+
+      return this;
+    },
+    getGraphBbox: function(state) {
+      const getVal = accessorFn(state.nodeVal);
+      const getR = node => Math.sqrt(Math.max(0, getVal(node) || 1)) * state.nodeRelSize;
+
+      const nodesPos = state.graphData.nodes.map(node => ({
+        x: node.x,
+        y: node.y,
+        r: getR(node)
+      }));
+
+      return {
+        x: [
+          d3Min(nodesPos, node => node.x - node.r),
+          d3Max(nodesPos, node => node.x + node.r)
+        ],
+        y: [
+          d3Min(nodesPos, node => node.y - node.r),
+          d3Max(nodesPos, node => node.y + node.r)
+        ]
+      };
     },
     pauseAnimation: function(state) {
       if (state.animationFrameRequestId) {

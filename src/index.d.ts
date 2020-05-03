@@ -115,6 +115,7 @@ export interface ForceGraphGenericInstance<ChainableInstance> {
   centerAt(x?: number, y?: number, durationMs?: number): ChainableInstance;
   zoom(): number;
   zoom(scale: number, durationMs?: number): ChainableInstance;
+  zoomToFit(durationMs?: number, padding?: number): ChainableInstance;
 
   // Force engine (d3-force) configuration
   dagMode(): DagMode;
@@ -162,6 +163,7 @@ export interface ForceGraphGenericInstance<ChainableInstance> {
   enablePointerInteraction(enable?: boolean): ChainableInstance;
 
   // Utility
+  getGraphBbox(): { x: [number, number], y: [number, number] };
   screen2GraphCoords(x: number, y: number): { x: number, y: number };
   graph2ScreenCoords(x: number, y: number): { x: number, y: number };
 }

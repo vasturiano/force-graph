@@ -35,6 +35,7 @@ Check out the examples:
 * [Click to focus on node](https://vasturiano.github.io/force-graph/example/click-to-focus/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/click-to-focus/index.html))
 * [Click to expand/collapse nodes](https://vasturiano.github.io/force-graph/example/expandable-nodes/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/expandable-nodes/index.html))
 * [Fix nodes after dragging](https://vasturiano.github.io/force-graph/example/fix-dragged-nodes/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/fix-dragged-nodes/index.html))
+* [Fit graph to canvas](https://vasturiano.github.io/force-graph/example/fix-to-canvas/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/fit-to-canvas/index.html))
 * [Dynamic data changes](https://vasturiano.github.io/force-graph/example/dynamic/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/dynamic/index.html))
 * [Node collision detection](https://vasturiano.github.io/force-graph/example/collision-detection/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/collision-detection/index.html))
 * [Emit link particles on demand](https://vasturiano.github.io/force-graph/example/emit-particles/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/emit-particles/index.html))
@@ -128,6 +129,7 @@ myGraph(<myDOMElement>)
 | <b>resumeAnimation</b>() | Resumes the rendering cycle of the component, and re-enables the user interaction. This method can be used together with `pauseAnimation` for performance optimization purposes. | |
 | <b>centerAt</b>([<i>x</i>], [<i>y</i>], [<i>ms</i>]) | Getter/setter for the coordinates of the center of the viewport. This method can be used to perform panning on the canvas programmatically. Each of the `x, y` coordinates is optional, allowing for motion in just one dimension. An optional 3rd argument defines the duration of the transition (in ms) to animate the canvas motion. A value of 0 (default) centers immediately in the final position. | 0,0 |
 | <b>zoom</b>([<i>num</i>], [<i>ms</i>]) | Getter/setter for the canvas zoom amount. The zoom is defined in terms of the scale transform of each px. A value of `1` indicates unity, larger values zoom in and smaller values zoom out. An optional 2nd argument defines the duration of the transition (in ms) to animate the canvas motion. A value of 0 (default) jumps immediately to the final position. | By default the zoom is set to a value inversely proportional to the amount of nodes in the system. |
+| <b>zoomToFit</b>([<i>ms</i>], [<i>px</i>]) | Automatically zooms/pans the canvas so that all of the nodes fit inside it. It takes two optional arguments: the first defines the duration of the transition (in ms) to animate the canvas motion (default: 0ms), and the second the amount of padding (in px) between the edge of the canvas and the outermost node (default: 10px). | `(0, 10)` |
 
 ### Force engine (d3-force) configuration
 
@@ -171,6 +173,7 @@ myGraph(<myDOMElement>)
 
 | Method | Description |
 | --- | --- |
+| <b>getGraphBbox</b>() | Returns the current bounding box of all the nodes in the graph, formatted as `{ x: [<num>, <num>], y: [<num>, <num>] }`. |
 | <b>screen2GraphCoords</b>(<i>x</i>, <i>y</i>) | Utility method to translate viewport coordinates to the graph domain. Given a pair of `x`,`y` screen coordinates, returns the current equivalent `{x, y}` in the domain of graph node coordinates. |
 | <b>graph2ScreenCoords</b>(<i>x</i>, <i>y</i>) | Utility method to translate node coordinates to the viewport domain. Given a pair of `x`,`y` graph coordinates, returns the current equivalent `{x, y}` in viewport coordinates. |
 
