@@ -249,35 +249,37 @@ export default Kapsule({
         state.zoom.scaleTo(state.zoom.__baseElem, k);
       }
     },
-    zoomToFit: function(state, transitionDuration = 0, padding = 10) {
-      const bbox = this.getGraphBbox();
+    zoomToFit: function(state, transitionDuration = 0, padding = 10, ...bboxArgs) {
+      const bbox = this.getGraphBbox(...bboxArgs);
+      
+      if (bbox) {
+        const center = {
+          x: (bbox.x[0] + bbox.x[1]) / 2,
+          y: (bbox.y[0] + bbox.y[1]) / 2,
+        };
 
-      const center = {
-        x: (bbox.x[0] + bbox.x[1]) / 2,
-        y: (bbox.y[0] + bbox.y[1]) / 2,
-      };
+        const zoomK = Math.max(1e-12, Math.min(1e12,
+          (state.width - padding * 2) / (bbox.x[1] - bbox.x[0]),
+          (state.height - padding * 2) / (bbox.y[1] - bbox.y[0]))
+        );
 
-      const zoomK = Math.max(1e-12, Math.min(1e12,
-        (state.width - padding * 2) / (bbox.x[1] - bbox.x[0]),
-        (state.height - padding * 2) / (bbox.y[1] - bbox.y[0]))
-      );
-
-      this.centerAt(center.x, center.y, transitionDuration);
-      this.zoom(zoomK, transitionDuration);
+        this.centerAt(center.x, center.y, transitionDuration);
+        this.zoom(zoomK, transitionDuration);
+      }
 
       return this;
     },
-    getGraphBbox: function(state) {
+    getGraphBbox: function(state, nodeFilter = () => true) {
       const getVal = accessorFn(state.nodeVal);
       const getR = node => Math.sqrt(Math.max(0, getVal(node) || 1)) * state.nodeRelSize;
 
-      const nodesPos = state.graphData.nodes.map(node => ({
+      const nodesPos = state.graphData.nodes.filter(nodeFilter).map(node => ({
         x: node.x,
         y: node.y,
         r: getR(node)
       }));
 
-      return {
+      return !nodesPos.length ? null : {
         x: [
           d3Min(nodesPos, node => node.x - node.r),
           d3Max(nodesPos, node => node.x + node.r)
