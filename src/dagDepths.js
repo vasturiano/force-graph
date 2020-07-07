@@ -1,8 +1,11 @@
-export default function({ nodes, links }, idAccessor) {
+export default function({ nodes, links }, idAccessor, {
+  nodeFilter = () => true,
+  onLoopError = loopIds => { throw `Invalid DAG structure! Found cycle in node path: ${loopIds.join(' -> ')}.` }
+} = {}) {
   // linked graph
   const graph = {};
 
-  nodes.forEach(node => graph[idAccessor(node)] = { data: node, out : [], depth: -1 });
+  nodes.forEach(node => graph[idAccessor(node)] = { data: node, out : [], depth: -1, skip: !nodeFilter(node) });
   links.forEach(({ source, target }) => {
     const sourceId = getNodeId(source);
     const targetId = getNodeId(target);
@@ -18,24 +21,30 @@ export default function({ nodes, links }, idAccessor) {
     }
   });
 
+  const foundLoops = [];
   traverse(Object.values(graph));
 
-  // cleanup
-  Object.keys(graph).forEach(id => graph[id] = graph[id].depth);
+  const nodeDepths = Object.assign({}, ...Object.entries(graph)
+    .filter(([, node]) => !node.skip)
+    .map(([id, node]) => ({ [id]: node.depth }))
+  );
 
-  return graph;
+  return nodeDepths;
 
-  function traverse(nodes, nodeStack = []) {
-    const currentDepth = nodeStack.length;
-    for (var i=0, l=nodes.length; i<l; i++) {
+  function traverse(nodes, nodeStack = [], currentDepth = 0) {
+    for (let i=0, l=nodes.length; i<l; i++) {
       const node = nodes[i];
       if (nodeStack.indexOf(node) !== -1) {
         const loop = [...nodeStack.slice(nodeStack.indexOf(node)), node].map(d => idAccessor(d.data));
-        throw `Invalid DAG structure! Found cycle in node path: ${loop.join(' -> ')}.`;
+        if (!foundLoops.some(foundLoop => foundLoop.length === loop.length && foundLoop.every((id, idx) => id === loop[idx]))) {
+          foundLoops.push(loop);
+          onLoopError(loop);
+        }
+        continue;
       }
       if (currentDepth > node.depth) { // Don't unnecessarily revisit chunks of the graph
         node.depth = currentDepth;
-        traverse(node.out, [...nodeStack, node]);
+        traverse(node.out, [...nodeStack, node], currentDepth + (node.skip ? 0 : 1));
       }
     }
   }

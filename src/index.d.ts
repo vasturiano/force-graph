@@ -122,6 +122,10 @@ export interface ForceGraphGenericInstance<ChainableInstance> {
   dagMode(mode: DagMode): ChainableInstance;
   dagLevelDistance(): number | null;
   dagLevelDistance(distance: number): ChainableInstance;
+  dagNodeFilter(): (node: NodeObject) => boolean;
+  dagNodeFilter(filterFn: (node: NodeObject) => boolean): ChainableInstance;
+  onDagError(): (loopNodeIds: (string | number)[]) => void,
+  onDagError(errorHandlerFn: (loopNodeIds: (string | number)[]) => void): ChainableInstance,
   d3AlphaMin(): number;
   d3AlphaMin(alphaMin: number): ChainableInstance;
   d3AlphaDecay(): number;
