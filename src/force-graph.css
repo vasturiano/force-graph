@@ -1,3 +1,8 @@
+canvas {
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
 .graph-tooltip {
   position: absolute;
   transform: translate(-50%, 25px);

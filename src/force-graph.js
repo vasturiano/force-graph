@@ -386,6 +386,7 @@ export default Kapsule({
             .d3AlphaTarget(0.3) // keep engine running at low intensity throughout drag
             .resetCountdown();  // prevent freeze while dragging
 
+          state.ignoreOneClick = true;
           obj.__dragged = true;
           state.onNodeDrag(obj, translate);
         })
@@ -451,48 +452,58 @@ export default Kapsule({
     toolTipElem.classList.add('graph-tooltip');
     container.appendChild(toolTipElem);
 
-    // Capture mouse coords on move
-    const mousePos = { x: -1e12, y: -1e12 };
-    state.canvas.addEventListener('mousemove', ev => {
-      // update the mouse pos
-      const offset = getOffset(container);
-      mousePos.x = ev.pageX - offset.left;
-      mousePos.y = ev.pageY - offset.top;
+    // Capture pointer coords on move or touchstart
+    const pointerPos = { x: -1e12, y: -1e12 };
+    ['pointermove', 'pointerdown'].forEach(evType =>
+      container.addEventListener(evType, ev => {
+        // update the pointer pos
+        const offset = getOffset(container);
+        pointerPos.x = ev.pageX - offset.left;
+        pointerPos.y = ev.pageY - offset.top;
 
-      // Move tooltip
-      toolTipElem.style.top = `${mousePos.y}px`;
-      toolTipElem.style.left = `${mousePos.x}px`;
+        // Move tooltip
+        toolTipElem.style.top = `${pointerPos.y}px`;
+        toolTipElem.style.left = `${pointerPos.x}px`;
 
-      //
+        //
 
-      function getOffset(el) {
-        const rect = el.getBoundingClientRect(),
-          scrollLeft = window.pageXOffset || document.documentElement.scrollLeft,
-          scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        return { top: rect.top + scrollTop, left: rect.left + scrollLeft };
+        function getOffset(el) {
+          const rect = el.getBoundingClientRect(),
+            scrollLeft = window.pageXOffset || document.documentElement.scrollLeft,
+            scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+          return { top: rect.top + scrollTop, left: rect.left + scrollLeft };
+        }
+      }, false)
+    );
+
+    // Handle click/touch events on nodes/links
+    container.addEventListener('pointerup', ev => {
+      if (state.ignoreOneClick) {
+        state.ignoreOneClick = false; // because of dragging end
+        return;
+      }
+
+      if (ev.button === 0) { // mouse left-click or touch
+        if (state.hoverObj) {
+          state[`on${state.hoverObj.type}Click`](state.hoverObj.d, ev);
+        } else {
+          state.onBackgroundClick(ev);
+        }
+      }
+
+      if (ev.button === 2) { // mouse right-click
+        if (state.hoverObj) {
+          const fn = state[`on${state.hoverObj.type}RightClick`];
+          fn && fn(state.hoverObj.d, ev);
+        } else {
+          state.onBackgroundRightClick && state.onBackgroundRightClick(ev);
+        }
       }
     }, false);
 
-    // Handle click events on nodes/links
-    container.addEventListener('click', ev => {
-      if (state.hoverObj) {
-        state[`on${state.hoverObj.type}Click`](state.hoverObj.d, ev);
-      } else {
-        state.onBackgroundClick(ev);
-      }
-    }, false);
-
-    // Handle right-click events
     container.addEventListener('contextmenu', ev => {
       if (!state.onBackgroundRightClick && !state.onNodeRightClick && !state.onLinkRightClick) return true; // default contextmenu behavior
-
       ev.preventDefault();
-      if (state.hoverObj) {
-        const fn = state[`on${state.hoverObj.type}RightClick`];
-        fn && fn(state.hoverObj.d, ev);
-      } else {
-        state.onBackgroundRightClick && state.onBackgroundRightClick(ev);
-      }
       return false;
     }, false);
 
@@ -520,8 +531,8 @@ export default Kapsule({
 
         // Lookup object per pixel color
         const pxScale = window.devicePixelRatio;
-        const px = (mousePos.x > 0 && mousePos.y > 0)
-          ? shadowCtx.getImageData(mousePos.x * pxScale, mousePos.y * pxScale, 1, 1)
+        const px = (pointerPos.x > 0 && pointerPos.y > 0)
+          ? shadowCtx.getImageData(pointerPos.x * pxScale, pointerPos.y * pxScale, 1, 1)
           : null;
         const obj = px ? state.colorTracker.lookup(px.data) : null;
 
