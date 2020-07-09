@@ -386,7 +386,6 @@ export default Kapsule({
             .d3AlphaTarget(0.3) // keep engine running at low intensity throughout drag
             .resetCountdown();  // prevent freeze while dragging
 
-          state.ignoreOneClick = true;
           obj.__dragged = true;
           state.onNodeDrag(obj, translate);
         })
@@ -456,6 +455,11 @@ export default Kapsule({
     const pointerPos = { x: -1e12, y: -1e12 };
     ['pointermove', 'pointerdown'].forEach(evType =>
       container.addEventListener(evType, ev => {
+        // detect point drag
+        !state.isPointerDragging && ev.type === 'pointermove'
+        && ev.pressure > 0 && (ev.movementX !== 0 || ev.movementY !== 0)
+        && (state.isPointerDragging = true);
+
         // update the pointer pos
         const offset = getOffset(container);
         pointerPos.x = ev.pageX - offset.left;
@@ -478,9 +482,9 @@ export default Kapsule({
 
     // Handle click/touch events on nodes/links
     container.addEventListener('pointerup', ev => {
-      if (state.ignoreOneClick) {
-        state.ignoreOneClick = false; // because of dragging end
-        return;
+      if (state.isPointerDragging) {
+        state.isPointerDragging = false;
+        return; // don't trigger click events after pointer drag (pan / node drag functionality)
       }
 
       if (ev.button === 0) { // mouse left-click or touch
@@ -529,12 +533,15 @@ export default Kapsule({
       if (state.enablePointerInteraction) {
         // Update tooltip and trigger onHover events
 
-        // Lookup object per pixel color
-        const pxScale = window.devicePixelRatio;
-        const px = (pointerPos.x > 0 && pointerPos.y > 0)
-          ? shadowCtx.getImageData(pointerPos.x * pxScale, pointerPos.y * pxScale, 1, 1)
-          : null;
-        const obj = px ? state.colorTracker.lookup(px.data) : null;
+        let obj = null;
+        if (!state.isPointerDragging) { // don't hover during drag
+          // Lookup object per pixel color
+          const pxScale = window.devicePixelRatio;
+          const px = (pointerPos.x > 0 && pointerPos.y > 0)
+            ? shadowCtx.getImageData(pointerPos.x * pxScale, pointerPos.y * pxScale, 1, 1)
+            : null;
+          px && (obj = state.colorTracker.lookup(px.data));
+        }
 
         if (obj !== state.hoverObj) {
           const prevObj = state.hoverObj;
