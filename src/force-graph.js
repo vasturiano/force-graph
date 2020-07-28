@@ -487,22 +487,24 @@ export default Kapsule({
         return; // don't trigger click events after pointer drag (pan / node drag functionality)
       }
 
-      if (ev.button === 0) { // mouse left-click or touch
-        if (state.hoverObj) {
-          state[`on${state.hoverObj.type}Click`](state.hoverObj.d, ev);
-        } else {
-          state.onBackgroundClick(ev);
+      requestAnimationFrame(() => { // trigger click events asynchronously, to allow hoverObj to be set (on frame)
+        if (ev.button === 0) { // mouse left-click or touch
+          if (state.hoverObj) {
+            state[`on${state.hoverObj.type}Click`](state.hoverObj.d, ev);
+          } else {
+            state.onBackgroundClick(ev);
+          }
         }
-      }
 
-      if (ev.button === 2) { // mouse right-click
-        if (state.hoverObj) {
-          const fn = state[`on${state.hoverObj.type}RightClick`];
-          fn && fn(state.hoverObj.d, ev);
-        } else {
-          state.onBackgroundRightClick && state.onBackgroundRightClick(ev);
+        if (ev.button === 2) { // mouse right-click
+          if (state.hoverObj) {
+            const fn = state[`on${state.hoverObj.type}RightClick`];
+            fn && fn(state.hoverObj.d, ev);
+          } else {
+            state.onBackgroundRightClick && state.onBackgroundRightClick(ev);
+          }
         }
-      }
+      });
     }, false);
 
     container.addEventListener('contextmenu', ev => {
