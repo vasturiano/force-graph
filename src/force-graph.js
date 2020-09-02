@@ -1,4 +1,4 @@
-import { select as d3Select, event as d3Event } from 'd3-selection';
+import { select as d3Select } from 'd3-selection';
 import { zoom as d3Zoom, zoomTransform as d3ZoomTransform } from 'd3-zoom';
 import { drag as d3Drag } from 'd3-drag';
 import { max as d3Max, min as d3Min } from 'd3-array';
@@ -355,22 +355,22 @@ export default Kapsule({
           const obj = state.hoverObj;
           return (obj && obj.type === 'Node') ? obj.d : null; // Only drag nodes
         })
-        .on('start', () => {
-          const obj = d3Event.subject;
+        .on('start', ev => {
+          const obj = ev.subject;
           obj.__initialDragPos = { x: obj.x, y: obj.y, fx: obj.fx, fy: obj.fy };
 
           // keep engine running at low intensity throughout drag
-          if (!d3Event.active) {
+          if (!ev.active) {
             obj.fx = obj.x; obj.fy = obj.y; // Fix points
           }
 
           // drag cursor
           state.canvas.classList.add('grabbable');
         })
-        .on('drag', () => {
-          const obj = d3Event.subject;
+        .on('drag', ev => {
+          const obj = ev.subject;
           const initPos = obj.__initialDragPos;
-          const dragPos = d3Event;
+          const dragPos = ev;
 
           const k = d3ZoomTransform(state.canvas).k;
           const translate = {
@@ -389,8 +389,8 @@ export default Kapsule({
           obj.__dragged = true;
           state.onNodeDrag(obj, translate);
         })
-        .on('end', () => {
-          const obj = d3Event.subject;
+        .on('end', ev => {
+          const obj = ev.subject;
           const initPos = obj.__initialDragPos;
           const translate = {x: obj.x - initPos.x, y:  obj.y - initPos.y};
 
@@ -419,7 +419,7 @@ export default Kapsule({
     state.zoom.__baseElem.on('dblclick.zoom', null); // Disable double-click to zoom
 
     state.zoom
-      .filter(() => state.enableZoomPanInteraction ? !d3Event.button : false) // disable zoom interaction
+      .filter(ev => state.enableZoomPanInteraction ? !ev.button : false) // disable zoom interaction
       .scaleExtent([0.01, 1000])
       .on('zoom', function() {
         const t = d3ZoomTransform(this); // Same as d3.event.transform
