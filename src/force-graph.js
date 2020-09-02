@@ -457,7 +457,7 @@ export default Kapsule({
       container.addEventListener(evType, ev => {
         // detect point drag
         !state.isPointerDragging && ev.type === 'pointermove'
-        && ev.pressure > 0 && (ev.movementX !== 0 || ev.movementY !== 0)
+        && ev.pressure > 0 && [ev.movementX, ev.movementY].some(m => Math.abs(m) > (ev.pointerType === 'touch' ? 1 : 0)) // relax drag trigger sensitivity on touch events
         && (state.isPointerDragging = true);
 
         // update the pointer pos
