@@ -477,7 +477,7 @@ export default Kapsule({
             scrollTop = window.pageYOffset || document.documentElement.scrollTop;
           return { top: rect.top + scrollTop, left: rect.left + scrollLeft };
         }
-      }, false)
+      }, { passive: true })
     );
 
     // Handle click/touch events on nodes/links
@@ -505,13 +505,13 @@ export default Kapsule({
           }
         }
       });
-    }, false);
+    }, { passive: true });
 
     container.addEventListener('contextmenu', ev => {
       if (!state.onBackgroundRightClick && !state.onNodeRightClick && !state.onLinkRightClick) return true; // default contextmenu behavior
       ev.preventDefault();
       return false;
-    }, false);
+    });
 
     state.forceGraph(ctx);
     state.shadowGraph(shadowCtx);
