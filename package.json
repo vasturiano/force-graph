@@ -56,18 +56,18 @@
     "lodash.throttle": "^4.1.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.11.5",
+    "@babel/core": "^7.11.6",
     "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@babel/plugin-proposal-object-rest-spread": "^7.11.0",
     "@babel/preset-env": "^7.11.5",
-    "@rollup/plugin-babel": "^5.2.0",
+    "@rollup/plugin-babel": "^5.2.1",
     "@rollup/plugin-commonjs": "^15.0.0",
     "@rollup/plugin-node-resolve": "^9.0.0",
     "postcss-nested": "^4.2.3",
     "postcss-simple-vars": "^5.0.2",
     "rimraf": "^3.0.2",
-    "rollup": "^2.26.9",
+    "rollup": "^2.26.11",
     "rollup-plugin-postcss": "^3.1.8",
-    "terser": "^5.2.1"
+    "terser": "^5.3.1"
   }
 }
