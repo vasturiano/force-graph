@@ -116,6 +116,8 @@ export interface ForceGraphGenericInstance<ChainableInstance> {
   zoom(): number;
   zoom(scale: number, durationMs?: number): ChainableInstance;
   zoomToFit(durationMs?: number, padding?: number, nodeFilter?: (node: NodeObject) => boolean): ChainableInstance;
+  onRenderFramePre(callback: (canvasContext: CanvasRenderingContext2D, globalScale: number) => void): ChainableInstance;
+  onRenderFramePost(callback: (canvasContext: CanvasRenderingContext2D, globalScale: number) => void): ChainableInstance;
 
   // Force engine (d3-force) configuration
   dagMode(): DagMode;
