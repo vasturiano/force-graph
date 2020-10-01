@@ -166,6 +166,8 @@ export default Kapsule({
     onBackgroundRightClick: { triggerUpdate: false },
     onZoom: { default: () => {}, triggerUpdate: false },
     onZoomEnd: { default: () => {}, triggerUpdate: false },
+    onRenderFramePre: { triggerUpdate: false },
+    onRenderFramePost: { triggerUpdate: false },
     ...linkedProps
   },
 
@@ -573,8 +575,10 @@ export default Kapsule({
       clearCanvas(ctx, state.width, state.height);
 
       // Frame cycle
-      const t = d3ZoomTransform(state.canvas);
-      state.forceGraph.globalScale(t.k).tickFrame();
+      const globalScale = d3ZoomTransform(state.canvas).k;
+      state.onRenderFramePre && state.onRenderFramePre(ctx, globalScale);
+      state.forceGraph.globalScale(globalScale).tickFrame();
+      state.onRenderFramePost && state.onRenderFramePost(ctx, globalScale);
 
       TWEEN.update(); // update canvas animation tweens
 
