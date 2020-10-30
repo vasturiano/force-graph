@@ -6,7 +6,7 @@ import {
   forceRadial as d3ForceRadial
 } from 'd3-force-3d';
 
-import { default as Bezier } from 'bezier-js';
+import { Bezier } from 'bezier-js';
 
 import Kapsule from 'kapsule';
 import accessorFn from 'accessor-fn';
