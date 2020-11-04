@@ -1,10 +1,11 @@
-canvas {
+.force-graph-container canvas {
+  display: block;
   user-select: none;
   outline: none;
   -webkit-tap-highlight-color: transparent;
 }
 
-.graph-tooltip {
+.force-graph-container .graph-tooltip {
   position: absolute;
   transform: translate(-50%, 25px);
   font-family: sans-serif;
@@ -16,14 +17,14 @@ canvas {
   visibility: hidden; /* by default */
 }
 
-.grabbable {
+.force-graph-container .grabbable {
   cursor: move;
   cursor: grab;
   cursor: -moz-grab;
   cursor: -webkit-grab;
 }
 
-.grabbable:active {
+.force-graph-container .grabbable:active {
   cursor: grabbing;
   cursor: -moz-grabbing;
   cursor: -webkit-grabbing;

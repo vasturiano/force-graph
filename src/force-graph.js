@@ -331,6 +331,7 @@ export default Kapsule({
 
     // Container anchor for canvas and tooltip
     const container = document.createElement('div');
+    container.classList.add('force-graph-container');
     container.style.position = 'relative';
     domNode.appendChild(container);
 
