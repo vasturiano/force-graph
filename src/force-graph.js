@@ -408,6 +408,8 @@ export default Kapsule({
           // drag cursor
           state.canvas.classList.remove('grabbable');
 
+          state.isPointerDragging = false;
+
           if (obj.__dragged) {
             delete(obj.__dragged);
             state.onNodeDragEnd(obj, translate);
