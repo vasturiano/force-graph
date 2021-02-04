@@ -149,6 +149,11 @@ export default Kapsule({
     },
     backgroundColor: { onChange(color, state) { state.canvas && color && (state.canvas.style.background = color) }, triggerUpdate: false },
     nodeLabel: { default: 'name', triggerUpdate: false },
+    nodePointerAreaPaint: { onChange(paintFn, state) {
+      state.shadowGraph.nodeCanvasObject(!paintFn ? null :
+        (node, ctx, globalScale) => paintFn(node, node.__indexColor, ctx, globalScale)
+      );
+    }, triggerUpdate: false },
     linkLabel: { default: 'name', triggerUpdate: false },
     linkHoverPrecision: { default: 4, triggerUpdate: false },
     enableNodeDrag: { default: true, triggerUpdate: false },
