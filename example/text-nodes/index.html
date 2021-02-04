@@ -35,7 +35,7 @@
         .nodePointerAreaPaint((node, color, ctx) => {
           ctx.fillStyle = color;
           const bckgDimensions = node.__bckgDimensions;
-          ctx.fillRect(node.x - bckgDimensions[0] / 2, node.y - bckgDimensions[1] / 2, ...bckgDimensions);
+          bckgDimensions && ctx.fillRect(node.x - bckgDimensions[0] / 2, node.y - bckgDimensions[1] / 2, ...bckgDimensions);
         });
     });
   </script>
