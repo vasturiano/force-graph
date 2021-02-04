@@ -33,6 +33,11 @@
         const size = 12;
         ctx.drawImage(img, x - size / 2, y - size / 2, size, size);
       })
+      .nodePointerAreaPaint((node, color, ctx) => {
+        const size = 12;
+        ctx.fillStyle = color;
+        ctx.fillRect(node.x - size / 2, node.y - size / 2, size, size); // draw square as pointer trap
+      })
       .graphData(gData);
   </script>
 </body>
