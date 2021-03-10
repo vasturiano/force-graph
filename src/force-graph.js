@@ -157,7 +157,9 @@ export default Kapsule({
     linkLabel: { default: 'name', triggerUpdate: false },
     linkHoverPrecision: { default: 4, triggerUpdate: false },
     enableNodeDrag: { default: true, triggerUpdate: false },
-    enableZoomPanInteraction: { default: true, triggerUpdate: false },
+    enableZoomInteraction: { default: true, triggerUpdate: false },
+    enablePanInteraction: { default: true, triggerUpdate: false },
+    enableZoomPanInteraction: { default: true, triggerUpdate: false }, // to be deprecated
     enablePointerInteraction: { default: true, onChange(_, state) { state.hoverObj = null; }, triggerUpdate: false },
     onNodeDrag: { default: () => {}, triggerUpdate: false },
     onNodeDragEnd: { default: () => {}, triggerUpdate: false },
@@ -429,7 +431,13 @@ export default Kapsule({
     state.zoom.__baseElem.on('dblclick.zoom', null); // Disable double-click to zoom
 
     state.zoom
-      .filter(ev => state.enableZoomPanInteraction ? !ev.button : false) // disable zoom interaction
+      .filter(ev =>
+        // disable zoom interaction
+        !ev.button
+        && state.enableZoomPanInteraction
+        && (state.enableZoomInteraction || ev.type !== 'wheel')
+        && (state.enablePanInteraction || ev.type === 'wheel')
+      )
       .scaleExtent([0.01, 1000])
       .on('zoom', function() {
         const t = d3ZoomTransform(this); // Same as d3.event.transform

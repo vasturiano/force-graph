@@ -166,8 +166,10 @@ export interface ForceGraphGenericInstance<ChainableInstance> {
   onZoomEnd(callback: (transform: {k: number, x: number, y: number}) => void): ChainableInstance;
   enableNodeDrag(): boolean;
   enableNodeDrag(enable: boolean): ChainableInstance;
-  enableZoomPanInteraction(): boolean;
-  enableZoomPanInteraction(enable: boolean): ChainableInstance;
+  enableZoomInteraction(): boolean;
+  enableZoomInteraction(enable: boolean): ChainableInstance;
+  enablePanInteraction(): boolean;
+  enablePanInteraction(enable: boolean): ChainableInstance;
   enablePointerInteraction(): boolean;
   enablePointerInteraction(enable?: boolean): ChainableInstance;
 
