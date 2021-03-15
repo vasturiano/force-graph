@@ -157,6 +157,8 @@ export default Kapsule({
     }, triggerUpdate: false },
     linkLabel: { default: 'name', triggerUpdate: false },
     linkHoverPrecision: { default: 4, triggerUpdate: false },
+    minZoom: { default: 0.01, onChange(minZoom, state) { state.zoom.scaleExtent([minZoom, state.zoom.scaleExtent()[1]]); }, triggerUpdate: false },
+    maxZoom: { default: 1000, onChange(maxZoom, state) { state.zoom.scaleExtent([state.zoom.scaleExtent()[0], maxZoom]) }, triggerUpdate: false },
     enableNodeDrag: { default: true, triggerUpdate: false },
     enableZoomInteraction: { default: true, triggerUpdate: false },
     enablePanInteraction: { default: true, triggerUpdate: false },
@@ -327,6 +329,7 @@ export default Kapsule({
 
   stateInit: () => ({
     lastSetZoom: 1,
+    zoom: d3Zoom(),
     forceGraph: new CanvasForceGraph(),
     shadowGraph: new CanvasForceGraph()
       .cooldownTicks(0)
@@ -429,7 +432,6 @@ export default Kapsule({
     );
 
     // Setup zoom / pan interaction
-    state.zoom = d3Zoom();
     state.zoom(state.zoom.__baseElem = d3Select(state.canvas)); // Attach controlling elem for easy access
 
     state.zoom.__baseElem.on('dblclick.zoom', null); // Disable double-click to zoom
@@ -442,7 +444,6 @@ export default Kapsule({
         && (state.enableZoomInteraction || ev.type !== 'wheel')
         && (state.enablePanInteraction || ev.type === 'wheel')
       )
-      .scaleExtent([0.01, 1000])
       .on('zoom', function() {
         const t = d3ZoomTransform(this); // Same as d3.event.transform
         [ctx, shadowCtx].forEach(c => {
