@@ -69,6 +69,7 @@
           highlightNodes.add(link.target);
         }
       })
+      .autoPauseRedraw(false) // keep redrawing after engine has stopped
       .linkWidth(link => highlightLinks.has(link) ? 5 : 1)
       .linkDirectionalParticles(4)
       .linkDirectionalParticleWidth(link => highlightLinks.has(link) ? 4 : 0)
