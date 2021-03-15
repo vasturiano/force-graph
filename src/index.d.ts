@@ -172,6 +172,8 @@ export interface ForceGraphGenericInstance<ChainableInstance> {
   enablePanInteraction(enable: boolean): ChainableInstance;
   enablePointerInteraction(): boolean;
   enablePointerInteraction(enable?: boolean): ChainableInstance;
+  autoPauseRedraw(): boolean;
+  autoPauseRedraw(enable?: boolean): ChainableInstance;
 
   // Utility
   getGraphBbox(nodeFilter?: (node: NodeObject) => boolean): { x: [number, number], y: [number, number] };

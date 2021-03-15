@@ -100,6 +100,7 @@ function adjustCanvasSize(state) {
       (state.width - curWidth) / 2 / k,
       (state.height - curHeight) / 2 / k
     );
+    state.needsRedraw = true;
   }
 }
 
@@ -161,6 +162,7 @@ export default Kapsule({
     enablePanInteraction: { default: true, triggerUpdate: false },
     enableZoomPanInteraction: { default: true, triggerUpdate: false }, // to be deprecated
     enablePointerInteraction: { default: true, onChange(_, state) { state.hoverObj = null; }, triggerUpdate: false },
+    autoPauseRedraw: { default: true, triggerUpdate: false },
     onNodeDrag: { default: () => {}, triggerUpdate: false },
     onNodeDragEnd: { default: () => {}, triggerUpdate: false },
     onNodeClick: { default: () => {}, triggerUpdate: false },
@@ -228,6 +230,7 @@ export default Kapsule({
           x === undefined ? getCenter().x : x,
           y === undefined ? getCenter().y : y
         );
+        state.needsRedraw = true;
       }
     },
     zoom: function(state, k, transitionDuration) {
@@ -258,6 +261,7 @@ export default Kapsule({
 
       function setZoom(k) {
         state.zoom.scaleTo(state.zoom.__baseElem, k);
+        state.needsRedraw = true;
       }
     },
     zoomToFit: function(state, transitionDuration = 0, padding = 10, ...bboxArgs) {
@@ -447,6 +451,7 @@ export default Kapsule({
           c.scale(t.k, t.k);
         });
         state.onZoom({ ...t });
+        state.needsRedraw = true;
       })
       .on('end', function() {
         const t = d3ZoomTransform(this); // Same as d3.event.transform
@@ -455,14 +460,17 @@ export default Kapsule({
 
     adjustCanvasSize(state);
 
-    state.forceGraph.onFinishUpdate(() => {
-      // re-zoom, if still in default position (not user modified)
-      if (d3ZoomTransform(state.canvas).k === state.lastSetZoom && state.graphData.nodes.length) {
-        state.zoom.scaleTo(state.zoom.__baseElem,
-          state.lastSetZoom = ZOOM2NODES_FACTOR / Math.cbrt(state.graphData.nodes.length)
-        );
-      }
-    });
+    state.forceGraph
+      .onNeedsRedraw(() => state.needsRedraw = true)
+      .onFinishUpdate(() => {
+        // re-zoom, if still in default position (not user modified)
+        if (d3ZoomTransform(state.canvas).k === state.lastSetZoom && state.graphData.nodes.length) {
+          state.zoom.scaleTo(state.zoom.__baseElem,
+            state.lastSetZoom = ZOOM2NODES_FACTOR / Math.cbrt(state.graphData.nodes.length)
+          );
+          state.needsRedraw = true;
+        }
+      });
 
     // Setup tooltip
     const toolTipElem = document.createElement('div');
@@ -550,6 +558,10 @@ export default Kapsule({
 
     // Kick-off renderer
     (this._animationCycle = function animate() { // IIFE
+      const doRedraw = !state.autoPauseRedraw || !!state.needsRedraw || state.forceGraph.isEngineRunning()
+        || state.graphData.links.some(d => d.__photons && d.__photons.length);
+      state.needsRedraw = false;
+
       if (state.enablePointerInteraction) {
         // Update tooltip and trigger onHover events
 
@@ -584,17 +596,19 @@ export default Kapsule({
           state.hoverObj = obj;
         }
 
-        refreshShadowCanvas();
+        doRedraw && refreshShadowCanvas();
       }
 
-      // Wipe canvas
-      clearCanvas(ctx, state.width, state.height);
+      if(doRedraw) {
+        // Wipe canvas
+        clearCanvas(ctx, state.width, state.height);
 
-      // Frame cycle
-      const globalScale = d3ZoomTransform(state.canvas).k;
-      state.onRenderFramePre && state.onRenderFramePre(ctx, globalScale);
-      state.forceGraph.globalScale(globalScale).tickFrame();
-      state.onRenderFramePost && state.onRenderFramePost(ctx, globalScale);
+        // Frame cycle
+        const globalScale = d3ZoomTransform(state.canvas).k;
+        state.onRenderFramePre && state.onRenderFramePre(ctx, globalScale);
+        state.forceGraph.globalScale(globalScale).tickFrame();
+        state.onRenderFramePost && state.onRenderFramePost(ctx, globalScale);
+      }
 
       TWEEN.update(); // update canvas animation tweens
 

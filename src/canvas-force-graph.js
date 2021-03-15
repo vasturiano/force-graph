@@ -19,6 +19,9 @@ import getDagDepths from './dagDepths';
 
 const DAG_LEVEL_NODE_RATIO = 2;
 
+// whenever styling props are changed that require a canvas redraw
+const notifyRedraw = (_, state) => state.onNeedsRedraw && state.onNeedsRedraw();
+
 export default Kapsule({
 
   props: {
@@ -37,27 +40,27 @@ export default Kapsule({
     dagLevelDistance: {},
     dagNodeFilter: { default: node => true },
     onDagError: { triggerUpdate: false },
-    nodeRelSize: { default: 4, triggerUpdate: false }, // area per val unit
+    nodeRelSize: { default: 4, triggerUpdate: false, onChange: notifyRedraw }, // area per val unit
     nodeId: { default: 'id' },
-    nodeVal: { default: 'val', triggerUpdate: false },
-    nodeColor: { default: 'color', triggerUpdate: false },
+    nodeVal: { default: 'val', triggerUpdate: false, onChange: notifyRedraw },
+    nodeColor: { default: 'color', triggerUpdate: false, onChange: notifyRedraw },
     nodeAutoColorBy: {},
-    nodeCanvasObject: { triggerUpdate: false },
-    nodeCanvasObjectMode: { default: () => 'replace', triggerUpdate: false },
-    nodeVisibility: { default: true, triggerUpdate: false },
+    nodeCanvasObject: { triggerUpdate: false, onChange: notifyRedraw },
+    nodeCanvasObjectMode: { default: () => 'replace', triggerUpdate: false, onChange: notifyRedraw },
+    nodeVisibility: { default: true, triggerUpdate: false, onChange: notifyRedraw },
     linkSource: { default: 'source' },
     linkTarget: { default: 'target' },
-    linkVisibility: { default: true, triggerUpdate: false },
-    linkColor: { default: 'color', triggerUpdate: false },
+    linkVisibility: { default: true, triggerUpdate: false, onChange: notifyRedraw },
+    linkColor: { default: 'color', triggerUpdate: false, onChange: notifyRedraw },
     linkAutoColorBy: {},
-    linkLineDash: { triggerUpdate: false },
-    linkWidth: { default: 1, triggerUpdate: false },
-    linkCurvature: { default: 0, triggerUpdate: false },
-    linkCanvasObject: { triggerUpdate: false },
-    linkCanvasObjectMode: { default: () => 'replace', triggerUpdate: false },
-    linkDirectionalArrowLength: { default: 0, triggerUpdate: false },
-    linkDirectionalArrowColor: { triggerUpdate: false },
-    linkDirectionalArrowRelPos: { default: 0.5, triggerUpdate: false }, // value between 0<>1 indicating the relative pos along the (exposed) line
+    linkLineDash: { triggerUpdate: false, onChange: notifyRedraw },
+    linkWidth: { default: 1, triggerUpdate: false, onChange: notifyRedraw },
+    linkCurvature: { default: 0, triggerUpdate: false, onChange: notifyRedraw },
+    linkCanvasObject: { triggerUpdate: false, onChange: notifyRedraw },
+    linkCanvasObjectMode: { default: () => 'replace', triggerUpdate: false, onChange: notifyRedraw },
+    linkDirectionalArrowLength: { default: 0, triggerUpdate: false, onChange: notifyRedraw },
+    linkDirectionalArrowColor: { triggerUpdate: false, onChange: notifyRedraw },
+    linkDirectionalArrowRelPos: { default: 0.5, triggerUpdate: false, onChange: notifyRedraw }, // value between 0<>1 indicating the relative pos along the (exposed) line
     linkDirectionalParticles: { default: 0 }, // animate photons travelling in the link direction
     linkDirectionalParticleSpeed: { default: 0.01, triggerUpdate: false }, // in link length ratio per frame
     linkDirectionalParticleWidth: { default: 4, triggerUpdate: false },
@@ -74,6 +77,7 @@ export default Kapsule({
     onFinishUpdate: { default: () => {}, triggerUpdate: false },
     onEngineTick: { default: () => {}, triggerUpdate: false },
     onEngineStop: { default: () => {}, triggerUpdate: false },
+    onNeedsRedraw: { triggerUpdate: false },
     isShadow: { default: false, triggerUpdate: false }
   },
 
@@ -98,6 +102,7 @@ export default Kapsule({
       state.engineRunning = true;
       return this;
     },
+    isEngineRunning: state => !!state.engineRunning,
     tickFrame: function(state) {
       !state.isShadow && layoutTick();
       paintLinks();
