@@ -110,6 +110,8 @@ export interface ForceGraphGenericInstance<ChainableInstance> {
   linkDirectionalParticleColor(): LinkAccessor<string>;
   linkDirectionalParticleColor(colorAccessor: LinkAccessor<string>): ChainableInstance;
   emitParticle(link: LinkObject): ChainableInstance;
+  linkPointerAreaPaint(): CanvasPointerAreaPaintFn<LinkObject>;
+  linkPointerAreaPaint(renderFn: CanvasPointerAreaPaintFn<LinkObject>): ChainableInstance;
 
   // Render control
   autoPauseRedraw(): boolean;

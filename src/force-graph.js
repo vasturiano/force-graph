@@ -155,6 +155,11 @@ export default Kapsule({
         (node, ctx, globalScale) => paintFn(node, node.__indexColor, ctx, globalScale)
       );
     }, triggerUpdate: false },
+    linkPointerAreaPaint: { onChange(paintFn, state) {
+      state.shadowGraph.linkCanvasObject(!paintFn ? null :
+        (link, ctx, globalScale) => paintFn(link, link.__indexColor, ctx, globalScale)
+      );
+    }, triggerUpdate: false },
     linkLabel: { default: 'name', triggerUpdate: false },
     linkHoverPrecision: { default: 4, triggerUpdate: false },
     minZoom: { default: 0.01, onChange(minZoom, state) { state.zoom.scaleExtent([minZoom, state.zoom.scaleExtent()[1]]); }, triggerUpdate: false },
