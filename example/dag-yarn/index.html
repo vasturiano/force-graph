@@ -27,7 +27,16 @@
       .dagMode('lr')
       .dagLevelDistance(300)
       .nodeId('package')
-      .linkCurvature(0.07)
+      .linkCurvature(d =>
+        0.07 * // max curvature
+        // curve outwards from source, using gradual straightening within a margin of a few px
+        (['td', 'bu'].includes(graph.dagMode())
+          ? Math.max(-1, Math.min(1, (d.source.x - d.target.x) / 25)) :
+          ['lr', 'rl'].includes(graph.dagMode())
+            ? Math.max(-1, Math.min(1, (d.target.y - d.source.y) / 25))
+            : ['radialout', 'radialin'].includes(graph.dagMode()) ? 0 : 1
+        )
+      )
       .linkDirectionalParticles(2)
       .linkDirectionalParticleWidth(3)
       .nodeCanvasObject((node, ctx) => {

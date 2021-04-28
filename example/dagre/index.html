@@ -1,0 +1,119 @@
+<head>
+  <style> body { margin: 0; } </style>
+
+  <script src="//bundle.run/@yarnpkg/lockfile"></script>
+
+  <script src="//unpkg.com/dagre/dist/dagre.min.js"></script>
+  <script src="//unpkg.com/accessor-fn"></script>
+
+  <script src="//unpkg.com/force-graph"></script>
+  <!--<script src="../../dist/force-graph.js"></script>-->
+</head>
+
+<body>
+  <div id="graph"></div>
+
+  <script>
+    const Graph = ForceGraph()(document.getElementById('graph'))
+      .nodeId('id')
+      .nodeLabel('id')
+      .cooldownTicks(0) // pre-defined layout, cancel force engine iterations
+      .linkDirectionalArrowLength(3)
+      .linkDirectionalArrowRelPos(1)
+      .linkCurvature(d =>
+        0.07 * // max curvature
+        //   curve outwards from source, using gradual straightening within a margin of a few px
+        Math.max(-1, Math.min(1, (d.source.x - d.target.x) / 5)) *
+        Math.max(-1, Math.min(1, (d.target.y - d.source.y) / 5))
+      );
+
+    fetch('../../yarn.lock')
+      .then(r => r.text())
+      .then(text => {
+        const yarnlock = _yarnpkg_lockfile.parse(text);
+        if (yarnlock.type !== 'success') throw new Error('invalid yarn.lock');
+        return yarnlock.object;
+      })
+      .then(yarnlock => {
+        const nodes = [];
+        const links = [];
+        Object.entries(yarnlock).forEach(([package, details]) => {
+          nodes.push({ id: package });
+          if (details.dependencies) {
+            Object.entries(details.dependencies).forEach(([dep, version]) => {
+              links.push({source: package, target: `${dep}@${version}`});
+            });
+          }
+        });
+        return { nodes, links };
+      }).then(data => {
+        const nodeDiameter = Graph.nodeRelSize() * 2;
+        const layoutData = getLayout(data.nodes, data.links, {
+          nodeWidth: nodeDiameter,
+          nodeHeight: nodeDiameter,
+          nodesep: nodeDiameter * 0.5,
+          ranksep: nodeDiameter * Math.sqrt(data.nodes.length) * 0.4,
+
+          // root nodes aligned on top
+          rankDir: 'BT',
+          ranker: 'longest-path',
+          linkSource: 'target',
+          linkTarget: 'source'
+        });
+        layoutData.nodes.forEach(node => { node.fx = node.x; node.fy = node.y; }); // fix nodes
+
+        Graph.graphData(layoutData);
+        Graph.zoomToFit();
+      });
+
+    //
+
+    function getLayout(nodes, links, {
+      nodeId = 'id',
+      linkSource = 'source',
+      linkTarget = 'target',
+      nodeWidth = 0,
+      nodeHeight = 0,
+      ...graphCfg
+    } = {}) {
+      const getNodeWidth = accessorFn(nodeWidth);
+      const getNodeHeight = accessorFn(nodeHeight);
+
+      const g = new dagre.graphlib.Graph();
+      g.setGraph({
+        // rankDir: 'LR',
+        // ranker: 'network-simplex' // 'tight-tree', 'longest-path'
+        // acyclicer: 'greedy'
+        nodesep: 5,
+        edgesep: 1,
+        ranksep: 20,
+        ...graphCfg
+      });
+
+      nodes.forEach(node =>
+        g.setNode(
+          node[nodeId],
+          Object.assign({}, node, {
+            width: getNodeWidth(node),
+            height: getNodeHeight(node)
+          })
+        )
+      );
+      links.forEach(link =>
+        g.setEdge(link[linkSource], link[linkTarget], Object.assign({}, link))
+      );
+
+      dagre.layout(g);
+
+      return {
+        nodes: g.nodes().map(n => {
+          const node = g.node(n);
+          delete node.width;
+          delete node.height;
+          return node;
+        }),
+        links: g.edges().map(e => g.edge(e))
+      };
+    }
+  </script>
+</body>
