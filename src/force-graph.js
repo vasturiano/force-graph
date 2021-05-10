@@ -365,12 +365,24 @@ export default Kapsule({
     const ctx = state.canvas.getContext('2d');
     const shadowCtx = state.shadowCanvas.getContext('2d');
 
+    const pointerPos = { x: -1e12, y: -1e12 };
+    const getObjUnderPointer = () => {
+      let obj = null;
+      const pxScale = window.devicePixelRatio;
+      const px = (pointerPos.x > 0 && pointerPos.y > 0)
+        ? shadowCtx.getImageData(pointerPos.x * pxScale, pointerPos.y * pxScale, 1, 1)
+        : null;
+      // Lookup object per pixel color
+      px && (obj = state.colorTracker.lookup(px.data));
+      return obj;
+    };
+
     // Setup node drag interaction
     d3Select(state.canvas).call(
       d3Drag()
         .subject(() => {
           if (!state.enableNodeDrag) { return null; }
-          const obj = state.hoverObj;
+          const obj = getObjUnderPointer();
           return (obj && obj.type === 'Node') ? obj.d : null; // Only drag nodes
         })
         .on('start', ev => {
@@ -480,7 +492,6 @@ export default Kapsule({
     container.appendChild(toolTipElem);
 
     // Capture pointer coords on move or touchstart
-    const pointerPos = { x: -1e12, y: -1e12 };
     ['pointermove', 'pointerdown'].forEach(evType =>
       container.addEventListener(evType, ev => {
         // detect point drag
@@ -566,17 +577,7 @@ export default Kapsule({
 
       if (state.enablePointerInteraction) {
         // Update tooltip and trigger onHover events
-
-        let obj = null;
-        if (!state.isPointerDragging) { // don't hover during drag
-          // Lookup object per pixel color
-          const pxScale = window.devicePixelRatio;
-          const px = (pointerPos.x > 0 && pointerPos.y > 0)
-            ? shadowCtx.getImageData(pointerPos.x * pxScale, pointerPos.y * pxScale, 1, 1)
-            : null;
-          px && (obj = state.colorTracker.lookup(px.data));
-        }
-
+        const obj = !state.isPointerDragging ? getObjUnderPointer() : null; // don't hover during drag
         if (obj !== state.hoverObj) {
           const prevObj = state.hoverObj;
           const prevObjType = prevObj ? prevObj.type : null;
