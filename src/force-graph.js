@@ -416,6 +416,8 @@ export default Kapsule({
             .d3AlphaTarget(0.3) // keep engine running at low intensity throughout drag
             .resetCountdown();  // prevent freeze while dragging
 
+          state.isPointerDragging = true;
+
           obj.__dragged = true;
           state.onNodeDrag(obj, translate);
         })
@@ -494,11 +496,6 @@ export default Kapsule({
     // Capture pointer coords on move or touchstart
     ['pointermove', 'pointerdown'].forEach(evType =>
       container.addEventListener(evType, ev => {
-        // detect point drag
-        !state.isPointerDragging && ev.type === 'pointermove'
-        && ev.pressure > 0 && [ev.movementX, ev.movementY].some(m => Math.abs(m) > (ev.pointerType === 'touch' ? 1 : 0)) // relax drag trigger sensitivity on touch events
-        && (state.isPointerDragging = true);
-
         // update the pointer pos
         const offset = getOffset(container);
         pointerPos.x = ev.pageX - offset.left;
