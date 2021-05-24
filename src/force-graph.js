@@ -174,7 +174,7 @@ export default Kapsule({
     onLinkClick: { default: () => {}, triggerUpdate: false },
     onLinkRightClick: { triggerUpdate: false },
     onLinkHover: { default: () => {}, triggerUpdate: false },
-    onBackgroundClick: { default: () => {}, triggerUpdate: false },
+    onBackgroundClick: { triggerUpdate: false },
     onBackgroundRightClick: { triggerUpdate: false },
     onZoom: { default: () => {}, triggerUpdate: false },
     onZoomEnd: { default: () => {}, triggerUpdate: false },
@@ -459,8 +459,8 @@ export default Kapsule({
         && (state.enableZoomInteraction || ev.type !== 'wheel')
         && (state.enablePanInteraction || ev.type === 'wheel')
       )
-      .on('zoom', function() {
-        const t = d3ZoomTransform(this); // Same as d3.event.transform
+      .on('zoom', ev => {
+        const t = ev.transform;
         [ctx, shadowCtx].forEach(c => {
           resetTransform(c);
           c.translate(t.x, t.y);
@@ -469,10 +469,7 @@ export default Kapsule({
         state.onZoom({ ...t });
         state.needsRedraw = true;
       })
-      .on('end', function() {
-        const t = d3ZoomTransform(this); // Same as d3.event.transform
-        state.onZoomEnd({ ...t });
-      });
+      .on('end', ev => state.onZoomEnd({ ...ev.transform }));
 
     adjustCanvasSize(state);
 
@@ -496,6 +493,16 @@ export default Kapsule({
     // Capture pointer coords on move or touchstart
     ['pointermove', 'pointerdown'].forEach(evType =>
       container.addEventListener(evType, ev => {
+        // track click state
+        evType === 'pointerdown' && (state.isPointerPressed = true);
+
+        // detect pointer drag on canvas pan
+        !state.isPointerDragging && ev.type === 'pointermove'
+        && (state.onBackgroundClick) // only bother detecting drags this way if background clicks are enabled (so they don't trigger accidentally on canvas panning)
+        && (ev.pressure > 0 || state.isPointerPressed) // ev.pressure always 0 on Safari, so we use the isPointerPressed tracker
+        && (ev.pointerType !== 'touch' || ev.movementX === undefined || [ev.movementX, ev.movementY].some(m => Math.abs(m) > 1)) // relax drag trigger sensitivity on touch events
+        && (state.isPointerDragging = true);
+
         // update the pointer pos
         const offset = getOffset(container);
         pointerPos.x = ev.pageX - offset.left;
@@ -518,6 +525,7 @@ export default Kapsule({
 
     // Handle click/touch events on nodes/links
     container.addEventListener('pointerup', ev => {
+      state.isPointerPressed = false;
       if (state.isPointerDragging) {
         state.isPointerDragging = false;
         return; // don't trigger click events after pointer drag (pan / node drag functionality)
@@ -528,7 +536,7 @@ export default Kapsule({
           if (state.hoverObj) {
             state[`on${state.hoverObj.type}Click`](state.hoverObj.d, ev);
           } else {
-            state.onBackgroundClick(ev);
+            state.onBackgroundClick && state.onBackgroundClick(ev);
           }
         }
 
