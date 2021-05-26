@@ -168,12 +168,12 @@ export default Kapsule({
     autoPauseRedraw: { default: true, triggerUpdate: false },
     onNodeDrag: { default: () => {}, triggerUpdate: false },
     onNodeDragEnd: { default: () => {}, triggerUpdate: false },
-    onNodeClick: { default: () => {}, triggerUpdate: false },
+    onNodeClick: { triggerUpdate: false },
     onNodeRightClick: { triggerUpdate: false },
-    onNodeHover: { default: () => {}, triggerUpdate: false },
-    onLinkClick: { default: () => {}, triggerUpdate: false },
+    onNodeHover: { triggerUpdate: false },
+    onLinkClick: { triggerUpdate: false },
     onLinkRightClick: { triggerUpdate: false },
-    onLinkHover: { default: () => {}, triggerUpdate: false },
+    onLinkHover: { triggerUpdate: false },
     onBackgroundClick: { triggerUpdate: false },
     onBackgroundRightClick: { triggerUpdate: false },
     onZoom: { default: () => {}, triggerUpdate: false },
@@ -534,7 +534,8 @@ export default Kapsule({
       requestAnimationFrame(() => { // trigger click events asynchronously, to allow hoverObj to be set (on frame)
         if (ev.button === 0) { // mouse left-click or touch
           if (state.hoverObj) {
-            state[`on${state.hoverObj.type}Click`](state.hoverObj.d, ev);
+            const fn = state[`on${state.hoverObj.type}Click`];
+            fn && fn(state.hoverObj.d, ev);
           } else {
             state.onBackgroundClick && state.onBackgroundClick(ev);
           }
@@ -590,16 +591,23 @@ export default Kapsule({
 
           if (prevObjType && prevObjType !== objType) {
             // Hover out
-            state[`on${prevObjType}Hover`](null, prevObj.d);
+            const fn = state[`on${prevObjType}Hover`];
+            fn && fn(null, prevObj.d);
           }
           if (objType) {
             // Hover in
-            state[`on${objType}Hover`](obj.d, prevObjType === objType ? prevObj.d : null);
+            const fn = state[`on${objType}Hover`];
+            fn && fn(obj.d, prevObjType === objType ? prevObj.d : null);
           }
 
           const tooltipContent = obj ? accessorFn(state[`${obj.type.toLowerCase()}Label`])(obj.d) || '' : '';
           toolTipElem.style.visibility = tooltipContent ? 'visible' : 'hidden';
           toolTipElem.innerHTML = tooltipContent;
+
+          // set pointer if hovered object is clickable
+          state.canvas.classList[(obj && state[
+            `on${objType}Click`] || !obj && state.onBackgroundClick) ? 'add' : 'remove'
+            ]('clickable');
 
           state.hoverObj = obj;
         }

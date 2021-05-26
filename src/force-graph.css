@@ -17,6 +17,10 @@
   visibility: hidden; /* by default */
 }
 
+.force-graph-container .clickable {
+  cursor: pointer;
+}
+
 .force-graph-container .grabbable {
   cursor: move;
   cursor: grab;
