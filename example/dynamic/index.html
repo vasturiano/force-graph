@@ -17,7 +17,6 @@
     const elem = document.getElementById("graph");
 
     const Graph = ForceGraph()(elem)
-      .onNodeHover(node => elem.style.cursor = node ? 'pointer' : null)
       .onNodeClick(removeNode)
       .graphData(initData);
 

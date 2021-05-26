@@ -605,9 +605,9 @@ export default Kapsule({
           toolTipElem.innerHTML = tooltipContent;
 
           // set pointer if hovered object is clickable
-          state.canvas.classList[(obj && state[
-            `on${objType}Click`] || !obj && state.onBackgroundClick) ? 'add' : 'remove'
-            ]('clickable');
+          state.canvas.classList[
+            ((obj && state[`on${objType}Click`]) || (!obj && state.onBackgroundClick)) ? 'add' : 'remove'
+          ]('clickable');
 
           state.hoverObj = obj;
         }
