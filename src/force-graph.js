@@ -493,8 +493,10 @@ export default Kapsule({
     // Capture pointer coords on move or touchstart
     ['pointermove', 'pointerdown'].forEach(evType =>
       container.addEventListener(evType, ev => {
-        // track click state
-        evType === 'pointerdown' && (state.isPointerPressed = true);
+        if (evType === 'pointerdown') {
+          state.isPointerPressed = true; // track click state
+          state.pointerDownEvent = ev;
+        }
 
         // detect pointer drag on canvas pan
         !state.isPointerDragging && ev.type === 'pointermove'
@@ -531,22 +533,23 @@ export default Kapsule({
         return; // don't trigger click events after pointer drag (pan / node drag functionality)
       }
 
+      const cbEvents = [ev, state.pointerDownEvent];
       requestAnimationFrame(() => { // trigger click events asynchronously, to allow hoverObj to be set (on frame)
         if (ev.button === 0) { // mouse left-click or touch
           if (state.hoverObj) {
             const fn = state[`on${state.hoverObj.type}Click`];
-            fn && fn(state.hoverObj.d, ev);
+            fn && fn(state.hoverObj.d, ...cbEvents);
           } else {
-            state.onBackgroundClick && state.onBackgroundClick(ev);
+            state.onBackgroundClick && state.onBackgroundClick(...cbEvents);
           }
         }
 
         if (ev.button === 2) { // mouse right-click
           if (state.hoverObj) {
             const fn = state[`on${state.hoverObj.type}RightClick`];
-            fn && fn(state.hoverObj.d, ev);
+            fn && fn(state.hoverObj.d, ...cbEvents);
           } else {
-            state.onBackgroundRightClick && state.onBackgroundRightClick(ev);
+            state.onBackgroundRightClick && state.onBackgroundRightClick(...cbEvents);
           }
         }
       });
