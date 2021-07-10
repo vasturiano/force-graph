@@ -1,0 +1,37 @@
+<head>
+  <style> body { margin: 30px; } </style>
+
+  <script src="//unpkg.com/element-resize-detector/dist/element-resize-detector.min.js"></script>
+
+  <script src="//unpkg.com/force-graph"></script>
+  <!--<script src="../../dist/force-graph.js"></script>-->
+</head>
+
+<body>
+<div id="graph"></div>
+
+<script>
+  // Random tree
+  const N = 200;
+  const gData = {
+    nodes: [...Array(N).keys()].map(i => ({ id: i })),
+    links: [...Array(N).keys()]
+      .filter(id => id)
+      .map(id => ({
+        source: id,
+        target: Math.round(Math.random() * (id-1))
+      }))
+  };
+
+  const Graph = ForceGraph()
+  (document.getElementById('graph'))
+    .backgroundColor('#F5F5FF')
+    .height(window.innerHeight - 60)
+    .graphData(gData);
+
+  elementResizeDetectorMaker().listenTo(
+    document.getElementById('graph'),
+    el => Graph.width(el.offsetWidth)
+  );
+</script>
+</body>
