@@ -25,6 +25,7 @@ Check out the examples:
 * [Directional links (using arrows)](https://vasturiano.github.io/force-graph/example/directional-links-arrows/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/directional-links-arrows/index.html))
 * [Directional links (using moving particles)](https://vasturiano.github.io/force-graph/example/directional-links-particles/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/directional-links-particles/index.html))
 * [Curved lines and self links](https://vasturiano.github.io/force-graph/example/curved-links/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/curved-links/index.html))
+* [Automatic curvature for overlapping links](https://vasturiano.github.io/force-graph/example/curved-links-computed-curvature/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/curved-links-computed-curvature/index.html))
 * [Text in links](https://vasturiano.github.io/force-graph/example/text-links/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/text-links/index.html))
 * [Dash odd links](https://vasturiano.github.io/force-graph/example/dash-odd-links/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/dash-odd-links/index.html))
 * [Highlight nodes/links](https://vasturiano.github.io/force-graph/example/highlight/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/highlight/index.html))
