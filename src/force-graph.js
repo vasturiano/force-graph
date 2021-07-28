@@ -14,6 +14,9 @@ import linkKapsule from './kapsule-link.js';
 const HOVER_CANVAS_THROTTLE_DELAY = 800; // ms to throttle shadow canvas updates for perf improvement
 const ZOOM2NODES_FACTOR = 4;
 
+// Check whether we're running outside a browser
+const NODEJS = (typeof window === 'undefined') ? true : false
+
 // Expose config from forceGraph
 const bindFG = linkKapsule('forceGraph', CanvasForceGraph);
 const bindBoth = linkKapsule(['forceGraph', 'shadowGraph'], CanvasForceGraph);
@@ -74,7 +77,7 @@ function adjustCanvasSize(state) {
       curWidth = curHeight = 0;
     }
 
-    const pxScale = window.devicePixelRatio; // 2 on retina displays
+    const pxScale = NODEJS ? 1 : window.devicePixelRatio; // 2 on retina displays
     curWidth /= pxScale;
     curHeight /= pxScale;
 
@@ -105,7 +108,7 @@ function adjustCanvasSize(state) {
 }
 
 function resetTransform(ctx) {
-  const pxRatio = window.devicePixelRatio;
+  const pxRatio = NODEJS ? 1 : window.devicePixelRatio;
   ctx.setTransform(pxRatio, 0, 0, pxRatio, 0, 0);
 }
 
@@ -120,8 +123,16 @@ function clearCanvas(ctx, width, height) {
 
 export default Kapsule({
   props:{
-    width: { default: window.innerWidth, onChange: (_, state) => adjustCanvasSize(state), triggerUpdate: false } ,
-    height: { default: window.innerHeight, onChange: (_, state) => adjustCanvasSize(state), triggerUpdate: false },
+    width: { 
+      default: NODEJS ? 800 : window.innerWidth, 
+      onChange: (_, state) => adjustCanvasSize(state), 
+      triggerUpdate: false 
+    } ,
+    height: { 
+      default: NODEJS ? 600 : window.innerHeight, 
+      onChange: (_, state) => adjustCanvasSize(state), 
+      triggerUpdate: false 
+    },
     graphData: {
       default: { nodes: [], links: [] },
       onChange: ((d, state) => {
@@ -368,7 +379,7 @@ export default Kapsule({
     const pointerPos = { x: -1e12, y: -1e12 };
     const getObjUnderPointer = () => {
       let obj = null;
-      const pxScale = window.devicePixelRatio;
+      const pxScale = NODEJS ? 1 : window.devicePixelRatio;
       const px = (pointerPos.x > 0 && pointerPos.y > 0)
         ? shadowCtx.getImageData(pointerPos.x * pxScale, pointerPos.y * pxScale, 1, 1)
         : null;
@@ -518,8 +529,8 @@ export default Kapsule({
 
         function getOffset(el) {
           const rect = el.getBoundingClientRect(),
-            scrollLeft = window.pageXOffset || document.documentElement.scrollLeft,
-            scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            scrollLeft = NODEJS ? 0 : window.pageXOffset || document.documentElement.scrollLeft,
+            scrollTop = NODEJS ? 0 : window.pageYOffset || document.documentElement.scrollTop;
           return { top: rect.top + scrollTop, left: rect.left + scrollLeft };
         }
       }, { passive: true })
