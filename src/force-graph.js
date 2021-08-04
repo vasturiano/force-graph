@@ -150,11 +150,13 @@ export default Kapsule({
       state.shadowGraph.nodeCanvasObject(!paintFn ? null :
         (node, ctx, globalScale) => paintFn(node, node.__indexColor, ctx, globalScale)
       );
+      state.flushShadowCanvas && state.flushShadowCanvas();
     }, triggerUpdate: false },
     linkPointerAreaPaint: { onChange(paintFn, state) {
       state.shadowGraph.linkCanvasObject(!paintFn ? null :
         (link, ctx, globalScale) => paintFn(link, link.__indexColor, ctx, globalScale)
       );
+      state.flushShadowCanvas && state.flushShadowCanvas();
     }, triggerUpdate: false },
     linkLabel: { default: 'name', triggerUpdate: false },
     linkHoverPrecision: { default: 4, triggerUpdate: false },
@@ -577,6 +579,7 @@ export default Kapsule({
       const t = d3ZoomTransform(state.canvas);
       state.shadowGraph.globalScale(t.k).tickFrame();
     }, HOVER_CANVAS_THROTTLE_DELAY);
+    state.flushShadowCanvas = refreshShadowCanvas.flush; // hook to immediately invoke shadow canvas paint
 
     // Kick-off renderer
     (this._animationCycle = function animate() { // IIFE
