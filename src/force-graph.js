@@ -432,9 +432,11 @@ export default Kapsule({
           if (initPos.fy === undefined) { obj.fy = undefined; }
           delete(obj.__initialDragPos);
 
-          state.forceGraph
-            .d3AlphaTarget(0)   // release engine low intensity
-            .resetCountdown();  // let the engine readjust after releasing fixed nodes
+          if (state.forceGraph.d3AlphaTarget()) {
+            state.forceGraph
+              .d3AlphaTarget(0)   // release engine low intensity
+              .resetCountdown();  // let the engine readjust after releasing fixed nodes
+          }
 
           // drag cursor
           state.canvas.classList.remove('grabbable');
