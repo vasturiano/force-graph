@@ -5,6 +5,7 @@ export interface GraphData {
 
 export type NodeObject = object & {
   id?: string | number;
+  group?: string | number;
   x?: number;
   y?: number;
   vx?: number;
@@ -16,6 +17,7 @@ export type NodeObject = object & {
 export type LinkObject = object & {
   source?: string | number | NodeObject;
   target?: string | number | NodeObject;
+  curvature?: number;
 };
 
 type Accessor<In, Out> = Out | string | ((obj: In) => Out);
