@@ -3,7 +3,7 @@ force-graph
 
 [![NPM package][npm-img]][npm-url]
 [![Build Size][build-size-img]][build-size-url]
-[![Dependencies][dependencies-img]][dependencies-url]
+[![NPM Downloads][npm-downloads-img]][npm-downloads-url]
 
 Force-directed graph rendered on HTML5 canvas.
 
@@ -52,22 +52,22 @@ And check out the [React bindings](https://github.com/vasturiano/react-force-gra
 
 ## Quick start
 
-```
+```js
 import ForceGraph from 'force-graph';
 ```
 or
-```
-var ForceGraph = require('force-graph');
+```js
+const ForceGraph = require('force-graph');
 ```
 or even
-```
+```html
 <script src="//unpkg.com/force-graph"></script>
 ```
 then
-```
-var myGraph = ForceGraph();
+```js
+const myGraph = ForceGraph();
 myGraph(<myDOMElement>)
-    .graphData(<myData>);
+  .graphData(<myData>);
 ```
 
 ## API reference
@@ -191,7 +191,7 @@ myGraph(<myDOMElement>)
 | <b>graph2ScreenCoords</b>(<i>x</i>, <i>y</i>) | Utility method to translate node coordinates to the viewport domain. Given a pair of `x`,`y` graph coordinates, returns the current equivalent `{x, y}` in viewport coordinates. |
 
 ### Input JSON syntax
-```
+```json
 {
     "nodes": [
         {
@@ -204,14 +204,14 @@ myGraph(<myDOMElement>)
           "name": "name2",
           "val": 10
         },
-        (...)
+        ...
     ],
     "links": [
         {
             "source": "id1",
             "target": "id2"
         },
-        (...)
+        ...
     ]
 }
 ```
@@ -220,9 +220,9 @@ myGraph(<myDOMElement>)
 
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=L398E7PKP47E8&currency_code=USD&source=url) If this project has helped you and you'd like to contribute back, you can always [buy me a ☕](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=L398E7PKP47E8&currency_code=USD&source=url)!
 
-[npm-img]: https://img.shields.io/npm/v/force-graph.svg
+[npm-img]: https://img.shields.io/npm/v/force-graph
 [npm-url]: https://npmjs.org/package/force-graph
-[build-size-img]: https://img.shields.io/bundlephobia/minzip/force-graph.svg
+[build-size-img]: https://img.shields.io/bundlephobia/minzip/force-graph
 [build-size-url]: https://bundlephobia.com/result?p=force-graph
-[dependencies-img]: https://img.shields.io/david/vasturiano/force-graph.svg
-[dependencies-url]: https://david-dm.org/vasturiano/force-graph
+[npm-downloads-img]: https://img.shields.io/npm/dt/force-graph
+[npm-downloads-url]: https://www.npmtrends.com/force-graph
