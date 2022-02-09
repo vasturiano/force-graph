@@ -15,7 +15,12 @@ A web component to represent a graph data structure in a 2-dimensional canvas us
 Uses HTML5 canvas for rendering and [d3-force](https://github.com/d3/d3-force) for the underlying physics engine.
 Supports canvas zooming/panning, node dragging and node/link hover/click interactions.
 
-Check out the examples:
+See also the [3D version](https://github.com/vasturiano/3d-force-graph).
+
+And check out the [React bindings](https://github.com/vasturiano/react-force-graph).
+
+## Examples
+
 * [Basic](https://vasturiano.github.io/force-graph/example/basic/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/basic/index.html))
 * [Load JSON](https://vasturiano.github.io/force-graph/example/load-json/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/load-json/index.html))
 * [Medium size graph (~4k elements)](https://vasturiano.github.io/force-graph/example/medium-graph/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/medium-graph/index.html))
@@ -45,10 +50,6 @@ Check out the examples:
 * [Expandable Tree](https://vasturiano.github.io/force-graph/example/expandable-tree/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/expandable-tree/index.html))
 * [yarn.lock dependency graph (DAG mode)](https://vasturiano.github.io/force-graph/example/dag-yarn/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/dag-yarn/index.html))
 * [Usage as UI to construct graphs](https://vasturiano.github.io/force-graph/example/build-a-graph/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/build-a-graph/index.html))
-
-See also the [3D version](https://github.com/vasturiano/3d-force-graph).
-
-And check out the [React bindings](https://github.com/vasturiano/react-force-graph).
 
 ## Quick start
 
