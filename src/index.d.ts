@@ -72,8 +72,8 @@ export interface ForceGraphGenericInstance<ChainableInstance> {
   nodeAutoColorBy(colorByAccessor: NodeAccessor<string | null>): ChainableInstance;
   nodeCanvasObject(): CanvasCustomRenderFn<NodeObject>;
   nodeCanvasObject(renderFn: CanvasCustomRenderFn<NodeObject>): ChainableInstance;
-  nodeCanvasObjectMode(): string | ((obj: NodeObject) => CanvasCustomRenderMode | undefined);
-  nodeCanvasObjectMode(modeAccessor: string | ((obj: NodeObject) => CanvasCustomRenderMode | undefined)): ChainableInstance;
+  nodeCanvasObjectMode(): string | ((obj: NodeObject) => CanvasCustomRenderMode | any);
+  nodeCanvasObjectMode(modeAccessor: string | ((obj: NodeObject) => CanvasCustomRenderMode | any)): ChainableInstance;
   nodePointerAreaPaint(): CanvasPointerAreaPaintFn<NodeObject>;
   nodePointerAreaPaint(renderFn: CanvasPointerAreaPaintFn<NodeObject>): ChainableInstance;
 
