@@ -7,8 +7,7 @@
 
 .force-graph-container .graph-tooltip {
   position: absolute;
-  left: 0; /* initial position to prevent overflow */
-  top: 0; /* initial position to prevent overflow */
+  top: 0;
   transform: translate(-50%, 25px);
   font-family: sans-serif;
   font-size: 16px;
