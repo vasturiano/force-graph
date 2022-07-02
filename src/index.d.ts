@@ -3,7 +3,7 @@ export interface GraphData {
   links: LinkObject[];
 }
 
-export type NodeObject = object & {
+export interface NodeObject {
   id?: string | number;
   x?: number;
   y?: number;
@@ -11,12 +11,12 @@ export type NodeObject = object & {
   vy?: number;
   fx?: number;
   fy?: number;
-};
+}
 
-export type LinkObject = object & {
+export interface LinkObject {
   source?: string | number | NodeObject;
   target?: string | number | NodeObject;
-};
+}
 
 type Accessor<In, Out> = Out | string | ((obj: In) => Out);
 type NodeAccessor<T> = Accessor<NodeObject, T>;
