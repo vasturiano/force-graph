@@ -23,7 +23,7 @@ type NodeAccessor<T> = Accessor<NodeObject, T>;
 type LinkAccessor<T> = Accessor<LinkObject, T>;
 
 type CanvasCustomRenderMode = 'replace' | 'before' | 'after';
-export type CanvasCustomRenderModeFn<T> = (obj: T) => CanvasCustomRenderMode;
+export type CanvasCustomRenderModeFn<T> = (obj: T) => CanvasCustomRenderMode | any;
 export type CanvasCustomRenderFn<T> = (obj: T, canvasContext: CanvasRenderingContext2D, globalScale: number) => void;
 export type CanvasPointerAreaPaintFn<T> = (obj: T, paintColor: string, canvasContext: CanvasRenderingContext2D, globalScale: number) => void;
 
