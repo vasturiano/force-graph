@@ -23,8 +23,9 @@ type NodeAccessor<T> = Accessor<NodeObject, T>;
 type LinkAccessor<T> = Accessor<LinkObject, T>;
 
 type CanvasCustomRenderMode = 'replace' | 'before' | 'after';
-type CanvasCustomRenderFn<T> = (obj: T, canvasContext: CanvasRenderingContext2D, globalScale: number) => void;
-type CanvasPointerAreaPaintFn<T> = (obj: T, paintColor: string, canvasContext: CanvasRenderingContext2D, globalScale: number) => void;
+export type CanvasCustomRenderModeFn<T> = (obj: T) => CanvasCustomRenderMode | any;
+export type CanvasCustomRenderFn<T> = (obj: T, canvasContext: CanvasRenderingContext2D, globalScale: number) => void;
+export type CanvasPointerAreaPaintFn<T> = (obj: T, paintColor: string, canvasContext: CanvasRenderingContext2D, globalScale: number) => void;
 
 type DagMode = 'td' | 'bu' | 'lr' | 'rl' | 'radialout' | 'radialin';
 
@@ -72,8 +73,8 @@ export interface ForceGraphGenericInstance<ChainableInstance> {
   nodeAutoColorBy(colorByAccessor: NodeAccessor<string | null>): ChainableInstance;
   nodeCanvasObject(): CanvasCustomRenderFn<NodeObject>;
   nodeCanvasObject(renderFn: CanvasCustomRenderFn<NodeObject>): ChainableInstance;
-  nodeCanvasObjectMode(): string | ((obj: NodeObject) => CanvasCustomRenderMode | any);
-  nodeCanvasObjectMode(modeAccessor: string | ((obj: NodeObject) => CanvasCustomRenderMode | any)): ChainableInstance;
+  nodeCanvasObjectMode(): string | CanvasCustomRenderModeFn<NodeObject>;
+  nodeCanvasObjectMode(modeAccessor: string | CanvasCustomRenderModeFn<NodeObject>): ChainableInstance;
   nodePointerAreaPaint(): CanvasPointerAreaPaintFn<NodeObject>;
   nodePointerAreaPaint(renderFn: CanvasPointerAreaPaintFn<NodeObject>): ChainableInstance;
 
@@ -94,8 +95,8 @@ export interface ForceGraphGenericInstance<ChainableInstance> {
   linkCurvature(curvatureAccessor: LinkAccessor<number>): ChainableInstance;
   linkCanvasObject(): CanvasCustomRenderFn<LinkObject>;
   linkCanvasObject(renderFn: CanvasCustomRenderFn<LinkObject>): ChainableInstance;
-  linkCanvasObjectMode(): string | ((obj: LinkObject) => CanvasCustomRenderMode);
-  linkCanvasObjectMode(modeAccessor: string | ((obj: LinkObject) => CanvasCustomRenderMode)): ChainableInstance;
+  linkCanvasObjectMode(): string | CanvasCustomRenderModeFn<LinkObject>;
+  linkCanvasObjectMode(modeAccessor: string | CanvasCustomRenderModeFn<LinkObject>): ChainableInstance;
   linkDirectionalArrowLength(): LinkAccessor<number>;
   linkDirectionalArrowLength(lengthAccessor: LinkAccessor<number>): ChainableInstance;
   linkDirectionalArrowColor(): LinkAccessor<string>;
