@@ -6,7 +6,9 @@
   "main": "dist/force-graph.common.js",
   "module": "dist/force-graph.module.js",
   "types": "src/index.d.ts",
-  "sideEffects": false,
+  "sideEffects": [
+    "./src/*.css"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vasturiano/force-graph.git"
