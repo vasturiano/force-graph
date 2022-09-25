@@ -134,7 +134,7 @@ export interface ForceGraphGenericInstance<ChainableInstance> {
 
   // Force engine (d3-force) configuration
   dagMode(): DagMode;
-  dagMode(mode: DagMode): ChainableInstance;
+  dagMode(mode: DagMode | false): ChainableInstance;
   dagLevelDistance(): number | null;
   dagLevelDistance(distance: number): ChainableInstance;
   dagNodeFilter(): (node: NodeObject) => boolean;
