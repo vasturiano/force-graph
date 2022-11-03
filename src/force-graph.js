@@ -518,6 +518,12 @@ export default Kapsule({
         toolTipElem.style.top = `${pointerPos.y}px`;
         toolTipElem.style.left = `${pointerPos.x}px`;
 
+        // adjust horizontal position to not exceed canvas boundaries
+        toolTipElem.style.transform = `translate(-${pointerPos.x / state.width * 100}%, ${
+          // flip to above if near bottom
+          state.height - pointerPos.y < 100 ? 'calc(-100% - 8px)' : '21px'
+        })`;
+
         //
 
         function getOffset(el) {
