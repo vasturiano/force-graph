@@ -133,8 +133,8 @@ export interface ForceGraphGenericInstance<ChainableInstance> {
   onRenderFramePost(callback: (canvasContext: CanvasRenderingContext2D, globalScale: number) => void): ChainableInstance;
 
   // Force engine (d3-force) configuration
-  dagMode(): DagMode;
-  dagMode(mode: DagMode): ChainableInstance;
+  dagMode(): DagMode | null;
+  dagMode(mode: DagMode | null): ChainableInstance;
   dagLevelDistance(): number | null;
   dagLevelDistance(distance: number): ChainableInstance;
   dagNodeFilter(): (node: NodeObject) => boolean;
