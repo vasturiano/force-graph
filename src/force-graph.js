@@ -365,7 +365,7 @@ export default Kapsule({
     //container.appendChild(state.shadowCanvas);
 
     const ctx = state.canvas.getContext('2d');
-    const shadowCtx = state.shadowCanvas.getContext('2d');
+    const shadowCtx = state.shadowCanvas.getContext('2d', { willReadFrequently: true });
 
     const pointerPos = { x: -1e12, y: -1e12 };
     const getObjUnderPointer = () => {
