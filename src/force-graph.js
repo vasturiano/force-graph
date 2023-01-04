@@ -366,7 +366,8 @@ export default Kapsule({
 
     const ctx = state.canvas.getContext('2d');
     const shadowCtx = state.shadowCanvas.getContext('2d');
-
+    window.addEventListener('resize', () => adjustCanvasSize(state))
+    
     const pointerPos = { x: -1e12, y: -1e12 };
     const getObjUnderPointer = () => {
       let obj = null;
