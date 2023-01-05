@@ -22,8 +22,22 @@ const DAG_LEVEL_NODE_RATIO = 2;
 // whenever styling props are changed that require a canvas redraw
 const notifyRedraw = (_, state) => state.onNeedsRedraw && state.onNeedsRedraw();
 
-export default Kapsule({
+const updDataPhotons = (_, state) => {
+  if (!state.isShadow) {
+    // Add photon particles
+    const linkParticlesAccessor = accessorFn(state.linkDirectionalParticles);
+    state.graphData.links.forEach(link => {
+      const numPhotons = Math.round(Math.abs(linkParticlesAccessor(link)));
+      if (numPhotons) {
+        link.__photons = [...Array(numPhotons)].map(() => ({}));
+      } else {
+        delete link.__photons;
+      }
+    });
+  }
+};
 
+export default Kapsule({
   props: {
     graphData: {
       default: {
@@ -31,8 +45,9 @@ export default Kapsule({
         links: []
       },
       onChange(_, state) {
-        state.engineRunning = false;
-      } // Pause simulation
+        state.engineRunning = false; // Pause simulation
+        updDataPhotons(_, state);
+      }
     },
     dagMode: { onChange(dagMode, state) { // td, bu, lr, rl, radialin, radialout
       !dagMode && (state.graphData.nodes || []).forEach(n => n.fx = n.fy = undefined); // unfix nodes when disabling dag mode
@@ -61,7 +76,7 @@ export default Kapsule({
     linkDirectionalArrowLength: { default: 0, triggerUpdate: false, onChange: notifyRedraw },
     linkDirectionalArrowColor: { triggerUpdate: false, onChange: notifyRedraw },
     linkDirectionalArrowRelPos: { default: 0.5, triggerUpdate: false, onChange: notifyRedraw }, // value between 0<>1 indicating the relative pos along the (exposed) line
-    linkDirectionalParticles: { default: 0 }, // animate photons travelling in the link direction
+    linkDirectionalParticles: { default: 0, triggerUpdate: false, onChange: updDataPhotons }, // animate photons travelling in the link direction
     linkDirectionalParticleSpeed: { default: 0.01, triggerUpdate: false }, // in link length ratio per frame
     linkDirectionalParticleWidth: { default: 4, triggerUpdate: false },
     linkDirectionalParticleColor: { triggerUpdate: false },
@@ -425,7 +440,7 @@ export default Kapsule({
     emitParticle: function(state, link) {
       if (link) {
         !link.__photons && (link.__photons = []);
-        link.__photons.push({__singleHop: true}); // add a single hop particle
+        link.__photons.push({ __singleHop: true }); // add a single hop particle
       }
 
       return this;
@@ -465,19 +480,6 @@ export default Kapsule({
       link.source = link[state.linkSource];
       link.target = link[state.linkTarget];
     });
-
-    if (!state.isShadow) {
-      // Add photon particles
-      const linkParticlesAccessor = accessorFn(state.linkDirectionalParticles);
-      state.graphData.links.forEach(link => {
-        const numPhotons = Math.round(Math.abs(linkParticlesAccessor(link)));
-        if (numPhotons) {
-          link.__photons = [...Array(numPhotons)].map(() => ({}));
-        } else {
-          delete link.__photons;
-        }
-      });
-    }
 
     // Feed data to force-directed layout
     state.forceLayout
