@@ -2,10 +2,15 @@
   "name": "force-graph",
   "version": "1.42.18",
   "description": "2D force-directed graph rendered on HTML5 canvas",
+  "type": "module",
   "unpkg": "dist/force-graph.min.js",
-  "main": "dist/force-graph.common.js",
-  "module": "dist/force-graph.module.js",
+  "main": "dist/force-graph.mjs",
+  "module": "dist/force-graph.mjs",
   "types": "src/index.d.ts",
+  "exports": {
+    "umd": "./dist/force-graph.min.js",
+    "default": "./dist/force-graph.mjs"
+  },
   "sideEffects": [
     "./src/*.css"
   ],
@@ -32,7 +37,7 @@
   },
   "scripts": {
     "build": "rimraf dist && rollup -c",
-    "dev": "rollup -w -c rollup.config.dev.mjs",
+    "dev": "rollup -w -c rollup.config.dev.js",
     "prepare": "npm run build"
   },
   "files": [
@@ -57,9 +62,7 @@
     "lodash.throttle": "4"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.7",
-    "@babel/plugin-proposal-class-properties": "^7.18.6",
-    "@babel/plugin-proposal-object-rest-spread": "^7.20.7",
+    "@babel/core": "^7.20.12",
     "@babel/preset-env": "^7.20.2",
     "@rollup/plugin-babel": "^6.0.3",
     "@rollup/plugin-commonjs": "^24.0.0",
@@ -71,5 +74,8 @@
     "rollup-plugin-dts": "^5.1.0",
     "rollup-plugin-postcss": "^4.0.2",
     "typescript": "^4.9.4"
+  },
+  "engines": {
+    "node": ">=12"
   }
 }
