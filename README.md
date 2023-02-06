@@ -56,7 +56,7 @@ And check out the [React bindings](https://github.com/vasturiano/react-force-gra
 ```js
 import ForceGraph from 'force-graph';
 ```
-or
+or using a *script* tag
 ```html
 <script src="//unpkg.com/force-graph"></script>
 ```
