@@ -59,7 +59,7 @@
     "d3-zoom": "2 - 3",
     "index-array-by": "1",
     "kapsule": "^1.13",
-    "lodash.throttle": "4"
+    "lodash-es": "^4.17.21"
   },
   "devDependencies": {
     "@babel/core": "^7.20.12",
