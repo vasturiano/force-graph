@@ -58,7 +58,7 @@
     "d3-selection": "2 - 3",
     "d3-zoom": "2 - 3",
     "index-array-by": "1",
-    "kapsule": "^1.14",
+    "kapsule": "^1.14.2",
     "lodash-es": "4"
   },
   "devDependencies": {
