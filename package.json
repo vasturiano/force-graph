@@ -8,6 +8,7 @@
   "module": "dist/force-graph.mjs",
   "types": "src/index.d.ts",
   "exports": {
+		"types": "./src/index.d.ts",
     "umd": "./dist/force-graph.min.js",
     "default": "./dist/force-graph.mjs"
   },
