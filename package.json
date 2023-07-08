@@ -47,7 +47,7 @@
     "src/**/*"
   ],
   "dependencies": {
-    "@tweenjs/tween.js": "19",
+    "@tweenjs/tween.js": "18 - 21",
     "accessor-fn": "1",
     "bezier-js": "3 - 6",
     "canvas-color-tracker": "1",
@@ -63,18 +63,18 @@
     "lodash-es": "4"
   },
   "devDependencies": {
-    "@babel/core": "^7.21.4",
-    "@babel/preset-env": "^7.21.4",
+    "@babel/core": "^7.22.8",
+    "@babel/preset-env": "^7.22.7",
     "@rollup/plugin-babel": "^6.0.3",
-    "@rollup/plugin-commonjs": "^24.0.1",
-    "@rollup/plugin-node-resolve": "^15.0.2",
-    "@rollup/plugin-terser": "^0.4.0",
-    "postcss": "^8.4.21",
-    "rimraf": "^4.4.1",
-    "rollup": "^3.20.2",
+    "@rollup/plugin-commonjs": "^25.0.2",
+    "@rollup/plugin-node-resolve": "^15.1.0",
+    "@rollup/plugin-terser": "^0.4.3",
+    "postcss": "^8.4.25",
+    "rimraf": "^5.0.1",
+    "rollup": "^3.26.2",
     "rollup-plugin-dts": "^5.3.0",
     "rollup-plugin-postcss": "^4.0.2",
-    "typescript": "^5.0.3"
+    "typescript": "^5.1.6"
   },
   "engines": {
     "node": ">=12"

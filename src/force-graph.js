@@ -3,7 +3,7 @@ import { zoom as d3Zoom, zoomTransform as d3ZoomTransform } from 'd3-zoom';
 import { drag as d3Drag } from 'd3-drag';
 import { max as d3Max, min as d3Min } from 'd3-array';
 import { throttle } from 'lodash-es';
-import TWEEN from '@tweenjs/tween.js';
+import * as TWEEN from '@tweenjs/tween.js';
 import Kapsule from 'kapsule';
 import accessorFn from 'accessor-fn';
 import ColorTracker from 'canvas-color-tracker';
