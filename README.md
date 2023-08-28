@@ -44,6 +44,7 @@ And check out the [React bindings](https://github.com/vasturiano/react-force-gra
 * [Fix nodes after dragging](https://vasturiano.github.io/force-graph/example/fix-dragged-nodes/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/fix-dragged-nodes/index.html))
 * [Fit graph to canvas](https://vasturiano.github.io/force-graph/example/fit-to-canvas/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/fit-to-canvas/index.html))
 * [Dynamic data changes](https://vasturiano.github.io/force-graph/example/dynamic/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/dynamic/index.html))
+* [Beeswarm chart](https://vasturiano.github.io/force-graph/example/beeswarm/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/beeswarm/index.html))
 * [Node collision detection](https://vasturiano.github.io/force-graph/example/collision-detection/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/collision-detection/index.html))
 * [Emit link particles on demand](https://vasturiano.github.io/force-graph/example/emit-particles/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/emit-particles/index.html))
 * [Force-directed tree (DAG mode)](https://vasturiano.github.io/force-graph/example/tree/) ([source](https://github.com/vasturiano/force-graph/blob/master/example/tree/index.html))
