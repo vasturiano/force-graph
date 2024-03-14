@@ -214,6 +214,15 @@ myGraph(<myDOMElement>)
 }
 ```
 
+The input data structure is not fixed to a specific format. This is intentional to make the module more flexible. Instead, the accessor functions define how the attributes in the nodes/links objects can be used to interface with the module functionality.
+
+For example, to use the val attribute to determine the node's size, you can do: `.nodeVal('val').`
+This is equivalent to `.nodeVal(node => node.val).`
+
+So if you wish to add a multiplication factor to it: `.nodeVal(node => node.val * 3).`
+
+See the [Load JSON](https://github.com/vasturiano/force-graph/blob/master/example/load-json/index.html) example for usage.
+
 ## Giving Back
 
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=L398E7PKP47E8&currency_code=USD&source=url) If this project has helped you and you'd like to contribute back, you can always [buy me a ☕](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=L398E7PKP47E8&currency_code=USD&source=url)!
