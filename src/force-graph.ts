@@ -9,7 +9,7 @@ import accessorFn from 'accessor-fn';
 import ColorTracker from 'canvas-color-tracker';
 
 import CanvasForceGraph from './canvas-force-graph';
-import linkKapsule from './kapsule-link.js';
+import { linkKapsule } from './kapsule-link';
 
 const HOVER_CANVAS_THROTTLE_DELAY = 800; // ms to throttle shadow canvas updates for perf improvement
 const ZOOM2NODES_FACTOR = 4;
@@ -115,8 +115,6 @@ function clearCanvas(ctx, width, height) {
   ctx.clearRect(0, 0, width, height);
   ctx.restore();        //restore transforms
 }
-
-//
 
 export default Kapsule({
   props:{
@@ -271,7 +269,7 @@ export default Kapsule({
     },
     zoomToFit: function(state, transitionDuration = 0, padding = 10, ...bboxArgs) {
       const bbox = this.getGraphBbox(...bboxArgs);
-      
+
       if (bbox) {
         const center = {
           x: (bbox.x[0] + bbox.x[1]) / 2,

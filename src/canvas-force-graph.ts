@@ -13,14 +13,14 @@ import accessorFn from 'accessor-fn';
 import indexBy from 'index-array-by';
 
 import { autoColorObjects } from './color-utils';
-import getDagDepths from './dagDepths';
+import {getDagDepths} from './dagDepths';
 
 //
 
 const DAG_LEVEL_NODE_RATIO = 2;
 
 // whenever styling props are changed that require a canvas redraw
-const notifyRedraw = (_, state) => state.onNeedsRedraw && state.onNeedsRedraw();
+const notifyRedraw = (_, state) => state?.onNeedsRedraw?.();
 
 const updDataPhotons = (_, state) => {
   if (!state.isShadow) {
@@ -98,7 +98,7 @@ export default Kapsule({
 
   methods: {
     // Expose d3 forces for external manipulation
-    d3Force: function(state, forceName, forceFn) {
+    d3Force: (state, forceName, forceFn) => {
       if (forceFn === undefined) {
         return state.forceLayout.force(forceName); // Force getter
       }
@@ -133,7 +133,7 @@ export default Kapsule({
         if (state.engineRunning) {
           if (
             ++state.cntTicks > state.cooldownTicks ||
-            (new Date()) - state.startTickTime > state.cooldownTime ||
+            (new Date().getTime()) - state.startTickTime > state.cooldownTime ||
             (state.d3AlphaMin > 0 && state.forceLayout.alpha() < state.d3AlphaMin)
           ) {
             state.engineRunning = false; // Stop ticking graph
@@ -240,11 +240,11 @@ export default Kapsule({
                 const start = link.source;
                 const end = link.target;
                 if (!start || !end || !start.hasOwnProperty('x') || !end.hasOwnProperty('x')) return; // skip invalid link
-  
+
                 ctx.moveTo(start.x, start.y);
-  
+
                 const controlPoints = link.__controlPoints;
-  
+
                 if (!controlPoints) { // Straight line
                   ctx.lineTo(end.x, end.y);
                 } else {

@@ -6,12 +6,10 @@ const autoColorScale = scaleOrdinal(schemePaired);
 // Autoset attribute colorField by colorByAccessor property
 // If an object has already a color, don't set it
 // Objects can be nodes or links
-function autoColorObjects(objects, colorByAccessor, colorField) {
+export function autoColorObjects(objects, colorByAccessor, colorField : string) {
   if (!colorByAccessor || typeof colorField !== 'string') return;
 
   objects.filter(obj => !obj[colorField]).forEach(obj => {
     obj[colorField] = autoColorScale(colorByAccessor(obj));
   });
 }
-
-export { autoColorObjects };
