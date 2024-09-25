@@ -125,6 +125,9 @@ export default Kapsule({
     graphData: {
       default: { nodes: [], links: [] },
       onChange: ((d, state) => {
+        // Wipe color registry if all objects are new
+        [d.nodes, d.links].every(arr => (arr || []).every(d => !d.hasOwnProperty('__indexColor'))) && state.colorTracker.reset();
+
         [{ type: 'Node', objs: d.nodes }, { type: 'Link', objs: d.links }].forEach(hexIndex);
         state.forceGraph.graphData(d);
         state.shadowGraph.graphData(d);
