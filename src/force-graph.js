@@ -3,7 +3,7 @@ import { zoom as d3Zoom, zoomTransform as d3ZoomTransform } from 'd3-zoom';
 import { drag as d3Drag } from 'd3-drag';
 import { max as d3Max, min as d3Min } from 'd3-array';
 import { throttle } from 'lodash-es';
-import * as TWEEN from '@tweenjs/tween.js';
+import { Tween, Group as TweenGroup, Easing } from '@tweenjs/tween.js';
 import Kapsule from 'kapsule';
 import accessorFn from 'accessor-fn';
 import ColorTracker from 'canvas-color-tracker';
@@ -210,11 +210,13 @@ export default Kapsule({
         if (!transitionDuration) { // no animation
           setCenter(finalPos);
         } else {
-          new TWEEN.Tween(getCenter())
-            .to(finalPos, transitionDuration)
-            .easing(TWEEN.Easing.Quadratic.Out)
-            .onUpdate(setCenter)
-            .start();
+          state.tweenGroup.add(
+            new Tween(getCenter())
+              .to(finalPos, transitionDuration)
+              .easing(Easing.Quadratic.Out)
+              .onUpdate(setCenter)
+              .start()
+          );
         }
         return this;
       }
@@ -246,11 +248,13 @@ export default Kapsule({
         if (!transitionDuration) { // no animation
           setZoom(k);
         } else {
-          new TWEEN.Tween({ k: getZoom() })
-            .to({ k }, transitionDuration)
-            .easing(TWEEN.Easing.Quadratic.Out)
-            .onUpdate(({ k }) => setZoom(k))
-            .start();
+          state.tweenGroup.add(
+            new Tween({ k: getZoom() })
+              .to({ k }, transitionDuration)
+              .easing(Easing.Quadratic.Out)
+              .onUpdate(({ k }) => setZoom(k))
+              .start()
+          );
         }
         return this;
       }
@@ -339,7 +343,8 @@ export default Kapsule({
       .nodeColor('__indexColor')
       .linkColor('__indexColor')
       .isShadow(true),
-    colorTracker: new ColorTracker() // indexed objects for rgb lookup
+    colorTracker: new ColorTracker(), // indexed objects for rgb lookup
+    tweenGroup: new TweenGroup()
   }),
 
   init: function(domNode, state) {
@@ -640,7 +645,7 @@ export default Kapsule({
         state.onRenderFramePost && state.onRenderFramePost(ctx, globalScale);
       }
 
-      TWEEN.update(); // update canvas animation tweens
+      state.tweenGroup.update(); // update canvas animation tweens
 
       state.animationFrameRequestId = requestAnimationFrame(animate);
     })();
