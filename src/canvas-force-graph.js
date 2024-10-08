@@ -462,7 +462,7 @@ export default Kapsule({
     state.ctx = canvasCtx;
   },
 
-  update(state) {
+  update(state, changedProps) {
     state.engineRunning = false; // Pause simulation
     state.onUpdate();
 
@@ -510,19 +510,19 @@ export default Kapsule({
         * (['radialin', 'radialout'].indexOf(state.dagMode) !== -1 ? 0.7 : 1)
       );
 
+    // Reset relevant fx/fy when swapping dag modes
+    if (['lr', 'rl', 'td', 'bu'].includes(changedProps.dagMode)) {
+      const resetProp = ['lr', 'rl'].includes(changedProps.dagMode) ? 'fx' : 'fy';
+      state.graphData.nodes.filter(state.dagNodeFilter).forEach(node => delete node[resetProp]);
+    }
+
     // Fix nodes to x,y for dag mode
-    if (state.dagMode) {
-      const getFFn = (fix, invert) => node => !fix
-        ? undefined
-        : (nodeDepths[node[state.nodeId]] - maxDepth / 2) * dagLevelDistance * (invert ? -1 : 1);
+    if (['lr', 'rl', 'td', 'bu'].includes(state.dagMode)) {
+      const invert = ['rl', 'bu'].includes(state.dagMode);
+      const fixFn = node => (nodeDepths[node[state.nodeId]] - maxDepth / 2) * dagLevelDistance * (invert ? -1 : 1);
 
-      const fxFn = getFFn(['lr', 'rl'].indexOf(state.dagMode) !== -1, state.dagMode === 'rl');
-      const fyFn = getFFn(['td', 'bu'].indexOf(state.dagMode) !== -1, state.dagMode === 'bu');
-
-      state.graphData.nodes.filter(state.dagNodeFilter).forEach(node => {
-        node.fx = fxFn(node);
-        node.fy = fyFn(node);
-      });
+      const resetProp = ['lr', 'rl'].includes(state.dagMode) ? 'fx' : 'fy';
+      state.graphData.nodes.filter(state.dagNodeFilter).forEach(node => node[resetProp] = fixFn(node));
     }
 
     // Use radial force for radial dags
