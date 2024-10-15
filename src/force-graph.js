@@ -2,7 +2,7 @@ import { select as d3Select } from 'd3-selection';
 import { zoom as d3Zoom, zoomTransform as d3ZoomTransform } from 'd3-zoom';
 import { drag as d3Drag } from 'd3-drag';
 import { max as d3Max, min as d3Min } from 'd3-array';
-import { throttle } from 'lodash-es';
+import { throttle, isFunction } from 'lodash-es';
 import { Tween, Group as TweenGroup, Easing } from '@tweenjs/tween.js';
 import Kapsule from 'kapsule';
 import accessorFn from 'accessor-fn';
@@ -464,13 +464,17 @@ export default Kapsule({
     state.zoom.__baseElem.on('dblclick.zoom', null); // Disable double-click to zoom
 
     state.zoom
-      .filter(ev =>
+      .filter(ev => {
+        const enablePanInteractionFn = isFunction(state.enablePanInteraction) ? state.enablePanInteraction : () => state.enablePanInteraction;
+
+        const enableZoomInteractionFn = isFunction(state.enableZoomInteraction) ? state.enableZoomInteraction : () => state.enableZoomInteraction;
+
         // disable zoom interaction
-        !ev.button
-        && state.enableZoomPanInteraction
-        && (state.enableZoomInteraction || ev.type !== 'wheel')
-        && (state.enablePanInteraction || ev.type === 'wheel')
-      )
+        return !ev.button
+          && state.enableZoomPanInteraction
+          && (enableZoomInteractionFn(ev) || ev.type !== 'wheel')
+          && (enablePanInteractionFn(ev) || ev.type === 'wheel');
+      })
       .on('zoom', ev => {
         const t = ev.transform;
         [ctx, shadowCtx].forEach(c => {
