@@ -467,9 +467,9 @@ export default Kapsule({
       .filter(ev =>
         // disable zoom interaction
         !ev.button
-        && state.enableZoomPanInteraction
-        && (state.enableZoomInteraction || ev.type !== 'wheel')
-        && (state.enablePanInteraction || ev.type === 'wheel')
+          && state.enableZoomPanInteraction
+          && (ev.type !== 'wheel' || accessorFn(state.enableZoomInteraction)(ev))
+          && (ev.type === 'wheel' || accessorFn(state.enablePanInteraction)(ev))
       )
       .on('zoom', ev => {
         const t = ev.transform;

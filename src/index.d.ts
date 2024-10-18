@@ -177,9 +177,9 @@ export interface ForceGraphGenericInstance<ChainableInstance> {
   enableNodeDrag(): boolean;
   enableNodeDrag(enable: boolean): ChainableInstance;
   enableZoomInteraction(): boolean;
-  enableZoomInteraction(enable: boolean): ChainableInstance;
+  enableZoomInteraction(enable: boolean | ((event: MouseEvent) => boolean)): ChainableInstance;
   enablePanInteraction(): boolean;
-  enablePanInteraction(enable: boolean): ChainableInstance;
+  enablePanInteraction(enable: boolean | ((event: MouseEvent) => boolean)): ChainableInstance;
   enablePointerInteraction(): boolean;
   enablePointerInteraction(enable?: boolean): ChainableInstance;
 
