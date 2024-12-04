@@ -12,7 +12,7 @@
   fetch('../datasets/miserables.json').then(res => res.json()).then(data => {
     const elem = document.getElementById('graph');
 
-    const Graph = ForceGraph()(elem)
+    const Graph = new ForceGraph(elem)
       .graphData(data)
       .nodeLabel('id')
       .nodeAutoColorBy('group')

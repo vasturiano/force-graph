@@ -21,8 +21,7 @@
         }))
     };
 
-    const Graph = ForceGraph()
-      (document.getElementById('graph'))
+    const Graph = new ForceGraph(document.getElementById('graph'))
         .cooldownTicks(100)
         .graphData(gData);
 

@@ -19,8 +19,7 @@
       vy: (Math.random() * 2) - 1
     }));
 
-    const Graph = ForceGraph()
-      (document.getElementById('graph'));
+    const Graph = new ForceGraph(document.getElementById('graph'));
 
     Graph.cooldownTime(Infinity)
       .d3AlphaDecay(0)

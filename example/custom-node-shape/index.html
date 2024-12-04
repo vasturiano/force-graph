@@ -24,8 +24,7 @@
     // gen a number persistent color from around the palette
     const getColor = n => '#' + ((n * 1234567) % Math.pow(2, 24)).toString(16).padStart(6, '0');
 
-    const Graph = ForceGraph()
-      (document.getElementById('graph'))
+    const Graph = new ForceGraph(document.getElementById('graph'))
         .nodeCanvasObject((node, ctx) => nodePaint(node, getColor(node.id), ctx))
         .nodePointerAreaPaint(nodePaint)
         .nodeLabel('id')

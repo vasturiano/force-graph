@@ -50,7 +50,7 @@
     };
 
     const elem = document.getElementById('graph');
-    const Graph = ForceGraph()(elem)
+    const Graph = new ForceGraph(elem)
       .graphData(getPrunedTree())
       .onNodeHover(node => elem.style.cursor = node && node.childLinks.length ? 'pointer' : null)
       .onNodeClick(node => {

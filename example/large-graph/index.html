@@ -27,8 +27,7 @@
       const links = pairs.filter(d => d[0] !== d[1])
         .map(d => ({ source: d[0], target: d[1] }));
 
-      const Graph = ForceGraph()
-        (document.getElementById('graph'))
+      const Graph = new ForceGraph(document.getElementById('graph'))
         .graphData({ nodes, links })
         .d3AlphaDecay(0)
         .d3VelocityDecay(0.08)

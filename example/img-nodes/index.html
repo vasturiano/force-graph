@@ -27,8 +27,7 @@
         }))
     };
 
-    const Graph = ForceGraph()
-      (document.getElementById('graph'))
+    const Graph = new ForceGraph(document.getElementById('graph'))
       .nodeCanvasObject(({ img, x, y }, ctx) => {
         const size = 12;
         ctx.drawImage(img, x - size / 2, y - size / 2, size, size);

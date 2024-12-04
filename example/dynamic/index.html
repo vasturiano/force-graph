@@ -16,7 +16,7 @@
 
     const elem = document.getElementById("graph");
 
-    const Graph = ForceGraph()(elem)
+    const Graph = new ForceGraph(elem)
       .onNodeClick(removeNode)
       .graphData(initData);
 

@@ -21,8 +21,7 @@
         }))
     };
 
-    const Graph = ForceGraph()
-      (document.getElementById('graph'))
+    const Graph = new ForceGraph(document.getElementById('graph'))
         .graphData(gData);
 
     let k = 0, angle = 0, radius = 300;

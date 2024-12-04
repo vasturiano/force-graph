@@ -36,8 +36,8 @@ interface ForceFn<N = NodeObject> {
   [key: string]: any;
 }
 
-export interface ForceGraphGenericInstance<ChainableInstance, N extends NodeObject = NodeObject, L extends LinkObject<N> = LinkObject<N>> {
-  (element: HTMLElement): ChainableInstance;
+export declare class ForceGraphGeneric<ChainableInstance, N extends NodeObject = NodeObject, L extends LinkObject<N> = LinkObject<N>> {
+  constructor(element: HTMLElement);
   resetProps(): ChainableInstance;
   _destructor(): void;
 
@@ -190,8 +190,6 @@ export interface ForceGraphGenericInstance<ChainableInstance, N extends NodeObje
   graph2ScreenCoords(x: number, y: number): { x: number, y: number };
 }
 
-export type ForceGraphInstance<NodeType = NodeObject, LinkType = LinkObject<NodeType>> = ForceGraphGenericInstance<ForceGraphInstance<NodeType, LinkType>, NodeType, LinkType>;
-
-declare function ForceGraph<NodeType = NodeObject, LinkType = LinkObject<NodeType>>(): ForceGraphInstance<NodeType, LinkType>;
+declare class ForceGraph<NodeType = NodeObject, LinkType = LinkObject<NodeType>> extends ForceGraphGeneric<ForceGraph<NodeType, LinkType>, NodeType, LinkType> {}
 
 export default ForceGraph;

@@ -12,7 +12,7 @@
     fetch('../datasets/blocks.json').then(res => res.json()).then(data => {
       const elem = document.getElementById('graph');
 
-      const Graph = ForceGraph()(elem)
+      const Graph = new ForceGraph(elem)
         .backgroundColor('#101020')
         .nodeRelSize(6)
         .nodeAutoColorBy('user')

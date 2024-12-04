@@ -23,8 +23,7 @@
         }))
     };
 
-    const Graph = ForceGraph()
-      (document.getElementById('graph'))
+    const Graph = new ForceGraph(document.getElementById('graph'))
         .linkColor(() => 'rgba(0,0,0,0.04)')
         .enablePointerInteraction(false)
         .d3AlphaDecay(0)

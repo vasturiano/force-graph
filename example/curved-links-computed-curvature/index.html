@@ -66,8 +66,7 @@
       }
     });
 
-    const Graph = ForceGraph()
-      (document.getElementById('graph'))
+    const Graph = new ForceGraph(document.getElementById('graph'))
         .linkCurvature('curvature')
         .linkDirectionalArrowLength(6)
         .linkDirectionalArrowRelPos(1)

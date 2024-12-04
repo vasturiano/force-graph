@@ -23,8 +23,7 @@
       }))
   };
 
-  const Graph = ForceGraph()
-  (document.getElementById('graph'))
+  const Graph = new ForceGraph(document.getElementById('graph'))
     .backgroundColor('#F5F5FF')
     .height(window.innerHeight - 60)
     .graphData(gData);

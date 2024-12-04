@@ -14,7 +14,7 @@
   <div id="graph"></div>
 
   <script>
-    const Graph = ForceGraph()(document.getElementById('graph'))
+    const Graph = new ForceGraph(document.getElementById('graph'))
       .nodeId('id')
       .nodeLabel('id')
       .cooldownTicks(0) // pre-defined layout, cancel force engine iterations

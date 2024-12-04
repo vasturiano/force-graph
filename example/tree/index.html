@@ -22,7 +22,7 @@
 
     // graph config
     const NODE_REL_SIZE = 1;
-    const graph = ForceGraph()
+    const graph = new ForceGraph(document.getElementById('graph'))
       .dagMode('td')
       .dagLevelDistance(300)
       .backgroundColor('#101020')
@@ -64,8 +64,7 @@
           }
         });
 
-        graph(document.getElementById('graph'))
-          .graphData({ nodes, links });
+        graph.graphData({ nodes, links });
       });
   </script>
 </body>

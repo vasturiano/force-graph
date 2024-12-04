@@ -66,8 +66,7 @@
     };
 
     const elem = document.getElementById('graph');
-    const Graph = ForceGraph()
-      (elem)
+    const Graph = new ForceGraph(elem)
         .graphData(getPrunedTree())
         .nodeLabel('id')
         .nodeColor(node => !node.childLinks.length ? 'green' : node.collapsed ? 'red' : 'yellow')

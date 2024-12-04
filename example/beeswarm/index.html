@@ -19,8 +19,7 @@
       pos: Math.random()
     }));
 
-    const Graph = ForceGraph()
-      (document.getElementById('graph'));
+    const Graph = new ForceGraph(document.getElementById('graph'));
 
     Graph
       // Deactivate existing forces

@@ -27,7 +27,7 @@
     const dashLen = 6;
     const gapLen = 8;
 
-    const Graph = ForceGraph()(elem)
+    const Graph = new ForceGraph(elem)
       .graphData(gData)
       .nodeRelSize(8)
       .linkWidth(3)

@@ -23,8 +23,7 @@
 
     let selectedNodes = new Set();
 
-    const Graph = ForceGraph()
-      (document.getElementById('graph'))
+    const Graph = new ForceGraph(document.getElementById('graph'))
         .graphData(gData)
         .nodeRelSize(7)
         .nodeColor(node => selectedNodes.has(node) ? 'darkorange' : 'grey')

@@ -63,8 +63,7 @@ or using a *script* tag
 ```
 then
 ```js
-const myGraph = ForceGraph();
-myGraph(<myDOMElement>)
+const myGraph = new ForceGraph(<myDOMElement>)
   .graphData(<myData>);
 ```
 

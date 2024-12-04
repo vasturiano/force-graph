@@ -44,7 +44,7 @@
 
     const elem = document.getElementById('graph');
 
-    ForceGraph()(elem)
+    new ForceGraph(elem)
       .graphData(gData)
       .nodeRelSize(NODE_R)
       .onNodeHover(node => {

@@ -59,8 +59,7 @@
       nodes.splice(nodes.indexOf(node), 1);
     };
 
-    const Graph = ForceGraph()
-      (document.getElementById('graph'))
+    const Graph = new ForceGraph(document.getElementById('graph'))
         .linkDirectionalArrowLength(6)
         .linkDirectionalArrowRelPos(1)
         .onNodeDrag(dragNode => {

@@ -32,8 +32,7 @@
       links
     };
 
-    const Graph = ForceGraph()
-    (document.getElementById('graph'))
+    const Graph = new ForceGraph(document.getElementById('graph'))
       .linkDirectionalParticleColor(() => 'red')
       .linkHoverPrecision(10)
       .graphData(gData);
