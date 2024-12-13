@@ -1,10 +1,6 @@
 <head>
   <style> body { margin: 0; } </style>
 
-  <script src="//unpkg.com/d3-dsv"></script>
-  <script src="//unpkg.com/d3-quadtree"></script>
-  <script src="//unpkg.com/d3-force"></script>
-
   <script src="//unpkg.com/force-graph"></script>
   <!--<script src="../../dist/force-graph.js"></script>-->
 
@@ -16,8 +12,11 @@
 <body>
 <div id="graph"></div>
 
-<script>
-  fetch('../datasets/d3-dependencies.csv').then(r => r.text()).then(d3.csvParse).then(data => {
+<script type="module">
+  import { forceCollide } from 'https://esm.sh/d3-force';
+  import { csvParse } from 'https://esm.sh/d3-dsv';
+
+  fetch('../datasets/d3-dependencies.csv').then(r => r.text()).then(csvParse).then(data => {
     const nodes = [], links = [];
     data.forEach(({ size, path }) => {
       const levels = path.split('/'),
@@ -77,7 +76,7 @@
         })
         .dagMode('td')
         .dagLevelDistance(90)
-        .d3Force('collision', d3.forceCollide(node => Graph.nodeRelSize()))
+        .d3Force('collision', forceCollide(node => Graph.nodeRelSize()))
         .warmupTicks(250);
   });
 </script>

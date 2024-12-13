@@ -3,15 +3,14 @@
 
   <script src="//unpkg.com/force-graph"></script>
   <!--<script src="../../dist/force-graph.js"></script>-->
-
-  <script src="//unpkg.com/d3-quadtree"></script>
-  <script src="//unpkg.com/d3-force"></script>
 </head>
 
 <body>
   <div id="graph"></div>
 
-  <script>
+  <script type="module">
+    import { forceCollide, forceX, forceY } from 'https://esm.sh/d3-force';
+
     // Random tree
     const N = 300;
     const nodes = [...Array(N).keys()].map(i => ({
@@ -27,9 +26,9 @@
       .d3Force('charge', null)
 
       // Add collision and x/y forces
-      .d3Force('collide', d3.forceCollide(Graph.nodeRelSize()))
-      .d3Force('x', d3.forceX(d => (d.pos - 0.5) * window.innerWidth))
-      .d3Force('y', d3.forceY(0).strength(0.2))
+      .d3Force('collide', forceCollide(Graph.nodeRelSize()))
+      .d3Force('x', forceX(d => (d.pos - 0.5) * window.innerWidth))
+      .d3Force('y', forceY(0).strength(0.2))
 
       // Add nodes
       .graphData({ nodes, links: [] });

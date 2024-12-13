@@ -3,9 +3,6 @@
 
   <script src="//bundle.run/@yarnpkg/lockfile@1.1.0"></script>
 
-  <script src="//unpkg.com/dagre/dist/dagre.min.js"></script>
-  <script src="//unpkg.com/accessor-fn"></script>
-
   <script src="//unpkg.com/force-graph"></script>
 <!--  <script src="../../dist/force-graph.js"></script>-->
 </head>
@@ -13,7 +10,10 @@
 <body>
   <div id="graph"></div>
 
-  <script>
+  <script type="module">
+    import dagre from 'https://esm.sh/dagre';
+    import accessorFn from 'https://esm.sh/accessor-fn';
+
     const Graph = new ForceGraph(document.getElementById('graph'))
       .nodeId('id')
       .nodeLabel('id')
@@ -37,11 +37,11 @@
       .then(yarnlock => {
         const nodes = [];
         const links = [];
-        Object.entries(yarnlock).forEach(([package, details]) => {
-          nodes.push({ id: package });
+        Object.entries(yarnlock).forEach(([pkg, details]) => {
+          nodes.push({ id: pkg });
           if (details.dependencies) {
             Object.entries(details.dependencies).forEach(([dep, version]) => {
-              links.push({source: package, target: `${dep}@${version}`});
+              links.push({source: pkg, target: `${dep}@${version}`});
             });
           }
         });

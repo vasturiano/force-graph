@@ -1,11 +1,6 @@
 <head>
   <style> body { margin: 0; } </style>
 
-  <script src="//unpkg.com/d3-dsv"></script>
-  <script src="//unpkg.com/dat.gui"></script>
-  <script src="//unpkg.com/d3-quadtree"></script>
-  <script src="//unpkg.com/d3-force"></script>
-
   <script src="//unpkg.com/force-graph"></script>
   <!--<script src="../../dist/force-graph.js"></script>-->
 </head>
@@ -13,10 +8,14 @@
 <body>
   <div id="graph"></div>
 
-  <script>
+  <script type="module">
+    import { csvParse } from 'https://esm.sh/d3-dsv';
+    import { forceCollide } from 'https://esm.sh/d3-force';
+    import { GUI } from 'https://esm.sh/dat.gui';
+
     // controls
     const controls = { 'DAG Orientation': 'td'};
-    const gui = new dat.GUI();
+    const gui = new GUI();
     gui.add(controls, 'DAG Orientation', ['td', 'bu', 'lr', 'rl', 'radialout', 'radialin', null])
       .onChange(orientation => graph && graph.dagMode(orientation));
 
@@ -34,12 +33,12 @@
       .nodeAutoColorBy('module')
       .linkDirectionalParticles(2)
       .linkDirectionalParticleWidth(2)
-      .d3Force('collision', d3.forceCollide(node => Math.sqrt(100 / (node.level + 1)) * NODE_REL_SIZE))
+      .d3Force('collision', forceCollide(node => Math.sqrt(100 / (node.level + 1)) * NODE_REL_SIZE))
       .d3VelocityDecay(0.3);
 
     fetch('../datasets/d3-dependencies.csv')
       .then(r => r.text())
-      .then(d3.csvParse)
+      .then(csvParse)
       .then(data => {
         const nodes = [], links = [];
         data.forEach(({ size, path }) => {
