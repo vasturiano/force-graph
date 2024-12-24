@@ -1,4 +1,4 @@
-export interface GraphData<N = NodeObject, L = LinkObject<N>> {
+export interface GraphData<N extends NodeObject = NodeObject, L extends LinkObject<N> = LinkObject<N>> {
   nodes: N[];
   links: L[];
 }
@@ -14,7 +14,7 @@ export interface NodeObject {
   fy?: number;
 }
 
-export interface LinkObject<N = NodeObject> {
+export interface LinkObject<N extends NodeObject = NodeObject> {
   source?: string | number | N;
   target?: string | number | N;
 }
@@ -30,7 +30,7 @@ export type CanvasPointerAreaPaintFn<T> = (obj: T, paintColor: string, canvasCon
 
 type DagMode = 'td' | 'bu' | 'lr' | 'rl' | 'radialout' | 'radialin';
 
-interface ForceFn<N = NodeObject> {
+interface ForceFn<N extends NodeObject = NodeObject> {
   (alpha: number): void;
   initialize?: (nodes: N[], ...args: any[]) => void;
   [key: string]: any;
@@ -190,6 +190,6 @@ export declare class ForceGraphGeneric<ChainableInstance, N extends NodeObject =
   graph2ScreenCoords(x: number, y: number): { x: number, y: number };
 }
 
-declare class ForceGraph<NodeType = NodeObject, LinkType = LinkObject<NodeType>> extends ForceGraphGeneric<ForceGraph<NodeType, LinkType>, NodeType, LinkType> {}
+declare class ForceGraph<N extends NodeObject = NodeObject, L extends LinkObject<N> = LinkObject<N>> extends ForceGraphGeneric<ForceGraph<N, L>, N, L> {}
 
 export default ForceGraph;
