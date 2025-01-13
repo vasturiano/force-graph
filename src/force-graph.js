@@ -7,6 +7,7 @@ import { Tween, Group as TweenGroup, Easing } from '@tweenjs/tween.js';
 import Kapsule from 'kapsule';
 import accessorFn from 'accessor-fn';
 import ColorTracker from 'canvas-color-tracker';
+import Tooltip from 'float-tooltip';
 
 import CanvasForceGraph from './canvas-force-graph';
 import linkKapsule from './kapsule-link.js';
@@ -498,9 +499,7 @@ export default Kapsule({
       });
 
     // Setup tooltip
-    const toolTipElem = document.createElement('div');
-    toolTipElem.classList.add('graph-tooltip');
-    container.appendChild(toolTipElem);
+    state.tooltip = new Tooltip(container);
 
     // Capture pointer coords on move or touchstart
     ['pointermove', 'pointerdown'].forEach(evType =>
@@ -521,16 +520,6 @@ export default Kapsule({
         const offset = getOffset(container);
         pointerPos.x = ev.pageX - offset.left;
         pointerPos.y = ev.pageY - offset.top;
-
-        // Move tooltip
-        toolTipElem.style.top = `${pointerPos.y}px`;
-        toolTipElem.style.left = `${pointerPos.x}px`;
-
-        // adjust horizontal position to not exceed canvas boundaries
-        toolTipElem.style.transform = `translate(-${pointerPos.x / state.width * 100}%, ${
-          // flip to above if near bottom
-          state.height - pointerPos.y < 100 ? 'calc(-100% - 8px)' : '21px'
-        })`;
 
         //
 
@@ -622,9 +611,7 @@ export default Kapsule({
             fn && fn(obj.d, prevObjType === objType ? prevObj.d : null);
           }
 
-          const tooltipContent = obj ? accessorFn(state[`${obj.type.toLowerCase()}Label`])(obj.d) || '' : '';
-          toolTipElem.style.visibility = tooltipContent ? 'visible' : 'hidden';
-          toolTipElem.innerHTML = tooltipContent;
+          state.tooltip.content(obj ? accessorFn(state[`${obj.type.toLowerCase()}Label`])(obj.d) || null : null);
 
           // set pointer if hovered object is clickable
           state.canvas.classList[
