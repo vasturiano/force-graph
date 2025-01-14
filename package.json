@@ -58,7 +58,7 @@
     "d3-scale-chromatic": "1 - 3",
     "d3-selection": "2 - 3",
     "d3-zoom": "2 - 3",
-    "float-tooltip": "1",
+    "float-tooltip": "^1.5",
     "index-array-by": "1",
     "kapsule": "^1.16",
     "lodash-es": "4"

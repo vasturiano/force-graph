@@ -1503,10 +1503,10 @@ fdir@^6.2.0:
   resolved "https://registry.yarnpkg.com/fdir/-/fdir-6.4.2.tgz#ddaa7ce1831b161bc3657bb99cb36e1622702689"
   integrity sha512-KnhMXsKSPZlAhp7+IjUkRZKPb4fUyccpDrdFXbi4QL1qkmFh9kVY09Yox+n4MaOb3lHZ1Tv829C3oaaXoMYPDQ==
 
-float-tooltip@1:
-  version "1.4.2"
-  resolved "https://registry.yarnpkg.com/float-tooltip/-/float-tooltip-1.4.2.tgz#a128f389aa45a6149ed2f27aae40151653e39479"
-  integrity sha512-sKWm5Q9YKBgpli8c5VEADvBYYH2Jqy+RH/m7FUbDMPUuoXYMRBVYppp8+dDv962XiE2kCKt7TIOV3lUQ+nK0Pw==
+float-tooltip@^1.5:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/float-tooltip/-/float-tooltip-1.5.0.tgz#0e97c4497d5b59a7b3f37b5ff9826b7ab6448668"
+  integrity sha512-CdpIbFdc7PSN+xhJXnAijWhha2vkdrrMRYpyfvrP3kKGJHJP404UrREVvMlKXQq2UXkb9G5oiyPTa5Kq6gRXjg==
   dependencies:
     d3-selection "2 - 3"
     kapsule "^1.16"

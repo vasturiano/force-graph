@@ -23,6 +23,8 @@ type Accessor<In, Out> = Out | string | ((obj: In) => Out);
 type NodeAccessor<T, N> = Accessor<N, T>;
 type LinkAccessor<T, N, L> = Accessor<L, T>;
 
+type Label = string | HTMLElement;
+
 type CanvasCustomRenderMode = 'replace' | 'before' | 'after';
 export type CanvasCustomRenderModeFn<T> = (obj: T) => CanvasCustomRenderMode | any;
 export type CanvasCustomRenderFn<T> = (obj: T, canvasContext: CanvasRenderingContext2D, globalScale: number) => void;
@@ -64,8 +66,8 @@ export declare class ForceGraphGeneric<ChainableInstance, N extends NodeObject =
   nodeRelSize(size: number): ChainableInstance;
   nodeVal(): NodeAccessor<number, N>;
   nodeVal(valAccessor: NodeAccessor<number, N>): ChainableInstance;
-  nodeLabel(): NodeAccessor<string, N>;
-  nodeLabel(labelAccessor: NodeAccessor<string, N>): ChainableInstance;
+  nodeLabel(): NodeAccessor<Label, N>;
+  nodeLabel(labelAccessor: NodeAccessor<Label, N>): ChainableInstance;
   nodeVisibility(): NodeAccessor<boolean, N>;
   nodeVisibility(visibilityAccessor: NodeAccessor<boolean, N>): ChainableInstance;
   nodeColor(): NodeAccessor<string, N>;
@@ -80,8 +82,8 @@ export declare class ForceGraphGeneric<ChainableInstance, N extends NodeObject =
   nodePointerAreaPaint(renderFn: CanvasPointerAreaPaintFn<N>): ChainableInstance;
 
   // Link styling
-  linkLabel(): LinkAccessor<string, N, L>;
-  linkLabel(labelAccessor: LinkAccessor<string, N, L>): ChainableInstance;
+  linkLabel(): LinkAccessor<Label, N, L>;
+  linkLabel(labelAccessor: LinkAccessor<Label, N, L>): ChainableInstance;
   linkVisibility(): LinkAccessor<boolean, N, L>;
   linkVisibility(visibilityAccessor: LinkAccessor<boolean, N, L>): ChainableInstance;
   linkColor(): LinkAccessor<string, N, L>;
