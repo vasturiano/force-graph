@@ -1,7 +1,7 @@
 import { select as d3Select } from 'd3-selection';
 import { zoom as d3Zoom, zoomTransform as d3ZoomTransform } from 'd3-zoom';
 import { drag as d3Drag } from 'd3-drag';
-import { max as d3Max, min as d3Min } from 'd3-array';
+import { max as d3Max, min as d3Min, sum as d3Sum } from 'd3-array';
 import { throttle } from 'lodash-es';
 import { Tween, Group as TweenGroup, Easing } from '@tweenjs/tween.js';
 import Kapsule from 'kapsule';
@@ -14,6 +14,7 @@ import linkKapsule from './kapsule-link.js';
 
 const HOVER_CANVAS_THROTTLE_DELAY = 800; // ms to throttle shadow canvas updates for perf improvement
 const ZOOM2NODES_FACTOR = 4;
+const DRAG_CLICK_TOLERANCE_PX = 5; // How many px can a node be accidentally dragged before disabling the click
 
 // Expose config from forceGraph
 const bindFG = linkKapsule('forceGraph', CanvasForceGraph);
