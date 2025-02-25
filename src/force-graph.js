@@ -399,7 +399,14 @@ export default Kapsule({
         })
         .on('start', ev => {
           const obj = ev.subject;
-          obj.__initialDragPos = { x: obj.x, y: obj.y, fx: obj.fx, fy: obj.fy };
+          obj.__initialDragPos = {
+            x: obj.x,
+            y: obj.y,
+            fx: obj.fx,
+            fy: obj.fy,
+            clientX: ev.sourceEvent.clientX,
+            clientY: ev.sourceEvent.clientY
+          };
 
           // keep engine running at low intensity throughout drag
           if (!ev.active) {
@@ -423,7 +430,10 @@ export default Kapsule({
           // Move fx/fy (and x/y) of nodes based on the scaled drag distance since the drag start
           ['x', 'y'].forEach(c => obj[`f${c}`] = obj[c] = initPos[c] + (dragPos[c] - initPos[c]) / k);
 
-          // prevent freeze while dragging
+          // Only engage full drag if distance reaches above threshold
+          if (!obj.__dragged && (DRAG_CLICK_TOLERANCE_PX >= Math.sqrt(d3Sum(['clientX', 'clientY'].map(k => (ev.sourceEvent[k] - initPos[k])**2)))))
+            return;
+
           state.forceGraph
             .d3AlphaTarget(0.3) // keep engine running at low intensity throughout drag
             .resetCountdown();  // prevent freeze while dragging
