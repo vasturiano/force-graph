@@ -403,9 +403,7 @@ export default Kapsule({
             x: obj.x,
             y: obj.y,
             fx: obj.fx,
-            fy: obj.fy,
-            clientX: ev.sourceEvent.clientX,
-            clientY: ev.sourceEvent.clientY
+            fy: obj.fy
           };
 
           // keep engine running at low intensity throughout drag
@@ -422,17 +420,18 @@ export default Kapsule({
           const dragPos = ev;
 
           const k = d3ZoomTransform(state.canvas).k;
-          const translate = {
-            x: (initPos.x + (dragPos.x - initPos.x) / k) - obj.x,
-            y: (initPos.y + (dragPos.y - initPos.y) / k) - obj.y
-          };
 
           // Move fx/fy (and x/y) of nodes based on the scaled drag distance since the drag start
           ['x', 'y'].forEach(c => obj[`f${c}`] = obj[c] = initPos[c] + (dragPos[c] - initPos[c]) / k);
 
           // Only engage full drag if distance reaches above threshold
-          if (!obj.__dragged && (DRAG_CLICK_TOLERANCE_PX >= Math.sqrt(d3Sum(['clientX', 'clientY'].map(k => (ev.sourceEvent[k] - initPos[k])**2)))))
+          if (!obj.__dragged && (DRAG_CLICK_TOLERANCE_PX >= Math.sqrt(d3Sum(['x', 'y'].map(k => (ev[k] - initPos[k])**2)))))
             return;
+
+          const translate = {
+            x: (initPos.x + (dragPos.x - initPos.x) / k) - obj.x,
+            y: (initPos.y + (dragPos.y - initPos.y) / k) - obj.y
+          };
 
           state.forceGraph
             .d3AlphaTarget(0.3) // keep engine running at low intensity throughout drag
