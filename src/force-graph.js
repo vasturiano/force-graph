@@ -488,10 +488,14 @@ export default Kapsule({
           c.translate(t.x, t.y);
           c.scale(t.k, t.k);
         });
+        state.isPointerDragging = true;
         state.onZoom && state.onZoom({ ...t, ...this.centerAt() }); // report x,y coordinates relative to canvas center
         state.needsRedraw = true;
       })
-      .on('end', ev => state.onZoomEnd && state.onZoomEnd({ ...ev.transform, ...this.centerAt() }));
+      .on('end', ev => {
+        state.isPointerDragging = false;
+        state.onZoomEnd && state.onZoomEnd({ ...ev.transform, ...this.centerAt() });
+      });
 
     adjustCanvasSize(state);
 
