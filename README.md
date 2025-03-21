@@ -59,7 +59,7 @@ import ForceGraph from 'force-graph';
 ```
 or using a *script* tag
 ```html
-<script src="//unpkg.com/force-graph"></script>
+<script src="//cdn.jsdelivr.net/npm/force-graph"></script>
 ```
 then
 ```js
