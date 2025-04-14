@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lasso node selection</title>
+  </head>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    .controls {
+      position: absolute;
+      bottom: 30px;
+      color: grey;
+      text-align: center;
+      width: 100%;
+      font-family: Helvetica, Arial, sans-serif;
+    }
+  </style>
+  <body>
+    <div id="graph-container"></div>
+    <div class="controls">
+      <div>
+        Hold the Shift key and drag to select nodes via a lasso. Hold Shift and
+        click to clear the selection.
+      </div>
+      <div>Works also with Ctrl or Alt keys.</div>
+    </div>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="//unpkg.com/force-graph"></script>
+
+    <script>
+      // this example is based on https://observablehq.com/@fil/lasso-selection-canvas
+      // hold shift and drag to select nodes via a lasso
+      // the lasso selection boundary is depicted as a grey polygon drawn behind the nodes using onRenderFramePre
+      // selected nodes are depicted in orange and have fixed x and y positions after lasso selection
+      // the graph can be panned and zoomed with the selection
+      // to clear the selection, hold shift and click without dragging
+
+      const N = 30;
+      const gData = {
+        nodes: [...Array(N).keys()].map((i) => ({ id: i, selected: false })),
+        links: [...Array(N).keys()]
+          .filter((id) => id)
+          .map((id) => ({
+            source: id,
+            target: Math.round(Math.random() * (id - 1)),
+          })),
+      };
+
+      const el = document.getElementById("graph-container");
+
+      const graph = ForceGraph()(el);
+
+      graph.autoPauseRedraw(false).nodeRelSize(7);
+
+      graph.graphData(gData);
+
+      graph.onRenderFramePre((ctx, scale) => {
+        draw(polygonOutline);
+      });
+
+      graph.nodeColor((d) => (d.selected ? "darkorange" : "grey"));
+
+      let polygonOutline = [];
+
+      const container = d3.select("#graph-container");
+
+      const canvas = container.select("canvas").node();
+
+      const context = canvas.getContext("2d");
+
+      const path = d3.geoPath().context(context);
+
+      function draw(polygon) {
+        context.beginPath();
+
+        path({
+          type: "LineString",
+          coordinates: polygon,
+        });
+
+        context.fillStyle = "rgba(0,0,0,.1)";
+        context.fill("evenodd");
+        context.setLineDash([4, 8]);
+        context.lineWidth = 1.5;
+        context.stroke();
+      }
+
+      function transformPolygonCoordinates(polygon) {
+        return polygon.map((d) => {
+          const { x, y } = graph.screen2GraphCoords(d[0], d[1]);
+          return [x, y];
+        });
+      }
+
+      function checkNodesForLassoSelection() {
+        if (polygon.length > 2) {
+          graph.graphData().nodes.forEach((d) => {
+            if (d3.polygonContains(polygonOutline, [d.x, d.y])) {
+              d.selected = true;
+              d.fx = d.x;
+              d.fy = d.y;
+            }
+          });
+        } else {
+          graph.graphData().nodes.forEach((d) => {
+            d.fx = null;
+            d.fy = null;
+          });
+        }
+      }
+
+      function start(polygon) {
+        graph.enablePanInteraction(false);
+        graph.graphData().nodes.forEach((d) => {
+          d.selected = false;
+          d.fx = null;
+          d.fy = null;
+        });
+
+        polygonOutline = transformPolygonCoordinates(polygon);
+      }
+
+      function move(polygon) {
+        polygonOutline = transformPolygonCoordinates(polygon);
+
+        checkNodesForLassoSelection();
+      }
+
+      function end(polygon) {
+        graph.enablePanInteraction(true);
+
+        polygonOutline = transformPolygonCoordinates(polygon);
+
+        checkNodesForLassoSelection();
+      }
+
+      d3.select(context.canvas).call(
+        lasso().on("start", start).on("move", move).on("end", end)
+      );
+
+      function lasso() {
+        const dispatch = d3.dispatch("start", "move", "end");
+
+        const lasso = function (selection) {
+          const node = selection.node();
+          polygon = [];
+
+          selection
+            .on("touchmove", (e) => e.preventDefault())
+            .on("pointerdown", (e) => {
+              if (!(e.shiftKey || e.ctrlKey || e.altKey)) return;
+
+              event.shiftKey;
+              trackPointer(e, {
+                start: (p) => {
+                  polygon.length = 0;
+                  dispatch.call("start", node, polygon);
+                },
+                move: (p) => {
+                  polygon.push(p.point);
+                  dispatch.call("move", node, polygon);
+                },
+                end: (p) => {
+                  dispatch.call("end", node, polygon);
+                },
+              });
+            });
+        };
+
+        lasso.on = function (type, _) {
+          return _
+            ? (dispatch.on(...arguments), lasso)
+            : dispatch.on(...arguments);
+        };
+
+        return lasso;
+      }
+
+      function trackDbltap(delay = 500) {
+        let tap;
+        return function (e) {
+          const t = d3.pointer(e);
+          if (tap && Math.hypot(tap[0] - t[0], tap[1] - t[1]) < 20) return true;
+          tap = t;
+          setTimeout(() => (tap = null), delay);
+        };
+      }
+
+      function trackPointer(e, { start, move, out, end }) {
+        const tracker = {},
+          id = (tracker.id = e.pointerId),
+          target = e.target;
+        tracker.point = d3.pointer(e, target);
+        target.setPointerCapture(id);
+
+        d3.select(target)
+          .on(
+            `pointerup.${id} pointercancel.${id} lostpointercapture.${id}`,
+            (e) => {
+              if (e.pointerId !== id) return;
+              tracker.sourceEvent = e;
+              d3.select(target).on(`.${id}`, null);
+              target.releasePointerCapture(id);
+              end && end(tracker);
+            }
+          )
+          .on(`pointermove.${id}`, (e) => {
+            if (e.pointerId !== id) return;
+            tracker.sourceEvent = e;
+            tracker.prev = tracker.point;
+            tracker.point = d3.pointer(e, target);
+            move && move(tracker);
+          })
+          .on(`pointerout.${id}`, (e) => {
+            if (e.pointerId !== id) return;
+            tracker.sourceEvent = e;
+            tracker.point = null;
+            out && out(tracker);
+          });
+
+        start && start(tracker);
+      }
+    </script>
+  </body>
+</html>
