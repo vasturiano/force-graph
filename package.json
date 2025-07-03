@@ -1,6 +1,6 @@
 {
   "name": "force-graph",
-  "version": "1.50.0",
+  "version": "1.50.1",
   "description": "2D force-directed graph rendered on HTML5 canvas",
   "type": "module",
   "unpkg": "dist/force-graph.min.js",
