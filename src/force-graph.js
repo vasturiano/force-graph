@@ -528,7 +528,7 @@ export default Kapsule({
         !state.isPointerDragging && ev.type === 'pointermove'
         && (state.onBackgroundClick) // only bother detecting drags this way if background clicks are enabled (so they don't trigger accidentally on canvas panning)
         && (ev.pressure > 0 || state.isPointerPressed) // ev.pressure always 0 on Safari, so we use the isPointerPressed tracker
-        && (ev.pointerType !== 'touch' || ev.movementX === undefined || [ev.movementX, ev.movementY].some(m => Math.abs(m) > 1)) // relax drag trigger sensitivity on touch events
+        && (ev.pointerType === 'mouse' || ev.movementX === undefined || [ev.movementX, ev.movementY].some(m => Math.abs(m) > 1)) // relax drag trigger sensitivity on non-mouse (touch/pen) events
         && (state.isPointerDragging = true);
 
         // update the pointer pos
