@@ -78,8 +78,10 @@ export default Kapsule({
     linkDirectionalArrowRelPos: { default: 0.5, triggerUpdate: false, onChange: notifyRedraw }, // value between 0<>1 indicating the relative pos along the (exposed) line
     linkDirectionalParticles: { default: 0, triggerUpdate: false, onChange: updDataPhotons }, // animate photons travelling in the link direction
     linkDirectionalParticleSpeed: { default: 0.01, triggerUpdate: false }, // in link length ratio per frame
+    linkDirectionalParticleOffset: { default: 0, triggerUpdate: false }, // starting position offset along the link's length, like a pre-delay. Values between [0, 1]
     linkDirectionalParticleWidth: { default: 4, triggerUpdate: false },
     linkDirectionalParticleColor: { triggerUpdate: false },
+    linkDirectionalParticleCanvasObject: { triggerUpdate: false },
     globalScale: { default: 1, triggerUpdate: false },
     d3AlphaMin: { default: 0, triggerUpdate: false},
     d3AlphaDecay: { default: 0.0228, triggerUpdate: false, onChange(alphaDecay, state) { state.forceLayout.alphaDecay(alphaDecay) }},
@@ -365,6 +367,7 @@ export default Kapsule({
       function paintPhotons() {
         const getNumPhotons = accessorFn(state.linkDirectionalParticles);
         const getSpeed = accessorFn(state.linkDirectionalParticleSpeed);
+        const getOffset = accessorFn(state.linkDirectionalParticleOffset);
         const getDiameter = accessorFn(state.linkDirectionalParticleWidth);
         const getVisibility = accessorFn(state.linkVisibility);
         const getColor = accessorFn(state.linkDirectionalParticleColor || state.linkColor);
@@ -382,6 +385,7 @@ export default Kapsule({
           if (!start || !end || !start.hasOwnProperty('x') || !end.hasOwnProperty('x')) return; // skip invalid link
 
           const particleSpeed = getSpeed(link);
+          const particleOffset = Math.abs(getOffset(link));
           const photons = link.__photons || [];
           const photonR = Math.max(0, getDiameter(link) / 2) / Math.sqrt(state.globalScale);
           const photonColor = getColor(link) || 'rgba(0,0,0,0.28)';
@@ -399,7 +403,7 @@ export default Kapsule({
             const singleHop = !!photon.__singleHop;
 
             if (!photon.hasOwnProperty('__progressRatio')) {
-              photon.__progressRatio = singleHop ? 0 : cyclePhotonIdx / numCyclePhotons;
+              photon.__progressRatio = singleHop ? 0 : (cyclePhotonIdx + particleOffset) / numCyclePhotons;
             }
 
             !singleHop && cyclePhotonIdx++; // increase regular photon index
@@ -424,9 +428,13 @@ export default Kapsule({
                 y: start.y + (end.y - start.y) * photonPosRatio || 0
               };
 
-            ctx.beginPath();
-            ctx.arc(coords.x, coords.y, photonR, 0, 2 * Math.PI, false);
-            ctx.fill();
+            if(state.linkDirectionalParticleCanvasObject) {
+              state.linkDirectionalParticleCanvasObject(coords.x, coords.y, link, ctx, state.globalScale);
+            } else {
+              ctx.beginPath();
+              ctx.arc(coords.x, coords.y, photonR, 0, 2 * Math.PI, false);
+              ctx.fill();
+            }
           });
 
           if (needsCleanup) {
