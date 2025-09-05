@@ -185,6 +185,7 @@ export default Kapsule({
     onLinkHover: { triggerUpdate: false },
     onBackgroundClick: { triggerUpdate: false },
     onBackgroundRightClick: { triggerUpdate: false },
+    showPointerCursor: { default: true, triggerUpdate: false },
     onZoom: { triggerUpdate: false },
     onZoomEnd: { triggerUpdate: false },
     onRenderFramePre: { triggerUpdate: false },
@@ -634,7 +635,8 @@ export default Kapsule({
 
           // set pointer if hovered object is clickable
           state.canvas.classList[
-            ((obj && state[`on${objType}Click`]) || (!obj && state.onBackgroundClick)) ? 'add' : 'remove'
+            ((obj && state[`on${objType}Click`]) || (!obj && state.onBackgroundClick)) &&
+            accessorFn(state.showPointerCursor)(obj?.d) ? 'add' : 'remove'
           ]('clickable');
 
           state.hoverObj = obj;

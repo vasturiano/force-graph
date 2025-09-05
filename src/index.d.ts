@@ -180,6 +180,8 @@ export declare class ForceGraphGeneric<ChainableInstance, N extends NodeObject =
   linkHoverPrecision(precision: number): ChainableInstance;
   onBackgroundClick(callback: (event: MouseEvent) => void): ChainableInstance;
   onBackgroundRightClick(callback: (event: MouseEvent) => void): ChainableInstance;
+  showPointerCursor(): Accessor<N | L | undefined, boolean>;
+  showPointerCursor(objAccessor: Accessor<N | L | undefined, boolean>): ChainableInstance;
   onZoom(callback: (transform: {k: number, x: number, y: number}) => void): ChainableInstance;
   onZoomEnd(callback: (transform: {k: number, x: number, y: number}) => void): ChainableInstance;
   enableNodeDrag(): boolean;
