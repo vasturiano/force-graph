@@ -283,7 +283,7 @@ export default Kapsule({
     },
     zoomToFit: function(state, transitionDuration = 0, padding = 10, ...bboxArgs) {
       const bbox = this.getGraphBbox(...bboxArgs);
-      
+
       if (bbox) {
         const center = {
           x: (bbox.x[0] + bbox.x[1]) / 2,
@@ -432,8 +432,10 @@ export default Kapsule({
           ['x', 'y'].forEach(c => obj[`f${c}`] = obj[c] = initPos[c] + (dragPos[c] - initPos[c]) / k);
 
           // Only engage full drag if distance reaches above threshold
-          if (!obj.__dragged && (DRAG_CLICK_TOLERANCE_PX >= Math.sqrt(d3Sum(['x', 'y'].map(k => (ev[k] - initPos[k])**2)))))
+          if (!obj.__dragged && (DRAG_CLICK_TOLERANCE_PX >= Math.sqrt(d3Sum(['x', 'y'].map(k => (ev[k] - initPos[k])**2))))) {
+            state.isPointerDragging = false;
             return;
+          }
 
           state.forceGraph
             .d3AlphaTarget(0.3) // keep engine running at low intensity throughout drag
