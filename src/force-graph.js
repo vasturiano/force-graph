@@ -223,6 +223,7 @@ export default Kapsule({
               .to(finalPos, transitionDuration)
               .easing(Easing.Quadratic.Out)
               .onUpdate(setCenter)
+              .onComplete(function() { state.tweenGroup.remove(this) })
               .start()
           );
         }
@@ -261,6 +262,7 @@ export default Kapsule({
               .to({ k }, transitionDuration)
               .easing(Easing.Quadratic.Out)
               .onUpdate(({ k }) => setZoom(k))
+              .onComplete(function() { state.tweenGroup.remove(this) })
               .start()
           );
         }
