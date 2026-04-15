@@ -409,7 +409,6 @@ export default Kapsule({
             !singleHop && cyclePhotonIdx++; // increase regular photon index
 
             photon.__progressRatio += particleSpeed;
-            
             if (photon.__progressRatio >= 1) {
               if (!singleHop) {
                 photon.__progressRatio = photon.__progressRatio % 1;
