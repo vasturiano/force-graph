@@ -384,7 +384,7 @@ export default Kapsule({
 
           if (!start || !end || !start.hasOwnProperty('x') || !end.hasOwnProperty('x')) return; // skip invalid link
 
-          const particleSpeed = Math.abs(getSpeed(link));
+          const particleSpeed = getSpeed(link);
           const particleOffset = Math.abs(getOffset(link));
           const photons = link.__photons || [];
           const photonR = Math.max(0, getDiameter(link) / 2) / Math.sqrt(state.globalScale);
@@ -403,16 +403,19 @@ export default Kapsule({
             const singleHop = !!photon.__singleHop;
 
             if (!photon.hasOwnProperty('__progressRatio')) {
-              photon.__progressRatio = singleHop ? 0 : (cyclePhotonIdx + particleOffset) / numCyclePhotons;
+              photon.__progressRatio = singleHop
+                ? particleSpeed < 0 ? 1 : 0
+                : (cyclePhotonIdx + particleOffset) / numCyclePhotons;
             }
 
             !singleHop && cyclePhotonIdx++; // increase regular photon index
 
             photon.__progressRatio += particleSpeed;
 
-            if (photon.__progressRatio >=1) {
+            if (photon.__progressRatio >= 1 || photon.__progressRatio < 0) {
               if (!singleHop) {
                 photon.__progressRatio = photon.__progressRatio % 1;
+                (photon.__progressRatio < 0) && photon.__progressRatio++;
               } else {
                 needsCleanup = true;
                 return;
@@ -439,7 +442,7 @@ export default Kapsule({
 
           if (needsCleanup) {
             // remove expired single hop photons
-            link.__photons = link.__photons.filter(photon => !photon.__singleHop || photon.__progressRatio <= 1);
+            link.__photons = link.__photons.filter(photon => !photon.__singleHop || (photon.__progressRatio <= 1 && photon.__progressRatio >= 0));
           }
         });
         ctx.restore();
