@@ -384,7 +384,7 @@ export default Kapsule({
 
           if (!start || !end || !start.hasOwnProperty('x') || !end.hasOwnProperty('x')) return; // skip invalid link
 
-          const particleSpeed = getSpeed(link);
+          const particleSpeed = Math.abs(getSpeed(link));
           const particleOffset = Math.abs(getOffset(link));
           const photons = link.__photons || [];
           const photonR = Math.max(0, getDiameter(link) / 2) / Math.sqrt(state.globalScale);
