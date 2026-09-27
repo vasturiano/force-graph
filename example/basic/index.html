@@ -21,8 +21,7 @@
         }))
     };
 
-    const Graph = new ForceGraph()
-      (document.getElementById('graph'))
+    const Graph = new ForceGraph(document.getElementById('graph'))
         .linkDirectionalParticles(2)
         .graphData(gData);
   </script>
