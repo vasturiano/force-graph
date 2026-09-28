@@ -298,19 +298,17 @@ export default Kapsule({
             link.__controlPoints = [cp.x, cp.y];
           } else { // Same point, draw a loop
             const d = curvature * 70;
-            const rotation = getSelfCurveRotation(link) || 0;
 
-            const cp1 = {
-              x: end.x + d * Math.cos(rotation - Math.PI / 2),
-              y: end.y + d * Math.sin(rotation - Math.PI / 2)
-            };
+            const angleRad = (getSelfCurveRotation(link) || 0) * Math.PI / 180;
+            const outAngle = angleRad - Math.PI / 2;
+            const inAngle = angleRad;
 
-            const cp2 = {
-              x: end.x + d * Math.cos(rotation),
-              y: end.y + d * Math.sin(rotation)
-            };
-
-            link.__controlPoints = [cp1.x, cp1.y, cp2.x, cp2.y];
+            link.__controlPoints = [
+              end.x + d * Math.cos(outAngle),
+              end.y + d * Math.sin(outAngle),
+              end.x + d * Math.cos(inAngle),
+              end.y + d * Math.sin(inAngle)
+            ];
           }
         }
       }
