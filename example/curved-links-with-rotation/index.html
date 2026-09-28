@@ -1,0 +1,60 @@
+<head>
+  <style> body { margin: 0; } </style>
+
+  <!-- <script src="//cdn.jsdelivr.net/npm/force-graph"></script> -->
+  <script src="../../dist/force-graph.js"></script>
+</head>
+
+<body>
+  <div id="graph"></div>
+
+  <script>
+    const gData = {
+      nodes: [...Array(8).keys()].map(i => ({ id: i })),
+      links: [
+        { source: 0, target: 1, curvature: 0.4 },
+        { source: 0, target: 2, curvature: -0.4 },
+        { source: 1, target: 2, curvature: 0.4 },
+
+        { source: 0, target: 0, curvature: 0.5, rotation: 4 * Math.PI / 3 },
+        { source: 1, target: 1, curvature: 0.5, rotation: 0 },
+        { source: 2, target: 2, curvature: 0.5, rotation: 2 * Math.PI / 3},
+
+        {
+          source: 4,
+          target: 4,
+          curvature: 0.6,
+          rotation: 0
+        },
+        {
+          source: 4,
+          target: 4,
+          curvature: 0.6,
+          rotation: Math.PI / 2
+        },
+        {
+          source: 4,
+          target: 4,
+          curvature: 0.6,
+          rotation: Math.PI
+        },
+        {
+          source: 4,
+          target: 4,
+          curvature: 0.6,
+          rotation: 3 * Math.PI / 2
+        },
+
+        { source: 5, target: 6, curvature: 0.5 },
+        { source: 6, target: 7, curvature: 0.5 },
+        { source: 7, target: 5, curvature: 0.5 },
+      ]
+    };
+
+    const Graph = new ForceGraph(document.getElementById('graph'))
+      .linkDirectionalParticles(2)
+      .linkCurvature('curvature')
+      .linkSelfCurveRotation('rotation')
+      .graphData(gData);
+  </script>
+</body>
