@@ -97,6 +97,8 @@ export declare class ForceGraphGeneric<ChainableInstance, N extends NodeObject =
   linkWidth(widthAccessor: LinkAccessor<number, N, L>): ChainableInstance;
   linkCurvature(): LinkAccessor<number, N, L>;
   linkCurvature(curvatureAccessor: LinkAccessor<number, N, L>): ChainableInstance;
+  linkSelfCurveRotation(): LinkAccessor<number, N, L>;
+  linkSelfCurveRotation(curveRotationAccessor: LinkAccessor<number, N, L>): ChainableInstance;
   linkCanvasObject(): CanvasCustomRenderFn<L>;
   linkCanvasObject(renderFn: CanvasCustomRenderFn<L>): ChainableInstance;
   linkCanvasObjectMode(): string | CanvasCustomRenderModeFn<L>;

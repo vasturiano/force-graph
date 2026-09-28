@@ -61,7 +61,8 @@ const linkedProps = Object.assign(
     'linkSource',
     'linkTarget',
     'linkVisibility',
-    'linkCurvature'
+    'linkCurvature',
+    'linkSelfCurveRotation'
   ].map(p => ({ [p]: bindBoth.linkProp(p)}))
 );
 const linkedMethods = Object.assign(...[

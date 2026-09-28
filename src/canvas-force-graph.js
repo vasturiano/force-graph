@@ -71,6 +71,7 @@ export default Kapsule({
     linkLineDash: { triggerUpdate: false, onChange: notifyRedraw },
     linkWidth: { default: 1, triggerUpdate: false, onChange: notifyRedraw },
     linkCurvature: { default: 0, triggerUpdate: false, onChange: notifyRedraw },
+    linkSelfCurveRotation: { default: 0, triggerUpdate: false, onChange: notifyRedraw },
     linkCanvasObject: { triggerUpdate: false, onChange: notifyRedraw },
     linkCanvasObjectMode: { default: () => 'replace', triggerUpdate: false, onChange: notifyRedraw },
     linkDirectionalArrowLength: { default: 0, triggerUpdate: false, onChange: notifyRedraw },
@@ -196,6 +197,7 @@ export default Kapsule({
         const getWidth = accessorFn(state.linkWidth);
         const getLineDash = accessorFn(state.linkLineDash);
         const getCurvature = accessorFn(state.linkCurvature);
+        const getSelfCurveRotation = accessorFn(state.linkSelfCurveRotation);
         const getLinkCanvasObjectMode = accessorFn(state.linkCanvasObjectMode);
 
         const ctx = state.ctx;
@@ -296,7 +298,17 @@ export default Kapsule({
             link.__controlPoints = [cp.x, cp.y];
           } else { // Same point, draw a loop
             const d = curvature * 70;
-            link.__controlPoints = [end.x, end.y - d, end.x + d, end.y];
+
+            const angleRad = (getSelfCurveRotation(link) || 0) * Math.PI / 180;
+            const outAngle = angleRad - Math.PI / 2;
+            const inAngle = angleRad;
+
+            link.__controlPoints = [
+              end.x + d * Math.cos(outAngle),
+              end.y + d * Math.sin(outAngle),
+              end.x + d * Math.cos(inAngle),
+              end.y + d * Math.sin(inAngle)
+            ];
           }
         }
       }
